@@ -1,0 +1,39 @@
+{
+  "name": "@nitro/cli",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./build/index.js",
+  "bin": {
+    "nitro": "./build/index.js"
+  },
+  "scripts": {
+    "start": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts",
+    "build": "tsc"
+  },
+  "keywords": [],
+  "authors": [
+    {
+      "name": "Wassim Chegham",
+      "email": "github@wassim.dev"
+    }
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@types/touch": "^3.1.1",
+    "chalk": "^2.4.2",
+    "clear": "^0.1.0",
+    "figlet": "^1.2.3",
+    "path": "^0.12.7",
+    "touch": "^3.1.0"
+  },
+  "devDependencies": {
+    "@types/clear": "^0.1.0",
+    "@types/figlet": "^1.2.0",
+    "@types/inquirer": "^6.5.0",
+    "@types/node": "^12.7.3",
+    "inquirer": "^7.0.0",
+    "nodemon": "^1.19.1",
+    "ts-node": "^8.3.0",
+    "typescript": "^3.6.2"
+  }
+}
