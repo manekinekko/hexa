@@ -1,5 +1,5 @@
-import { chooseResourceGroup } from "../../lib/prompt";
-import { az, saveWorkspace, Config } from "../../lib/utils";
+import { chooseResourceGroup } from "../../core/prompt";
+import { az, Config, saveWorkspace } from "../../core/utils";
 
 module.exports = async function() {
   let resourceGroupsList = await az<AzureResourceGroup[]>(

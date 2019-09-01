@@ -1,5 +1,5 @@
+import { Config } from "../core/utils";
 import { push } from "../features/hosting/command";
-import { Config } from "../lib/utils";
 
 module.exports = async function() {
   const subscription = Config.get("subscription") as AzureSubscription;

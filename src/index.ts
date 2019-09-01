@@ -4,8 +4,8 @@
 
 import chalk from "chalk";
 import clear from "clear";
-import figlet from "figlet";
 import program from "commander";
+import figlet from "figlet";
 
 clear();
 console.log(
@@ -44,5 +44,5 @@ console.log(
     process.exit(0);
   }
 
-  runCommand(commandName.replace("--", ""));
+  await runCommand(commandName.replace("--", ""));
 })();

@@ -1,6 +1,6 @@
-import { isProjectFileExists, saveWorkspace, Config } from "../lib/utils";
-import { askIfOverrideProjectFile, askForProjectDetails, askForFeatures } from "../lib/prompt";
 import chalk from "chalk";
+import { askForFeatures, askForProjectDetails, askIfOverrideProjectFile } from "../core/prompt";
+import { Config, isProjectFileExists, saveWorkspace } from "../core/utils";
 const debug = require("debug")("nitro");
 
 module.exports = async function() {

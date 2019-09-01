@@ -1,6 +1,6 @@
-import { az, saveWorkspace, Config } from "../../lib/utils";
-import { askForStorageAccountDetails } from "../../lib/prompt";
 import chalk from "chalk";
+import { askForStorageAccountDetails } from "../../core/prompt";
+import { az, Config, saveWorkspace } from "../../core/utils";
 
 module.exports = async function() {
   let regionsList = await az<AzureRegion[]>(

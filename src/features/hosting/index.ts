@@ -1,5 +1,5 @@
 import { QuestionCollection } from "inquirer";
-import { createDirectoryIfNotExists } from "../../lib/utils";
+import { createDirectoryIfNotExists } from "../../core/utils";
 import inquirer = require("inquirer");
 
 // Note: use commonJs exports

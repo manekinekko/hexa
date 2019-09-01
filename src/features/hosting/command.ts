@@ -1,4 +1,4 @@
-import { az } from "../../lib/utils";
+import { az } from "../../core/utils";
 
 export async function push({ subscriptionId, storageAccountName }: { subscriptionId: string, storageAccountName: string }) {
   await az(

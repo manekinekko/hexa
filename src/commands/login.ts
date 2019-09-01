@@ -1,5 +1,5 @@
-import { az, saveWorkspace, Config } from "../lib/utils";
-import { chooseSubscription } from "../lib/prompt";
+import { chooseSubscription } from "../core/prompt";
+import { az, Config, saveWorkspace } from "../core/utils";
 
 module.exports = async function() {
   let subscriptionsList = await az<AzureSubscription[]>(

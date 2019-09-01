@@ -1,5 +1,5 @@
-import { az, Config, saveWorkspace } from "../../lib/utils";
-import { chooseAccountStorage } from "../../lib/prompt";
+import { chooseAccountStorage } from "../../core/prompt";
+import { az, Config, saveWorkspace } from "../../core/utils";
 
 module.exports = async function() {
   const subscription: AzureSubscription = Config.get("subscription");
