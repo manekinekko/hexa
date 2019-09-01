@@ -2,5 +2,15 @@
   "subscription": {
     "id": "198cd413-7754-4cae-b7b4-048151e7bb79",
     "name": "ca-wachegha-demo-test"
+  },
+  "project": {
+    "name": "test"
+  },
+  "storage": {
+    "name": "sasa",
+    "sas": "aaa"
+  },
+  "hosting": {
+    "folder": "public"
   }
 }
