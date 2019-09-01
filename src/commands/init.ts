@@ -1,4 +1,4 @@
-import { isProjectFileExists, saveProjectConfigToDisk } from "../lib/utils";
+import { isProjectFileExists, saveWorkspace, Config } from "../lib/utils";
 import {
   askIfOverrideProjectFile,
   askForProjectDetails,
@@ -15,21 +15,27 @@ module.exports = async function() {
   }
 
   const project = await askForProjectDetails();
+
+
+  await (require(`./login`)());
+  await (require(`./resource-group-selection`)());
+
   const { features } = await askForFeatures();
   const featuresConfiguration: any = {};
 
   for await (let feature of features) {
     console.log(`Configuring ${chalk.green(feature)}:`);
     try {
-      const featureImplementation = require(`./lib/features/${feature}/index`);
+      const featureImplementation = require(`../features/${feature}/index`);
       const config = await featureImplementation();
       featuresConfiguration[feature] = config;
+      Config.get(feature, config);
     } catch (error) {
       console.error(error.toString());
     }
   }
 
-  saveProjectConfigToDisk({
+  saveWorkspace({
     project,
     ...featuresConfiguration
   });

@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+process.env.DEBUG = "*";
+
 import chalk from "chalk";
 import clear from "clear";
 import figlet from "figlet";
@@ -16,25 +18,31 @@ console.log(
 );
 
 (async () => {
+  const runCommand = async (commandName: string) => {
+    try {
+      return (await require(`./commands/${commandName}`))();
+    } catch (error) {
+      console.error(chalk.red(`Command "${commandName}" not supported yet.`));
+      console.error(chalk.red(error));
+      program.outputHelp();
+    }
+  };
   program
     .name("nitro")
     .usage("<command>")
     .version(require("../package.json").version)
-    .option("--init", "initialise a new workspace")
-    .option("--login", "connect to your Azure")
-    .option("--push", "deploy the app to Azure")
+    .option("login, --login", "connect to your Azure")
+    .option("init, --init", "initialise a new workspace")
+    .option("push, --push", "deploy the app to Azure")
     .parse(process.argv);
 
-  if (!process.argv.slice(2).length) {
+  // use process.argv not program.argv
+  const commandName = process.argv[2];
+
+  if (!process.argv.slice(2).length || !commandName) {
     program.outputHelp();
+    process.exit(0);
   }
 
-  const commandName = program.args[0];
-
-  try {
-    (await require(`./commands/${commandName}`))();
-  } catch (error) {
-    console.error(chalk.red(`Command ${commandName} not supported.`));
-    program.outputHelp();
-  }
+  runCommand(commandName.replace("--", ""));
 })();

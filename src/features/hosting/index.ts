@@ -12,6 +12,7 @@ module.exports = async function(): Promise<inquirer.Answers> {
       default: "public",
       validate: function(value: string) {
         if (value && value.length) {
+          // TODO: copy template files if new created folder
           return createDirectoryIfNotExists(value);
         } else {
           return "Please enter a public folder.";

@@ -1,28 +1,76 @@
 import inquirer, { Answers, QuestionCollection } from "inquirer";
 import { getCurrentDirectoryBase } from "./utils";
-
-export function chooseSubscription(subscriptionsList: any[]): Promise<Answers> {
+const uuid = require("uuid");
+export function chooseSubscription(subscriptionsList: AzureSubscription[]): Promise<Answers> {
   const questions: QuestionCollection = [
     {
       type: "list",
       name: "subscription",
       message: "Choose your subscription:",
-      choices: subscriptionsList.map((sub: AzureSubscription) => {
+      choices: subscriptionsList.map((subscription: AzureSubscription) => {
         return {
-          name: `${sub.name}`,
-          disabled: sub.state !== "Enabled"
+          name: `${subscription.name}`,
+          disabled: subscription.state !== "Enabled",
+          value: subscription.id
         };
       }),
       validate: function(value: string) {
         if (value.length) {
           return true;
         } else {
-          return "Please enter a name for the project.";
+          return "Please choose a subscription.";
         }
       }
     }
   ];
   return inquirer.prompt(questions);
+}
+
+export function chooseResourceGroup(resourceGroups: AzureResourceGroup[]): Promise<Answers> {
+  const extraChoice: AzureResourceGroup = {
+    id: "",
+    location: "",
+    name: "<Create a new resource group>"
+  };
+  const questions: QuestionCollection = [
+    {
+      type: "list",
+      name: "resourceGroup",
+      message: "Choose your resource group:",
+      choices: [...[extraChoice], ...resourceGroups].map((resourceGroup: AzureResourceGroup) => {
+        return {
+          name: `${resourceGroup.name}`,
+          value: resourceGroup.id
+        };
+      }),
+      validate: function(value: string) {
+        if (value.length) {
+          return true;
+        } else {
+          return "Please enter a resource group.";
+        }
+      }
+    }
+  ];
+  return inquirer.prompt(questions);
+}
+
+export function chooseAccountStorageName(): Promise<inquirer.Answers> {
+    const questions: QuestionCollection = [
+      {
+        type: "input",
+        name: "name",
+        message: "Enter your storage account name:",
+        validate: function(value: string) {
+          if (value.length) {
+            return true;
+          } else {
+            return "Please enter a valid name.";
+          }
+        }
+      }
+    ];
+    return inquirer.prompt(questions); 
 }
 
 export function askForFeatures(): Promise<Answers> {
@@ -34,27 +82,22 @@ export function askForFeatures(): Promise<Answers> {
       choices: [
         {
           name: "storage",
-          checked: true,
-          required: true
+          checked: true
         },
         {
           name: "hosting"
         },
         {
-          name: "functions (coming soon)",
-          disabled: true
+          name: "functions (coming soon)"
         },
         {
-          name: "database (coming soon)",
-          disabled: true
+          name: "database (coming soon)"
         },
         {
-          name: "cdn (coming soon)",
-          disabled: true
+          name: "cdn (coming soon)"
         },
         {
-          name: "auth (coming soon)",
-          disabled: true
+          name: "auth (coming soon)"
         }
       ],
       validate: function(value: string) {
@@ -69,6 +112,43 @@ export function askForFeatures(): Promise<Answers> {
   return inquirer.prompt(questions);
 }
 
+export function askForResourceGroupDetails(regions: AzureRegion[]): Promise<Answers> {
+  const questions: QuestionCollection = [
+    {
+      type: "input",
+      name: "resource",
+      message: "Enter a name for the resource group:",
+      default: `nitro-${uuid()}`,
+      validate: function(value: string) {
+        if (value.length) {
+          return true;
+        } else {
+          return "Please enter a name for the resource group.";
+        }
+      }
+    },
+    {
+      type: "list",
+      name: "region",
+      message: "Choose a region:",
+      choices: regions.map((region: AzureRegion) => {
+        return {
+          name: `${region.name} (${region.displayName})`,
+          value: region.name,
+          short: region.displayName
+        };
+      }),
+      validate: function(value: string) {
+        if (value.length) {
+          return true;
+        } else {
+          return "Please choose a region.";
+        }
+      }
+    }
+  ];
+  return inquirer.prompt(questions);
+}
 export function askForProjectDetails(): Promise<Answers> {
   const questions: QuestionCollection = [
     {

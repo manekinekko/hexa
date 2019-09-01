@@ -15,18 +15,6 @@ module.exports = async function(): Promise<inquirer.Answers> {
           return "Please enter a valid name.";
         }
       }
-    },
-    {
-      type: "input",
-      name: "sas",
-      message: "Enter your storage SAS token:",
-      validate: function(value: string) {
-        if (value.length) {
-          return true;
-        } else {
-          return "Please enter a valid SAS token.";
-        }
-      }
     }
   ];
   return inquirer.prompt(questions);
