@@ -3,34 +3,32 @@
 import chalk from "chalk";
 import clear from "clear";
 import figlet from "figlet";
-import { saveProjectConfigToDisk, isProjectFileExists } from "./lib/files";
-import {
-  askForProjectDetails,
-  askIfOverrideProjectFile,
-  askForFeatures
-} from "./lib/prompt";
-import { Answers } from "inquirer";
-
-const files = require("./lib/files");
+import program from "commander";
 
 clear();
 console.log(
-  chalk.red(figlet.textSync("NITRO", { horizontalLayout: "fitted" }))
+  chalk.red(
+    figlet.textSync("  NITRO", {
+      font: "ANSI Shadow",
+      horizontalLayout: "full"
+    })
+  )
 );
 
 (async () => {
-  if (isProjectFileExists()) {
-    const shouldOverrideConfigFile = await askIfOverrideProjectFile();
-    if (shouldOverrideConfigFile.override === false) {
-      process.exit(0);
-    }
+  program
+    .name("nitro")
+    .usage("<command>")
+    .version(require("../package.json").version)
+    .option("--init", "initialise a new workspace")
+    .option("--login", "connect to your Azure")
+    .parse(process.argv);
+
+  if (!process.argv.slice(2).length) {
+    program.outputHelp();
   }
 
-  const project = await askForProjectDetails();
-  const { features } = await askForFeatures();
+  const commandName = program.args[0];
 
-  saveProjectConfigToDisk({
-    project,
-    features
-  });
+  (await require(`./commands/${commandName}`))();
 })();

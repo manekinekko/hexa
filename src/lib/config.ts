@@ -1,1 +1,0 @@
-const Configstore = require('configstore');
