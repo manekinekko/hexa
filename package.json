@@ -19,18 +19,19 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@types/touch": "^3.1.1",
     "chalk": "^2.4.2",
     "clear": "^0.1.0",
+    "commander": "^3.0.1",
     "figlet": "^1.2.3",
-    "path": "^0.12.7",
-    "touch": "^3.1.0"
+    "ora": "^3.4.0",
+    "shelljs": "^0.8.3"
   },
   "devDependencies": {
     "@types/clear": "^0.1.0",
     "@types/figlet": "^1.2.0",
     "@types/inquirer": "^6.5.0",
     "@types/node": "^12.7.3",
+    "@types/ora": "^3.2.0",
     "inquirer": "^7.0.0",
     "nodemon": "^1.19.1",
     "ts-node": "^8.3.0",
