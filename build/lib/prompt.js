@@ -4,17 +4,64 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var inquirer_1 = __importDefault(require("inquirer"));
-var files_1 = require("./files");
+var utils_1 = require("./utils");
+function chooseSubscription(subscriptionsList) {
+    var questions = [
+        {
+            type: "list",
+            name: "subscription",
+            message: "Choose your subscription:",
+            choices: subscriptionsList.map(function (sub) {
+                return {
+                    name: "" + sub.name,
+                    disabled: sub.state !== "Enabled"
+                };
+            }),
+            validate: function (value) {
+                if (value.length) {
+                    return true;
+                }
+                else {
+                    return "Please enter a name for the project.";
+                }
+            }
+        }
+    ];
+    return inquirer_1.default.prompt(questions);
+}
+exports.chooseSubscription = chooseSubscription;
 function askForFeatures() {
     var questions = [
         {
             type: "checkbox",
             name: "features",
             message: "Choose the features you want to enable",
-            choices: [{
-                    name: "hosting",
-                    checked: true
-                }],
+            choices: [
+                {
+                    name: "storage",
+                    checked: true,
+                    required: true
+                },
+                {
+                    name: "hosting"
+                },
+                {
+                    name: "functions (coming soon)",
+                    disabled: true
+                },
+                {
+                    name: "database (coming soon)",
+                    disabled: true
+                },
+                {
+                    name: "cdn (coming soon)",
+                    disabled: true
+                },
+                {
+                    name: "auth (coming soon)",
+                    disabled: true
+                }
+            ],
             validate: function (value) {
                 if (value.length) {
                     return true;
@@ -29,13 +76,12 @@ function askForFeatures() {
 }
 exports.askForFeatures = askForFeatures;
 function askForProjectDetails() {
-    var argv = require("minimist")(process.argv.slice(2));
     var questions = [
         {
             type: "input",
             name: "name",
             message: "Enter a name for the project:",
-            default: argv._[0] || files_1.getCurrentDirectoryBase(),
+            default: utils_1.getCurrentDirectoryBase(),
             validate: function (value) {
                 if (value.length) {
                     return true;
@@ -54,7 +100,7 @@ function askIfOverrideProjectFile() {
         {
             type: "confirm",
             name: "override",
-            message: "nitro.json found. Do you want to override it?",
+            message: "Configuration file found. Do you want to override it?",
             default: false
         }
     ];

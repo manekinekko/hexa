@@ -1,6 +1,6 @@
 export declare const WORKSPACE_FILENAME = "nitro.json";
-export declare function runCmd(command: string): any;
-export declare function az(command: string): any;
+export declare function runCmd(command: string, loadingMessage?: string): Promise<string>;
+export declare function az(command: string, loadingMessage?: string): Promise<string>;
 export declare function getCurrentDirectoryBase(): string;
 export declare function directoryExists(filePath: string): boolean;
 export declare function createDirectoryIfNotExists(filePath: string): boolean;

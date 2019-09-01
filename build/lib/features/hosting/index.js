@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -36,39 +35,31 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-var chalk_1 = __importDefault(require("chalk"));
-var clear_1 = __importDefault(require("clear"));
-var figlet_1 = __importDefault(require("figlet"));
-var commander_1 = __importDefault(require("commander"));
-clear_1.default();
-console.log(chalk_1.default.red(figlet_1.default.textSync("  NITRO", {
-    font: "ANSI Shadow",
-    horizontalLayout: "full"
-})));
-(function () { return __awaiter(void 0, void 0, void 0, function () {
-    var commandName;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                commander_1.default
-                    .name("nitro")
-                    .usage("<command>")
-                    .version(require("../package.json").version)
-                    .option("--init", "initialise a new workspace")
-                    .option("--login", "connect to your Azure")
-                    .parse(process.argv);
-                if (!process.argv.slice(2).length) {
-                    commander_1.default.outputHelp();
+var files_1 = require("../../files");
+var inquirer = require("inquirer");
+// Note: use commonJs exports
+module.exports = function () {
+    return __awaiter(this, void 0, void 0, function () {
+        var questions;
+        return __generator(this, function (_a) {
+            questions = [
+                {
+                    type: "input",
+                    name: "folder",
+                    message: "Enter public folder (will be created if not present):",
+                    default: "public",
+                    validate: function (value) {
+                        if (value && value.length) {
+                            return files_1.createDirectoryIfNotExists(value);
+                        }
+                        else {
+                            return "Please enter a public folder.";
+                        }
+                    }
                 }
-                commandName = commander_1.default.args[0];
-                return [4 /*yield*/, require("./commands/" + commandName)];
-            case 1:
-                (_a.sent())();
-                return [2 /*return*/];
-        }
+            ];
+            return [2 /*return*/, inquirer.prompt(questions)];
+        });
     });
-}); })();
+};
