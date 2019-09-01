@@ -4,7 +4,7 @@ import { chooseSubscription } from "../lib/prompt";
 module.exports = async function() {
   let subscriptionsList = await az<AzureSubscription[]>(
     `login --query '[].{name:name, state:state, id:id}'`,
-    `Loading your subscriptions...`
+    `Loading subscriptions...`
   );
 
   Config.set("subscriptions", subscriptionsList);

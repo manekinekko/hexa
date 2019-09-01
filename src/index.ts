@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-process.env.DEBUG = "*";
+// process.env.DEBUG = "*";
 
 import chalk from "chalk";
 import clear from "clear";

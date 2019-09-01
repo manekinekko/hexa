@@ -18,7 +18,7 @@ export async function runCmd(command: string, loadingMessage?: string, options?:
   }
 
   return new Promise((resolve, reject) => {
-    command = `${command} --output json ` + (debug.enabled && "--verbose");
+    command = `${command} --output json ` + (debug.enabled ? "--verbose" : "");
 
     debug(command);
 

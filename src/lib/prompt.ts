@@ -6,7 +6,7 @@ export function chooseSubscription(subscriptionsList: AzureSubscription[]): Prom
     {
       type: "list",
       name: "subscription",
-      message: "Choose your subscription:",
+      message: "Choose a subscription:",
       choices: subscriptionsList.map((subscription: AzureSubscription) => {
         return {
           name: `${subscription.name}`,
@@ -36,7 +36,7 @@ export function chooseResourceGroup(resourceGroups: AzureResourceGroup[]): Promi
     {
       type: "list",
       name: "resourceGroup",
-      message: "Choose your resource group:",
+      message: "Choose resource group:",
       choices: [...[extraChoice], ...resourceGroups].map((resourceGroup: AzureResourceGroup) => {
         return {
           name: `${resourceGroup.name}`,
@@ -55,49 +55,63 @@ export function chooseResourceGroup(resourceGroups: AzureResourceGroup[]): Promi
   return inquirer.prompt(questions);
 }
 
-export function chooseAccountStorageName(): Promise<inquirer.Answers> {
-    const questions: QuestionCollection = [
-      {
-        type: "input",
-        name: "name",
-        message: "Enter your storage account name:",
-        validate: function(value: string) {
-          if (value.length) {
-            return true;
-          } else {
-            return "Please enter a valid name.";
-          }
+export function chooseAccountStorage(storageAccounts: AzureStorage[]): Promise<inquirer.Answers> {
+  const extraChoice: AzureStorage = {
+    id: "",
+    name: "<Create a new storage account>"
+  };
+  const questions: QuestionCollection = [
+    {
+      type: "list",
+      name: "storage",
+      message: "Choose a storage account:",
+      choices: [...[extraChoice], ...storageAccounts].map((storageAccount: AzureStorage) => {
+        return {
+          name: storageAccount.name,
+          value: storageAccount.id
+        };
+      }),
+      validate: function(value: string) {
+        if (value.length) {
+          return true;
+        } else {
+          return "Please enter a storage account.";
         }
       }
-    ];
-    return inquirer.prompt(questions); 
+    }
+  ];
+  return inquirer.prompt(questions);
 }
-
 export function askForFeatures(): Promise<Answers> {
   const questions: QuestionCollection = [
     {
       type: "checkbox",
       name: "features",
-      message: "Choose the features you want to enable",
+      message: "Choose features you want to setup:",
       choices: [
         {
-          name: "storage",
+          name: "Storage: Configure and deploy to Azure Blob Storage",
+          value: "storage",
           checked: true
         },
         {
-          name: "hosting"
+          name: "Hosting: Configure and deploy to Azure Static Website",
+          value: "hosting",
         },
         {
-          name: "functions (coming soon)"
+          name: "Functions: Configure and deploy an Azure Functions",
+          value: "functions",
+          disabled: "coming soon"
         },
         {
-          name: "database (coming soon)"
+          name: "Database: Configure and deploy to Azure Table Storage",
+          value: "database",
+          disabled: "coming soon"
         },
         {
-          name: "cdn (coming soon)"
-        },
-        {
-          name: "auth (coming soon)"
+          name: "Auth: Enable and setup Azure AD Authentication",
+          value: "auth",
+          disabled: "coming soon"
         }
       ],
       validate: function(value: string) {
@@ -116,9 +130,9 @@ export function askForResourceGroupDetails(regions: AzureRegion[]): Promise<Answ
   const questions: QuestionCollection = [
     {
       type: "input",
-      name: "resource",
+      name: "name",
       message: "Enter a name for the resource group:",
-      default: `nitro-${uuid()}`,
+      default: `nitro-group-${uuid()}`,
       validate: function(value: string) {
         if (value.length) {
           return true;
@@ -146,6 +160,47 @@ export function askForResourceGroupDetails(regions: AzureRegion[]): Promise<Answ
         }
       }
     }
+  ];
+  return inquirer.prompt(questions);
+}
+export function askForStorageAccountDetails(regions: AzureRegion[]): Promise<Answers> {
+  const questions: QuestionCollection = [
+    {
+      type: "input",
+      name: "name",
+      message: "Enter a name for the storage account:",
+      default: `nitro-storage-${uuid()}`,
+      validate: function(value: string) {
+        if (value.length) {
+          return true;
+        } else {
+          return "Please enter a name for the storage account.";
+        }
+      }
+    }
+    /**
+
+     {
+       type: "list",
+       name: "region",
+       message: "Choose a region:",
+       default: Config.get("region") || null,
+       choices: regions.map((region: AzureRegion) => {
+         return {
+           name: `${region.name} (${region.displayName})`,
+           value: region.name,
+           short: region.displayName
+          };
+        }),
+        validate: function(value: string) {
+          if (value.length) {
+            return true;
+          } else {
+            return "Please choose a region.";
+          }
+        }
+      }
+      */
   ];
   return inquirer.prompt(questions);
 }

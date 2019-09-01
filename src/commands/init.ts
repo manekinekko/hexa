@@ -1,10 +1,7 @@
 import { isProjectFileExists, saveWorkspace, Config } from "../lib/utils";
-import {
-  askIfOverrideProjectFile,
-  askForProjectDetails,
-  askForFeatures
-} from "../lib/prompt";
+import { askIfOverrideProjectFile, askForProjectDetails, askForFeatures } from "../lib/prompt";
 import chalk from "chalk";
+const debug = require("debug")("nitro");
 
 module.exports = async function() {
   if (isProjectFileExists()) {
@@ -16,15 +13,13 @@ module.exports = async function() {
 
   const project = await askForProjectDetails();
 
-
-  await (require(`./login`)());
-  await (require(`./resource-group-selection`)());
+  await require(`./login`)();
 
   const { features } = await askForFeatures();
   const featuresConfiguration: any = {};
 
-  for await (let feature of features) {
-    console.log(`Configuring ${chalk.green(feature)}:`);
+  for await (let feature of ["resource-group", ...features]) {
+    debug(`Configuring ${chalk.green(feature)}:`);
     try {
       const featureImplementation = require(`../features/${feature}/index`);
       const config = await featureImplementation();
