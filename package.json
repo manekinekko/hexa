@@ -22,12 +22,14 @@
     "chalk": "^2.4.2",
     "clear": "^0.1.0",
     "commander": "^3.0.1",
+    "configstore": "^5.0.0",
     "figlet": "^1.2.3",
     "ora": "^3.4.0",
     "shelljs": "^0.8.3"
   },
   "devDependencies": {
     "@types/clear": "^0.1.0",
+    "@types/configstore": "^4.0.0",
     "@types/figlet": "^1.2.0",
     "@types/inquirer": "^6.5.0",
     "@types/node": "^12.7.3",
