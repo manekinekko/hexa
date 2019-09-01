@@ -54,25 +54,36 @@ var fs_1 = __importDefault(require("fs"));
 var path_1 = __importDefault(require("path"));
 var shell = require("shelljs");
 var ora = require("ora");
+var Configstore = require("configstore");
+var packageJson = require("../../package.json");
+var debug = require("debug")("nitro");
+exports.Config = new Configstore(packageJson.name, {
+    version: packageJson.version
+});
 exports.WORKSPACE_FILENAME = "nitro.json";
-function runCmd(command, loadingMessage) {
+function runCmd(command, loadingMessage, options) {
     return __awaiter(this, void 0, void 0, function () {
         var spinner;
         return __generator(this, function (_a) {
             spinner = null;
-            if (loadingMessage) {
+            if (loadingMessage && debug.enabled === false) {
                 spinner = ora(loadingMessage).start();
             }
-            return [2 /*return*/, new Promise(function (resolve, _reject) {
-                    var stdout = shell.exec(command + " --output json", {
-                        silent: true,
-                        async: true
-                    }).stdout;
-                    stdout.on("data", function (data) {
-                        resolve(data);
-                        if (spinner) {
+            return [2 /*return*/, new Promise(function (resolve, reject) {
+                    command = command + " --output json " + (debug.enabled && "--verbose");
+                    debug(command);
+                    shell.exec(command, __assign({}, options), function (code, stdout, stderr) {
+                        if (stderr.length) {
+                            debug("stderr", stderr);
+                        }
+                        if (stdout.length) {
+                            debug("stdout", stdout);
+                            resolve(stdout);
+                        }
+                        try {
                             spinner.stop();
                         }
+                        catch (error) { }
                     });
                 })];
         });
@@ -81,10 +92,15 @@ function runCmd(command, loadingMessage) {
 exports.runCmd = runCmd;
 function az(command, loadingMessage) {
     return __awaiter(this, void 0, void 0, function () {
+        var output;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, runCmd("az " + command, loadingMessage)];
-                case 1: return [2 /*return*/, _a.sent()];
+                case 0: return [4 /*yield*/, runCmd("az " + command, loadingMessage, {
+                        silent: !debug.enabled
+                    })];
+                case 1:
+                    output = _a.sent();
+                    return [2 /*return*/, JSON.parse(output || "{}")];
             }
         });
     });
@@ -126,14 +142,14 @@ function readFileFromDisk(filePath) {
     return null;
 }
 exports.readFileFromDisk = readFileFromDisk;
-function saveProjectConfigToDisk(config) {
+function saveWorkspace(config) {
     var oldConfig = {};
     if (fileExists(exports.WORKSPACE_FILENAME)) {
         oldConfig = JSON.parse(readFileFromDisk(exports.WORKSPACE_FILENAME) || "{}");
     }
     fs_1.default.writeFileSync(exports.WORKSPACE_FILENAME, JSON.stringify(__assign(__assign({}, oldConfig), config), null, 2));
 }
-exports.saveProjectConfigToDisk = saveProjectConfigToDisk;
+exports.saveWorkspace = saveWorkspace;
 function isProjectFileExists() {
     return fileExists(exports.WORKSPACE_FILENAME);
 }

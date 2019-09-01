@@ -1,10 +1,11 @@
+export declare const Config: any;
 export declare const WORKSPACE_FILENAME = "nitro.json";
-export declare function runCmd(command: string, loadingMessage?: string): Promise<string>;
-export declare function az(command: string, loadingMessage?: string): Promise<string>;
+export declare function runCmd(command: string, loadingMessage?: string, options?: CommandOptions): Promise<string>;
+export declare function az<T>(command: string, loadingMessage?: string): Promise<T>;
 export declare function getCurrentDirectoryBase(): string;
 export declare function directoryExists(filePath: string): boolean;
 export declare function createDirectoryIfNotExists(filePath: string): boolean;
 export declare function fileExists(filePath: string): boolean;
 export declare function readFileFromDisk(filePath: string): string | null;
-export declare function saveProjectConfigToDisk(config: object): void;
+export declare function saveWorkspace(config: object): void;
 export declare function isProjectFileExists(): boolean;

@@ -6,5 +6,5 @@ export declare function directoryExists(filePath: string): boolean;
 export declare function createDirectoryIfNotExists(filePath: string): boolean;
 export declare function fileExists(filePath: string): boolean;
 export declare function readFileFromDisk(filePath: string): string | null;
-export declare function saveProjectConfigToDisk(config: object): void;
+export declare function saveWorkspace(config: object): void;
 export declare function isProjectFileExists(): boolean;

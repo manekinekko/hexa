@@ -51,6 +51,7 @@ module.exports = function () {
                     default: "public",
                     validate: function (value) {
                         if (value && value.length) {
+                            // TODO: copy template files if new created folder
                             return utils_1.createDirectoryIfNotExists(value);
                         }
                         else {

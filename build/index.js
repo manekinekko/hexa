@@ -40,6 +40,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+process.env.DEBUG = "*";
 var chalk_1 = __importDefault(require("chalk"));
 var clear_1 = __importDefault(require("clear"));
 var figlet_1 = __importDefault(require("figlet"));
@@ -50,25 +51,40 @@ console.log(chalk_1.default.red(figlet_1.default.textSync("  NITRO", {
     horizontalLayout: "full"
 })));
 (function () { return __awaiter(void 0, void 0, void 0, function () {
-    var commandName;
+    var runCommand, commandName;
     return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                commander_1.default
-                    .name("nitro")
-                    .usage("<command>")
-                    .version(require("../package.json").version)
-                    .option("--init", "initialise a new workspace")
-                    .option("--login", "connect to your Azure")
-                    .parse(process.argv);
-                if (!process.argv.slice(2).length) {
-                    commander_1.default.outputHelp();
+        runCommand = function (commandName) { return __awaiter(void 0, void 0, void 0, function () {
+            var error_1;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, require("./commands/" + commandName)];
+                    case 1: return [2 /*return*/, (_a.sent())()];
+                    case 2:
+                        error_1 = _a.sent();
+                        console.error(chalk_1.default.red("Command \"" + commandName + "\" not supported yet."));
+                        console.error(chalk_1.default.red(error_1));
+                        commander_1.default.outputHelp();
+                        return [3 /*break*/, 3];
+                    case 3: return [2 /*return*/];
                 }
-                commandName = commander_1.default.args[0];
-                return [4 /*yield*/, require("./commands/" + commandName)];
-            case 1:
-                (_a.sent())();
-                return [2 /*return*/];
+            });
+        }); };
+        commander_1.default
+            .name("nitro")
+            .usage("<command>")
+            .version(require("../package.json").version)
+            .option("login, --login", "connect to your Azure")
+            .option("init, --init", "initialise a new workspace")
+            .option("push, --push", "deploy the app to Azure")
+            .parse(process.argv);
+        commandName = process.argv[2];
+        if (!process.argv.slice(2).length || !commandName) {
+            commander_1.default.outputHelp();
+            process.exit(0);
         }
+        runCommand(commandName.replace("--", ""));
+        return [2 /*return*/];
     });
 }); })();

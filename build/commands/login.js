@@ -40,20 +40,23 @@ var utils_1 = require("../lib/utils");
 var prompt_1 = require("../lib/prompt");
 module.exports = function () {
     return __awaiter(this, void 0, void 0, function () {
-        var subscriptions, subscriptionsList, selectedSubscription_1, _a, id, name_1;
+        var subscriptionsList, selectedSubscriptionId_1, _a, id, name_1;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0: return [4 /*yield*/, utils_1.az("login --query '[].{name:name, state:state, id:id}'", "Loading your subscriptions...")];
                 case 1:
-                    subscriptions = _b.sent();
-                    if (!subscriptions.length) return [3 /*break*/, 3];
-                    subscriptionsList = JSON.parse(subscriptions);
+                    subscriptionsList = _b.sent();
+                    utils_1.Config.set("subscriptions", subscriptionsList);
+                    if (!subscriptionsList.length) return [3 /*break*/, 3];
                     return [4 /*yield*/, prompt_1.chooseSubscription(subscriptionsList)];
                 case 2:
-                    selectedSubscription_1 = (_b.sent())
+                    selectedSubscriptionId_1 = (_b.sent())
                         .subscription;
-                    _a = subscriptionsList.find(function (sub) { return sub.name === selectedSubscription_1; }), id = _a.id, name_1 = _a.name;
-                    utils_1.saveProjectConfigToDisk({
+                    _a = subscriptionsList.find(function (subscription) {
+                        return subscription.id === selectedSubscriptionId_1;
+                    }), id = _a.id, name_1 = _a.name;
+                    utils_1.Config.set("subscription", { id: id, name: name_1 });
+                    utils_1.saveWorkspace({
                         subscription: {
                             id: id,
                             name: name_1

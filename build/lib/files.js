@@ -65,14 +65,14 @@ function readFileFromDisk(filePath) {
     return null;
 }
 exports.readFileFromDisk = readFileFromDisk;
-function saveProjectConfigToDisk(config) {
+function saveWorkspace(config) {
     var oldConfig = {};
     if (fileExists(exports.WORKSPACE_FILENAME)) {
         oldConfig = JSON.parse(readFileFromDisk(exports.WORKSPACE_FILENAME) || "{}");
     }
     fs_1.default.writeFileSync(exports.WORKSPACE_FILENAME, JSON.stringify(__assign(__assign({}, oldConfig), config), null, 2));
 }
-exports.saveProjectConfigToDisk = saveProjectConfigToDisk;
+exports.saveWorkspace = saveWorkspace;
 function isProjectFileExists() {
     return fileExists(exports.WORKSPACE_FILENAME);
 }

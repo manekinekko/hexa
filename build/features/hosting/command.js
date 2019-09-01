@@ -37,19 +37,14 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = require("../../lib/utils");
-function push() {
+function push(_a) {
+    var subscriptionId = _a.subscriptionId, storageAccountName = _a.storageAccountName;
     return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, utils_1.az("storage blob service-properties update --account-name <storage-account-name> --static-website --404-document <error-document-name> --index-document <index-document-name>")];
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0: return [4 /*yield*/, utils_1.az("storage blob service-properties update --account-name " + storageAccountName + " --static-website --404-document 404.html --index-document index.html")];
                 case 1:
-                    _a.sent();
-                    return [4 /*yield*/, utils_1.az("storage blob upload-batch -s <source-path> -d $web --account-name <storage-account-name>")];
-                case 2:
-                    _a.sent();
-                    return [4 /*yield*/, utils_1.az("storage account show -n <storage-account-name> -g <resource-group-name> --query \"primaryEndpoints.web\"")];
-                case 3:
-                    _a.sent();
+                    _b.sent();
                     return [2 /*return*/];
             }
         });

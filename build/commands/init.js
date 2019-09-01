@@ -78,53 +78,60 @@ module.exports = function () {
                 case 2: return [4 /*yield*/, prompt_1.askForProjectDetails()];
                 case 3:
                     project = _b.sent();
-                    return [4 /*yield*/, prompt_1.askForFeatures()];
+                    return [4 /*yield*/, (require("./login")())];
                 case 4:
+                    _b.sent();
+                    return [4 /*yield*/, (require("./resource-group-selection")())];
+                case 5:
+                    _b.sent();
+                    return [4 /*yield*/, prompt_1.askForFeatures()];
+                case 6:
                     features = (_b.sent()).features;
                     featuresConfiguration = {};
-                    _b.label = 5;
-                case 5:
-                    _b.trys.push([5, 13, 14, 19]);
-                    features_1 = __asyncValues(features);
-                    _b.label = 6;
-                case 6: return [4 /*yield*/, features_1.next()];
+                    _b.label = 7;
                 case 7:
-                    if (!(features_1_1 = _b.sent(), !features_1_1.done)) return [3 /*break*/, 12];
+                    _b.trys.push([7, 15, 16, 21]);
+                    features_1 = __asyncValues(features);
+                    _b.label = 8;
+                case 8: return [4 /*yield*/, features_1.next()];
+                case 9:
+                    if (!(features_1_1 = _b.sent(), !features_1_1.done)) return [3 /*break*/, 14];
                     feature = features_1_1.value;
                     console.log("Configuring " + chalk_1.default.green(feature) + ":");
-                    _b.label = 8;
-                case 8:
-                    _b.trys.push([8, 10, , 11]);
-                    featureImplementation = require("./lib/features/" + feature + "/index");
+                    _b.label = 10;
+                case 10:
+                    _b.trys.push([10, 12, , 13]);
+                    featureImplementation = require("../features/" + feature + "/index");
                     return [4 /*yield*/, featureImplementation()];
-                case 9:
+                case 11:
                     config = _b.sent();
                     featuresConfiguration[feature] = config;
-                    return [3 /*break*/, 11];
-                case 10:
+                    utils_1.Config.get(feature, config);
+                    return [3 /*break*/, 13];
+                case 12:
                     error_1 = _b.sent();
                     console.error(error_1.toString());
-                    return [3 /*break*/, 11];
-                case 11: return [3 /*break*/, 6];
-                case 12: return [3 /*break*/, 19];
-                case 13:
+                    return [3 /*break*/, 13];
+                case 13: return [3 /*break*/, 8];
+                case 14: return [3 /*break*/, 21];
+                case 15:
                     e_1_1 = _b.sent();
                     e_1 = { error: e_1_1 };
-                    return [3 /*break*/, 19];
-                case 14:
-                    _b.trys.push([14, , 17, 18]);
-                    if (!(features_1_1 && !features_1_1.done && (_a = features_1.return))) return [3 /*break*/, 16];
+                    return [3 /*break*/, 21];
+                case 16:
+                    _b.trys.push([16, , 19, 20]);
+                    if (!(features_1_1 && !features_1_1.done && (_a = features_1.return))) return [3 /*break*/, 18];
                     return [4 /*yield*/, _a.call(features_1)];
-                case 15:
-                    _b.sent();
-                    _b.label = 16;
-                case 16: return [3 /*break*/, 18];
                 case 17:
+                    _b.sent();
+                    _b.label = 18;
+                case 18: return [3 /*break*/, 20];
+                case 19:
                     if (e_1) throw e_1.error;
                     return [7 /*endfinally*/];
-                case 18: return [7 /*endfinally*/];
-                case 19:
-                    utils_1.saveProjectConfigToDisk(__assign({ project: project }, featuresConfiguration));
+                case 20: return [7 /*endfinally*/];
+                case 21:
+                    utils_1.saveWorkspace(__assign({ project: project }, featuresConfiguration));
                     return [2 /*return*/];
             }
         });

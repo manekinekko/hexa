@@ -55,19 +55,6 @@ module.exports = function () {
                             return "Please enter a valid name.";
                         }
                     }
-                },
-                {
-                    type: "input",
-                    name: "sas",
-                    message: "Enter your storage SAS token:",
-                    validate: function (value) {
-                        if (value.length) {
-                            return true;
-                        }
-                        else {
-                            return "Please enter a valid SAS token.";
-                        }
-                    }
                 }
             ];
             return [2 /*return*/, inquirer.prompt(questions)];
