@@ -22,6 +22,7 @@ console.log(
     .version(require("../package.json").version)
     .option("--init", "initialise a new workspace")
     .option("--login", "connect to your Azure")
+    .option("--push", "deploy the app to Azure")
     .parse(process.argv);
 
   if (!process.argv.slice(2).length) {
@@ -30,5 +31,10 @@ console.log(
 
   const commandName = program.args[0];
 
-  (await require(`./commands/${commandName}`))();
+  try {
+    (await require(`./commands/${commandName}`))();
+  } catch (error) {
+    console.error(chalk.red(`Command ${commandName} not supported.`));
+    program.outputHelp();
+  }
 })();
