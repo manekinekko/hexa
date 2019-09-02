@@ -13,9 +13,14 @@ declare interface AzureSubscription extends AzureEntity {
 
 declare interface AzureResourceGroup extends AzureEntity {
   location: string;
+  tags: { [key: string]: string };
 }
 
 declare interface AzureStorage extends AzureEntity {}
+declare interface AzureStorageToken extends AzureStorage {
+  sas?: string;
+  connectionString?: string;
+}
 
 declare interface CommandOptions {
   silent: boolean;
