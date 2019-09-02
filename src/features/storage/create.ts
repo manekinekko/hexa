@@ -17,9 +17,6 @@ module.exports = async function() {
     `Creating storage account: ${chalk.green(name)}`
   );
 
-  console.log(storage);
-  
-
   saveWorkspace({
     storage
   });

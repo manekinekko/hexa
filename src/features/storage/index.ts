@@ -3,8 +3,11 @@ import { az, Config, saveWorkspace } from "../../core/utils";
 
 module.exports = async function() {
   const subscription: AzureSubscription = Config.get("subscription");
+  const resourceGroup: AzureResourceGroup = Config.get("resourceGroup");
+
+  // https://docs.microsoft.com/en-us/cli/azure/storage/account?view=azure-cli-latest#az-storage-account-list
   let storageAccountsList = await az<AzureStorage[]>(
-    `storage account list --subscription "${subscription.id}" --query '[].{name:name, id:id, location:location}'`,
+    `storage account list --resource-group "${resourceGroup.name}" --subscription "${subscription.id}" --query '[].{name:name, id:id, location:location}'`,
     `Loading your storage accounts...`
   );
 
@@ -24,10 +27,11 @@ module.exports = async function() {
         name
       };
       Config.set("storage", storage);
-
       saveWorkspace({
         storage
       });
+
+      await require("./tokens")();
     }
   }
 };

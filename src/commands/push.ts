@@ -6,7 +6,6 @@ module.exports = async function() {
   const storage = Config.get("storage") as AzureStorage;
 
   await push({
-    subscriptionId: subscription.id,
     storageAccountName: storage.name
   });
 };

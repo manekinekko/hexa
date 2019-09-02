@@ -15,9 +15,6 @@ module.exports = async function() {
     `Creating resource group: ${chalk.green(name)}`
   );
 
-  console.log(resourceGroup);
-  
-
   Config.set("resourceGroup", resourceGroup);
 
   saveWorkspace({

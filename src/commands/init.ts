@@ -12,8 +12,14 @@ module.exports = async function() {
   }
 
   const project = await askForProjectDetails();
+  const subscriptions: AzureSubscription[] = Config.get("subscriptions");
 
-  await require(`./login`)();
+  if (subscriptions.length === 0 || process.env.NITRO_FORCE_LOGIN) {
+    await require(`./login`)();
+  }
+  else {
+    debug(`found previous subscriptions`);
+  }
 
   const { features } = await askForFeatures();
   const featuresConfiguration: any = {};

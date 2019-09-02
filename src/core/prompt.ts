@@ -1,6 +1,7 @@
 import inquirer, { Answers, QuestionCollection } from "inquirer";
 import { getCurrentDirectoryBase } from "./utils";
 const uuid = require("uuid");
+
 export function chooseSubscription(subscriptionsList: AzureSubscription[]): Promise<Answers> {
   const questions: QuestionCollection = [
     {
@@ -27,17 +28,20 @@ export function chooseSubscription(subscriptionsList: AzureSubscription[]): Prom
 }
 
 export function chooseResourceGroup(resourceGroups: AzureResourceGroup[]): Promise<Answers> {
-  const extraChoice: AzureResourceGroup = {
-    id: "",
-    location: "",
-    name: "<Create a new resource group>"
-  };
+  if (process.env.NITRO_ENABLE_ADDING_NEW_RESOURCE) {
+    resourceGroups = [{
+      id: "",
+      location: "",
+      tags: {},
+      name: "<Create a new resource group>"
+    }, ...resourceGroups];
+  }
   const questions: QuestionCollection = [
     {
       type: "list",
       name: "resourceGroup",
       message: "Choose resource group:",
-      choices: [...[extraChoice], ...resourceGroups].map((resourceGroup: AzureResourceGroup) => {
+      choices: resourceGroups.map((resourceGroup: AzureResourceGroup) => {
         return {
           name: `${resourceGroup.name}`,
           value: resourceGroup.id
@@ -56,16 +60,18 @@ export function chooseResourceGroup(resourceGroups: AzureResourceGroup[]): Promi
 }
 
 export function chooseAccountStorage(storageAccounts: AzureStorage[]): Promise<inquirer.Answers> {
-  const extraChoice: AzureStorage = {
-    id: "",
-    name: "<Create a new storage account>"
-  };
+  if (process.env.NITRO_ENABLE_ADDING_NEW_RESOURCE) {
+    storageAccounts = [{
+      id: "",
+      name: "<Create a new storage account>"
+    }, ...storageAccounts];
+  }
   const questions: QuestionCollection = [
     {
       type: "list",
       name: "storage",
       message: "Choose a storage account:",
-      choices: [...[extraChoice], ...storageAccounts].map((storageAccount: AzureStorage) => {
+      choices: storageAccounts.map((storageAccount: AzureStorage) => {
         return {
           name: storageAccount.name,
           value: storageAccount.id
@@ -96,7 +102,7 @@ export function askForFeatures(): Promise<Answers> {
         },
         {
           name: "Hosting: Configure and deploy to Azure Static Website",
-          value: "hosting",
+          value: "hosting"
         },
         {
           name: "Functions: Configure and deploy an Azure Functions",
@@ -169,7 +175,7 @@ export function askForStorageAccountDetails(regions: AzureRegion[]): Promise<Ans
       type: "input",
       name: "name",
       message: "Enter a name for the storage account:",
-      default: `nitro-storage-${uuid()}`,
+      default: `nitrostorage${uuid().split("-").pop()}`,
       validate: function(value: string) {
         if (value.length) {
           return true;
