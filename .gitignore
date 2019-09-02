@@ -49,3 +49,4 @@ Thumbs.db
 workspace_test
 nitro.json
 /build
+.env

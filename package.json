@@ -19,11 +19,13 @@
   ],
   "license": "MIT",
   "dependencies": {
+    "@types/dotenv": "^6.1.1",
     "chalk": "^2.4.2",
     "clear": "^0.1.0",
     "commander": "^3.0.1",
     "configstore": "^5.0.0",
     "debug": "^4.1.1",
+    "dotenv": "^8.1.0",
     "figlet": "^1.2.3",
     "ora": "^3.4.0",
     "shelljs": "^0.8.3",
