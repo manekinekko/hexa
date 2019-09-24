@@ -25,8 +25,8 @@ module.exports = async function() {
   const { features } = await askForFeatures();
   const featuresConfiguration: any = {};
 
-  // we need to create a resource group before creating all other features
-  for await (let feature of ["resource-group", ...features]) {
+  // we need to confiure a resource group and storage before creating all other features
+  for await (let feature of ["resource-group", "storage", ...features]) {
     debug(`Configuring ${chalk.green(feature)}:`);
     try {
       const featureImplementation = require(`../features/${feature}/index`);
@@ -44,4 +44,5 @@ module.exports = async function() {
   });
 
   console.log(`\n${chalk.green("✓")} Configuration saved to ${chalk.green("nitro.json")}`);
+  console.log(`${chalk.green("✓")} Tokens saved to ${chalk.green(".env")}`);
 };
