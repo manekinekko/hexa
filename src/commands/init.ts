@@ -32,7 +32,6 @@ module.exports = async function() {
       const featureImplementation = require(`../features/${feature}/index`);
       const config = await featureImplementation();
       featuresConfiguration[feature] = config;
-      Config.set(feature, config);
     } catch (error) {
       console.error(error);
     }
