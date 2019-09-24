@@ -3,7 +3,6 @@
 import chalk from "chalk";
 import clear from "clear";
 import program from "commander";
-import figlet from "figlet";
 const CFonts = require("cfonts");
 const prettyFont = CFonts.render("NITRO", {
   font: "3d",
@@ -32,7 +31,7 @@ console.log(prettyFont.string);
     .version(require("../package.json").version)
     .option("login", "connect to your Azure")
     .option("init", "initialise a new workspace")
-    .option("push", "deploy to Azure")
+    .option("deploy", "deploy to Azure")
     .option("-d, --debug", "enable debug mode", false)
     .option("-c, --create", "enable resource creation", true)
     .option("-r, --relogin", "force login", false)
