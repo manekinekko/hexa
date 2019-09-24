@@ -12,7 +12,7 @@ module.exports = async function() {
   // https://docs.microsoft.com/en-us/cli/azure/storage/account?view=azure-cli-latest#az-storage-account-list
   let storageAccountsList = await az<AzureStorage[]>(
     `storage account list --resource-group "${resourceGroup.name}" --subscription "${subscription.id}" --query '[].{name:name, id:id, location:location}'`,
-    `Loading your storage accounts...`
+    `Loading storage accounts...`
   );
 
   if (storageAccountsList.length) {
@@ -45,5 +45,5 @@ module.exports = async function() {
     (await require(`./create`))("AUTOMATIC");
   }
 
-  (await require("./tokens"))();
+  return (await require("./tokens"))();
 };
