@@ -27,7 +27,7 @@ module.exports = async function(creationMode: CreationMode) {
 
   let storage = await az<AzureStorage>(
     `storage account create --location "${resourceGroup.location}" --name "${name}" --subscription "${subscription.id}" --resource-group "${resourceGroup.name}" --tag x-created-by=nitro --query '{name:name, id:id, location:location}'`,
-    `Creating storage account: ${chalk.green(name)}`
+    `Creating storage account ${chalk.green(name)} (this may take few minutes)...`
   );
 
   Config.set("storage", storage);
@@ -36,4 +36,6 @@ module.exports = async function(creationMode: CreationMode) {
   saveWorkspace({
     storage
   });
+
+  return (await require("./tokens"))();
 };

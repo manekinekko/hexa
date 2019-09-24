@@ -5,7 +5,7 @@ const debug = require("debug")("storage");
 module.exports = async function() {
   const subscription: AzureSubscription = Config.get("subscription");
   debug(`Using subscription ${JSON.stringify(subscription)}`);
-  
+
   const resourceGroup: AzureResourceGroup = Config.get("resourceGroup");
   debug(`Using resource group ${JSON.stringify(resourceGroup)}`);
 
@@ -20,8 +20,7 @@ module.exports = async function() {
 
     if (selectedStorageAccountId === "MANUAL" || selectedStorageAccountId === "AUTOMATIC") {
       // create a new storage account
-      // and get back here to generate a token
-      (await require(`./create`))(selectedStorageAccountId);
+      return (await require(`./create`))(selectedStorageAccountId);
     } else {
       const { id, name } = storageAccountsList.find(
         (accountStorage: AzureStorage) => accountStorage.id === selectedStorageAccountId
@@ -31,19 +30,18 @@ module.exports = async function() {
         id,
         name
       };
-      
+
       Config.set("storage", storage);
 
       saveWorkspace({
         storage
       });
+
+      return (await require("./tokens"))();
     }
   } else {
     // no storage account found
     // create a new one
-    // and get back here to generate a token
-    (await require(`./create`))("AUTOMATIC");
+    return (await require(`./create`))("AUTOMATIC");
   }
-
-  return (await require("./tokens"))();
 };
