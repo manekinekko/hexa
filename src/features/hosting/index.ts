@@ -33,15 +33,16 @@ module.exports = async function() {
   await az(
     `storage blob service-properties update --account-name "${storage.name}" --static-website --404-document 404.html --index-document index.html --query '{staticWebsite: staticWebsite}'`,
     `Enabling hosting service...`
-    );
-    
-    // https://docs.microsoft.com/en-us/cli/azure/storage/cors?view=azure-cli-latest#az-storage-cors-clear
-    await az(`storage cors clear --services "b" --account-name "${storage.name}" --subscription "${subscription.id}"`);
-    // https://docs.microsoft.com/en-us/cli/azure/storage/cors?view=azure-cli-latest#az-storage-cors-add
-    await az(
-      `storage cors add --methods GET HEAD MERGE OPTIONS POST PUT --origins "*" --services "b" --account-name "${storage.name}" --subscription "${subscription.id}" --max-age 3600`,
-      `Enabling CORS...`
   );
+
+  // TODO: enable CORS
+  // https://docs.microsoft.com/en-us/cli/azure/storage/cors?view=azure-cli-latest#az-storage-cors-clear
+  // await az(`storage cors clear --services "b" --account-name "${storage.name}" --subscription "${subscription.id}"`);
+  // https://docs.microsoft.com/en-us/cli/azure/storage/cors?view=azure-cli-latest#az-storage-cors-add
+  //   await az(
+  //     `storage cors add --methods GET HEAD MERGE OPTIONS POST PUT --origins "*" --services "b" --account-name "${storage.name}" --subscription "${subscription.id}" --max-age 3600`,
+  //     `Enabling CORS...`
+  // );
 
   saveWorkspace({
     hosting: {
