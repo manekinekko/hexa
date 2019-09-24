@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-process.env.DEBUG = "*";
+// process.env.DEBUG = "*";
 process.env.NITRO_ENABLE_ADDING_NEW_RESOURCE = "1";
 // process.env.NITRO_STORAGE_USE_SAS = "1";
 // process.env.NITRO_FORCE_LOGIN = "1";
