@@ -1,6 +1,6 @@
 {
   "name": "@nitro-stack/cli",
-  "version": "1.0.0",
+  "version": "1.0.0-preview.0",
   "description": "",
   "main": "./build/index.js",
   "bin": {
@@ -8,7 +8,7 @@
   },
   "scripts": {
     "start": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts",
-    "build": "rm -fr build/ && tsc",
+    "build": "rm -fr build/ && mkdir build && npm run copy && tsc",
     "copy": "cp -r src/templates build"
   },
   "keywords": [],
@@ -28,7 +28,6 @@
     "configstore": "^5.0.0",
     "debug": "^4.1.1",
     "dotenv": "^8.1.0",
-    "figlet": "^1.2.3",
     "ora": "^3.4.0",
     "shelljs": "^0.8.3",
     "uuid": "^3.3.3"
@@ -36,7 +35,6 @@
   "devDependencies": {
     "@types/clear": "^0.1.0",
     "@types/configstore": "^4.0.0",
-    "@types/figlet": "^1.2.0",
     "@types/inquirer": "^6.5.0",
     "@types/node": "^12.7.3",
     "@types/ora": "^3.2.0",
