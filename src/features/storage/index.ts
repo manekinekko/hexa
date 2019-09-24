@@ -22,7 +22,7 @@ module.exports = async function() {
     // go ahead and use it.
     if (storageAccountsList.length === 1) {
       const storageAccount = storageAccountsList[0];
-      if (storageAccount.tags["x-created-by"] === "nitro") {
+      if (storageAccount.tags && storageAccount.tags["x-created-by"] === "nitro") {
         selectedStorageAccountId = storageAccountsList[0].id;
       }
     } else {
