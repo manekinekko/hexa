@@ -11,19 +11,21 @@ module.exports = async function() {
     }
   }
 
-  const project = await askForProjectDetails();
+  const { name } = await askForProjectDetails();
+  debug(`saving project name ${name}`);
+  Config.set("project", name);
   const subscriptions: AzureSubscription[] = Config.get("subscriptions");
 
-  if (subscriptions.length === 0 || process.env.NITRO_FORCE_LOGIN) {
+  if (!subscriptions || (subscriptions && subscriptions.length === 0) || process.env.NITRO_FORCE_LOGIN) {
     await require(`./login`)();
-  }
-  else {
-    debug(`found previous subscriptions`);
+  } else {
+    debug(`found previous subscriptions ${JSON.stringify(subscriptions)}`);
   }
 
   const { features } = await askForFeatures();
   const featuresConfiguration: any = {};
 
+  // we need to create a resource group before creating all other features
   for await (let feature of ["resource-group", ...features]) {
     debug(`Configuring ${chalk.green(feature)}:`);
     try {
@@ -32,12 +34,12 @@ module.exports = async function() {
       featuresConfiguration[feature] = config;
       Config.get(feature, config);
     } catch (error) {
-      console.error(error.toString());
+      console.error(error);
     }
   }
 
   saveWorkspace({
-    project,
+    project: name,
     ...featuresConfiguration
   });
 };

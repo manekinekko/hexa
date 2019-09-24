@@ -2,6 +2,7 @@ import { chooseResourceGroup } from "../../core/prompt";
 import { az, Config, saveWorkspace } from "../../core/utils";
 
 module.exports = async function() {
+  // https://docs.microsoft.com/en-us/cli/azure/group?view=azure-cli-latest#az-group-list
   let resourceGroupsList = await az<AzureResourceGroup[]>(
     `group list --query '[].{name:name, id:id, location:location, tags:tags}'`,
     `Loading resource groups...`
@@ -9,16 +10,16 @@ module.exports = async function() {
 
   if (resourceGroupsList.length) {
     // move resource groups created with Nitro to the top
-    resourceGroupsList = resourceGroupsList.sort((a, b) => (a.tags && a.tags.cli === "nitro" ? -1 : 1));
+    resourceGroupsList = resourceGroupsList.sort((a, b) => (a.tags && a.tags["x-created-by"] === "nitro" ? -1 : 1));
 
-    let selectedResourceId = (await chooseResourceGroup(resourceGroupsList)).resourceGroup as string;
+    let selectedResourceId = (await chooseResourceGroup(resourceGroupsList)).resourceGroup as (string & CreationMode);
 
-    if (selectedResourceId === "") {
+    if (selectedResourceId === "MANUAL" || selectedResourceId === "AUTOMATIC") {
       // create a new resource group
-      return (await require(`./create`))();
+      return (await require(`./create`))(selectedResourceId);
     } else {
       const { id, name, location } = resourceGroupsList.find(
-        (resourceGroup: AzureResourceGroup) => resourceGroup.id === selectedResourceId
+        (resourceGroup: AzureResourceGroup) => resourceGroup.id === (selectedResourceId as string)
       ) as AzureResourceGroup;
 
       const resourceGroup = {
@@ -26,6 +27,7 @@ module.exports = async function() {
         location,
         name
       };
+
       Config.set("resourceGroup", resourceGroup);
 
       saveWorkspace({
@@ -34,5 +36,7 @@ module.exports = async function() {
     }
   } else {
     // no resource found
+    // create a new resource group
+    return (await require(`./create`))("AUTOMATIC");
   }
 };
