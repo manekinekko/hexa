@@ -32,7 +32,7 @@ module.exports = async function() {
       const featureImplementation = require(`../features/${feature}/index`);
       const config = await featureImplementation();
       featuresConfiguration[feature] = config;
-      Config.get(feature, config);
+      Config.set(feature, config);
     } catch (error) {
       console.error(error);
     }
@@ -42,4 +42,6 @@ module.exports = async function() {
     project: name,
     ...featuresConfiguration
   });
+
+  console.log(`\n${chalk.green("✓")} Configuration saved to ${chalk.green("nitro.json")}`);
 };
