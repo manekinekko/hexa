@@ -1,10 +1,5 @@
 #!/usr/bin/env node
 
-// process.env.DEBUG = "*";
-process.env.NITRO_ENABLE_ADDING_NEW_RESOURCE = "1";
-// process.env.NITRO_STORAGE_USE_SAS = "1";
-// process.env.NITRO_FORCE_LOGIN = "1";
-
 import chalk from "chalk";
 import clear from "clear";
 import program from "commander";
@@ -34,10 +29,27 @@ console.log(
     .name("nitro")
     .usage("<command>")
     .version(require("../package.json").version)
-    .option("login, --login", "connect to your Azure")
-    .option("init, --init", "initialise a new workspace")
-    .option("push, --push", "deploy the app to Azure")
+    .option("login", "connect to your Azure")
+    .option("init", "initialise a new workspace")
+    .option("push", "deploy the app to Azure")
+    .option("-d, --debug", "enable debug mode", false)
+    .option("-a, --auto", "enable auto mode", true)
+    .option("-r, --relogin", "force login", false)
+    .option("-s, --sas", "use SAS token (only: storage and database)", false)
     .parse(process.argv);
+
+  if (program.debug) {
+    process.env.DEBUG = "*";
+  }
+  if (program.auto) {
+    process.env.NITRO_ENABLE_ADDING_NEW_RESOURCE = "1";
+  }
+  if (program.relogin) {
+    process.env.NITRO_FORCE_LOGIN = "1";
+  }
+  if (program.sas) {
+    process.env.NITRO_STORAGE_USE_SAS = "1";
+  }
 
   // use process.argv not program.argv
   const commandName = process.argv[2];
@@ -46,6 +58,5 @@ console.log(
     program.outputHelp();
     process.exit(0);
   }
-
   await runCommand(commandName.replace("--", ""));
 })();
