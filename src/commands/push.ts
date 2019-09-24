@@ -19,7 +19,7 @@ module.exports = async function() {
     debug(`set env variable AZURE_STORAGE_CONNECTION_STRING`);
   }
   
-  let hostingUrl = null;
+  let hostingUrl = '';
   if (workspace.hosting) {
     debug(`deploying hosting configuration`);
     // https://docs.microsoft.com/en-us/cli/azure/storage/blob?view=azure-cli-latest#az-storage-blob-upload-batch
@@ -36,5 +36,7 @@ module.exports = async function() {
   }
 
   console.log(`${chalk.green("✓")} Application ${chalk.green(workspace.project)} deployed:`);
-  console.log(`\t- Hosting: ${hostingUrl}`);
+  if (hostingUrl) {
+    console.log(`\t- Hosting: ${chalk.green(hostingUrl)}`);
+  }
 };
