@@ -6,7 +6,7 @@ import program from "commander";
 import figlet from "figlet";
 const CFonts = require("cfonts");
 const prettyFont = CFonts.render("NITRO", {
-  font: '3d',
+  font: "3d",
   colors: ["candy"],
   letterSpacing: 5
 });
@@ -15,6 +15,8 @@ clear();
 console.log(prettyFont.string);
 
 (async () => {
+  const start = process.hrtime();
+
   const runCommand = async (commandName: string) => {
     try {
       return (await require(`./commands/${commandName}`))();
@@ -62,4 +64,7 @@ console.log(prettyFont.string);
     process.exit(0);
   }
   await runCommand(commandName.replace("--", ""));
+
+  const end = process.hrtime(start);
+  console.info(chalk.green("\n✓ Done in %d seconds."), end[0]);
 })();
