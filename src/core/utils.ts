@@ -121,7 +121,7 @@ export function saveWorkspace(config: Partial<NitroWorkspace>) {
   }
   config = Object.assign(config, oldConfig);
 
-  debug(`saving workspace with ${chalk.green(JSON.stringify(config))}}`);
+  debug(`saving workspace with ${chalk.green(JSON.stringify(config))}`);
   fs.writeFileSync(WORKSPACE_FILENAME, JSON.stringify(config, null, 2));
 }
 
