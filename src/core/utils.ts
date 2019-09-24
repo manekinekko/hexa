@@ -1,12 +1,13 @@
+import chalk from "chalk";
 import fs from "fs";
 import path from "path";
-import chalk from "chalk";
 const shell = require("shelljs");
 const ora = require("ora");
 const Configstore = require("configstore");
 const dotenv = require("dotenv");
 const packageJson = require("../../package.json");
-const debug = require("debug");
+const debug = require("debug")(`nitro`);
+
 const crypto = require("crypto");
 export const uuid = () =>
   crypto
@@ -34,7 +35,7 @@ export async function runCmd(command: string, loadingMessage?: string, options?:
   return new Promise((resolve, reject) => {
     command = `${command} --output json ` + (IS_DEBUG ? "--verbose" : "");
 
-    debug(`shell`)(command);
+    debug(command);
 
     shell.exec(
       command,
@@ -43,7 +44,7 @@ export async function runCmd(command: string, loadingMessage?: string, options?:
       },
       (code: number, stdout: string, stderr: string) => {
         if (stderr.length) {
-          debug(`shell`)("stderr", stderr);
+          debug("stderr", stderr);
           // the Azure CLI uses stderr to output debug information,
           // we have to filter and check only for errors
           if (stderr.includes("ERROR")) {
@@ -51,7 +52,7 @@ export async function runCmd(command: string, loadingMessage?: string, options?:
           }
         }
         if (stdout.length) {
-          debug(`shell`)("stdout", stdout);
+          debug("stdout", stdout);
           resolve(stdout);
         }
         try {
@@ -84,6 +85,9 @@ export function directoryExists(filePath: string) {
 export function createDirectoryIfNotExists(filePath: string) {
   if (directoryExists(filePath) === false) {
     fs.mkdirSync(filePath);
+    debug(`created directory ${chalk.green(filePath)}`);
+  } else {
+    debug(`directory already created ${chalk.green(filePath)}`);
   }
 
   return true;
@@ -98,9 +102,13 @@ export function fileExists(filePath: string) {
 }
 
 export function readFileFromDisk(filePath: string) {
+  debug(`reading file ${chalk.green(filePath)}`);
+
   if (fileExists(filePath)) {
     return fs.readFileSync(filePath).toString("utf-8");
   }
+
+  debug(`file not found ${chalk.red(filePath)}`);
   return null;
 }
 
@@ -111,12 +119,13 @@ export function saveWorkspace(config: object) {
   }
   config = Object.assign(config, oldConfig);
 
-  debug(`workspace`)(`saving workspace with keys: ${chalk.green(Object.keys(config).join(", "))}`);
+  debug(`saving workspace with keys: ${chalk.green(Object.keys(config).join(", "))}`);
   fs.writeFileSync(WORKSPACE_FILENAME, JSON.stringify(config, null, 2));
 }
 
 export function saveEnvFile(key: string, value: string) {
-  debug(`env`)(`saving key ${chalk.green(key)}`);
+  debug(`saving env key ${chalk.green(key)}`);
+
   let oldEnv = "";
   if (fileExists(WORKSPACE_FILENAME)) {
     oldEnv = readFileFromDisk(WORKSPACE_FILENAME) || "";
@@ -125,7 +134,7 @@ export function saveEnvFile(key: string, value: string) {
   const env = dotenv.parse(buf);
 
   if (env[key]) {
-    debug(`env`)(`overriding key ${chalk.green(key)}`);
+    debug(`overriding env key ${chalk.green(key)}`);
   }
 
   env[key] = value;
@@ -139,5 +148,20 @@ export function saveEnvFile(key: string, value: string) {
 }
 
 export function isProjectFileExists() {
-  return fileExists(WORKSPACE_FILENAME);
+  const isFound = fileExists(WORKSPACE_FILENAME);
+  debug(`checking project file ${chalk.green(WORKSPACE_FILENAME)}. Found=${isFound}`);
+
+  return isFound;
+}
+
+export function copyTemplate(src: string, destination: string) {
+  const templateDir = getTemplateFullPath();
+  src = templateDir + "/" + src;
+
+  debug(`copying template file src=${chalk.green(src)}, destination=${chalk.green(destination)}`);
+  return fs.copyFileSync(src, destination);
+}
+
+export function getTemplateFullPath() {
+  return path.join(path.dirname(fs.realpathSync(__filename)), "../templates");
 }
