@@ -4,16 +4,15 @@ import chalk from "chalk";
 import clear from "clear";
 import program from "commander";
 import figlet from "figlet";
+const CFonts = require("cfonts");
+const prettyFont = CFonts.render("NITRO", {
+  font: '3d',
+  colors: ["candy"],
+  letterSpacing: 5
+});
 
 clear();
-console.log(
-  chalk.red(
-    figlet.textSync("  NITRO", {
-      font: "ANSI Shadow",
-      horizontalLayout: "full"
-    })
-  )
-);
+console.log(prettyFont.string);
 
 (async () => {
   const runCommand = async (commandName: string) => {
