@@ -19,10 +19,10 @@ module.exports = async function() {
       `Creating a SAS token...`
     );
     saveEnvFile("AZURE_STORAGE_SAS", sas);
-    // Config.set("storage", {
-    //   ...storage,
-    //   sas
-    // });
+    Config.set("storage", {
+      ...storage,
+      sas
+    });
   } else {
     // https://docs.microsoft.com/en-us/cli/azure/storage/account?view=azure-cli-latest#az-storage-account-show-connection-string
     let connectionString = await az<string>(
@@ -30,9 +30,9 @@ module.exports = async function() {
       `Fetching a connection string...`
     );
     saveEnvFile("AZURE_STORAGE_CONNECTION_STRING", connectionString);
-    // Config.set("storage", {
-    //   ...storage,
-    //   connectionString
-    // });
+    Config.set("storage", {
+      ...storage,
+      connectionString
+    });
   }
 };
