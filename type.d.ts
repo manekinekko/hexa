@@ -1,6 +1,7 @@
 declare interface AzureEntity {
   id: string & CreationMode;
   name: string;
+  tags: { 'x-created-by': 'nitro' } | { [key: string]: string };
 }
 
 declare interface AzureRegion extends AzureEntity {
@@ -13,7 +14,6 @@ declare interface AzureSubscription extends AzureEntity {
 
 declare interface AzureResourceGroup extends AzureEntity {
   location: string;
-  tags: { 'x-created-by': 'nitro' } | { [key: string]: string };
 }
 
 declare interface AzureStorage extends AzureEntity {}
