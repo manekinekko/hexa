@@ -123,6 +123,10 @@ export function saveWorkspace(config: object) {
   fs.writeFileSync(WORKSPACE_FILENAME, JSON.stringify(config, null, 2));
 }
 
+export function readWorkspace() {
+  return JSON.parse(readFileFromDisk(WORKSPACE_FILENAME) || "{}");
+}
+
 export function saveEnvFile(key: string, value: string) {
   debug(`saving env key ${chalk.green(key)}`);
 
