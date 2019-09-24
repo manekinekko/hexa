@@ -1,5 +1,5 @@
 {
-  "name": "@nitro/cli",
+  "name": "@nitro-stack/cli",
   "version": "1.0.0",
   "description": "",
   "main": "./build/index.js",
