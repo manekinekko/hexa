@@ -1,5 +1,5 @@
 import inquirer, { Answers, QuestionCollection } from "inquirer";
-import { getCurrentDirectoryBase } from "./utils";
+import { createDirectoryIfNotExists, fileExists, getCurrentDirectoryBase } from "./utils";
 
 export function chooseSubscription(subscriptionsList: AzureSubscription[]): Promise<Answers> {
   const questions: QuestionCollection = [
@@ -113,16 +113,9 @@ export function askForFeatures(): Promise<Answers> {
       message: "Choose features you want to setup:",
       choices: [
         {
-          name: "Storage: Configure and deploy to Azure Blob Storage",
-          value: "storage",
-          short: "Storage",
-          checked: true
-        },
-        {
           name: "Hosting: Configure and deploy to Azure Static Website",
           value: "hosting",
-          short: "Hosting",
-          disabled: "coming soon"
+          short: "Hosting"
         },
         {
           name: "Functions: Configure and deploy an Azure Functions",
@@ -212,32 +205,10 @@ export function askForStorageAccountDetails(regions: AzureRegion[], defaultStora
         }
       }
     }
-    /**
-
-     {
-       type: "list",
-       name: "region",
-       message: "Choose a region:",
-       default: Config.get("region") || null,
-       choices: regions.map((region: AzureRegion) => {
-         return {
-           name: `${region.name} (${region.displayName})`,
-           value: region.name,
-           short: region.displayName
-          };
-        }),
-        validate: function(value: string) {
-          if (value.length) {
-            return true;
-          } else {
-            return "Please choose a region.";
-          }
-        }
-      }
-      */
   ];
   return inquirer.prompt(questions);
 }
+
 export function askForProjectDetails(): Promise<Answers> {
   const questions: QuestionCollection = [
     {
@@ -267,5 +238,43 @@ export function askIfOverrideProjectFile(): Promise<Answers> {
     }
   ];
 
+  return inquirer.prompt(questions);
+}
+
+export function askForHostingFolder(): Promise<Answers> {
+  const questions: QuestionCollection = [
+    {
+      type: "input",
+      name: "folder",
+      message: "Enter public folder (will be created if not present):",
+      default: "public",
+      validate: function(value: string) {
+        if (value && value.length) {
+          // TODO: copy template files if new created folder
+          return createDirectoryIfNotExists(value);
+        } else {
+          return "Please enter a public folder.";
+        }
+      }
+    },
+    {
+      type: "confirm",
+      name: "overrideHtml",
+      message: ({ folder }) => `Override ${folder}/index.html?`,
+      when: ({ folder }) => fileExists(`${folder}/index.html`)
+    },
+    {
+      type: "confirm",
+      name: "override404",
+      message: ({ folder }) => `Override ${folder}/404.html?`,
+      when: ({ folder }) => fileExists(`${folder}/404.html`)
+    },
+    {
+      type: "confirm",
+      name: "overrideError",
+      message: ({ folder }) => `Override ${folder}/error.html?`,
+      when: ({ folder }) => fileExists(`${folder}/error.html`)
+    }
+  ];
   return inquirer.prompt(questions);
 }
