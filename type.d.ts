@@ -1,5 +1,5 @@
 declare interface AzureEntity {
-  id: string;
+  id: string & CreationMode;
   name: string;
 }
 
@@ -13,7 +13,7 @@ declare interface AzureSubscription extends AzureEntity {
 
 declare interface AzureResourceGroup extends AzureEntity {
   location: string;
-  tags: { [key: string]: string };
+  tags: { 'x-created-by': 'nitro' } | { [key: string]: string };
 }
 
 declare interface AzureStorage extends AzureEntity {}
@@ -25,3 +25,5 @@ declare interface AzureStorageToken extends AzureStorage {
 declare interface CommandOptions {
   silent: boolean;
 }
+
+declare type CreationMode = 'MANUAL' | 'AUTOMATIC';
