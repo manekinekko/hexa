@@ -19,8 +19,8 @@ module.exports = async function(creationMode: CreationMode) {
 
   // https://docs.microsoft.com/en-us/cli/azure/group?view=azure-cli-latest#az-group-create
   let resourceGroup = await az<AzureResourceGroup>(
-    `group create -l ${region} -n ${name} --tag x-created-by=nitro --query '{name:name, id:id, location:location}'`,
-    `Creating resource group: ${chalk.green(name)}`
+    `group create -l ${region} -n ${name} --tag 'x-created-by=nitro' --query '{name:name, id:id, location:location}'`,
+    `Setting resource group ${chalk.green(name)}`
   );
 
   Config.set("resourceGroup", resourceGroup);

@@ -70,17 +70,15 @@ export function chooseResourceGroup(resourceGroups: AzureResourceGroup[]): Promi
 }
 
 export function chooseAccountStorage(storageAccounts: AzureStorage[]): Promise<inquirer.Answers> {
+
   if (process.env.NITRO_ENABLE_ADDING_NEW_RESOURCE) {
     storageAccounts = [
-      {
-        id: "AUTOMATIC",
-        name: "<Create a new storage account (auto)>"
-      },
+      ...storageAccounts,
       {
         id: "MANUAL",
-        name: "<Create a new storage account>"
-      },
-      ...storageAccounts
+        tags: {},
+        name: "<Create Storage Account>"
+      }
     ];
   }
   const questions: QuestionCollection = [

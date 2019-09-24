@@ -2,6 +2,12 @@ import { chooseResourceGroup } from "../../core/prompt";
 import { az, Config, saveWorkspace } from "../../core/utils";
 
 module.exports = async function() {
+
+  if (process.env.NITRO_AUTO_MODE) {
+    return (await require(`./create`))("AUTOMATIC");
+  }
+  
+
   // https://docs.microsoft.com/en-us/cli/azure/group?view=azure-cli-latest#az-group-list
   let resourceGroupsList = await az<AzureResourceGroup[]>(
     `group list --query '[].{name:name, id:id, location:location, tags:tags}'`,
@@ -14,7 +20,7 @@ module.exports = async function() {
 
     let selectedResourceId = (await chooseResourceGroup(resourceGroupsList)).resourceGroup as (string & CreationMode);
 
-    if (selectedResourceId === "MANUAL" || selectedResourceId === "AUTOMATIC") {
+    if (selectedResourceId === "MANUAL") {
       // create a new resource group
       return (await require(`./create`))(selectedResourceId);
     } else {
