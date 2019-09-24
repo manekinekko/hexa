@@ -7,6 +7,14 @@ const Configstore = require("configstore");
 const dotenv = require("dotenv");
 const packageJson = require("../../package.json");
 const debug = require("debug");
+const crypto = require("crypto");
+export const uuid = () =>
+  crypto
+    .randomBytes(16)
+    .toString("hex")
+    .substr(0, 8);
+
+export const sanitize = (name: string) => name.replace(/[\W_]+/gim, "").trim();
 
 export const Config = new Configstore(packageJson.name, {
   version: packageJson.version
@@ -18,7 +26,7 @@ const IS_DEBUG = !!process.env.DEBUG;
 
 export async function runCmd(command: string, loadingMessage?: string, options?: CommandOptions): Promise<string> {
   let spinner: typeof ora = null;
-  
+
   if (loadingMessage && IS_DEBUG === false) {
     spinner = ora(loadingMessage).start();
   }
