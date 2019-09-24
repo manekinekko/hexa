@@ -112,14 +112,16 @@ export function readFileFromDisk(filePath: string) {
   return null;
 }
 
-export function saveWorkspace(config: object) {
+export function saveWorkspace(config: Partial<NitroWorkspace>) {
+  debug(`updating workspace with ${chalk.green(JSON.stringify(config))}}`);
+
   let oldConfig = {};
   if (fileExists(WORKSPACE_FILENAME)) {
-    oldConfig = JSON.parse(readFileFromDisk(WORKSPACE_FILENAME) || "{}");
+    oldConfig = JSON.parse(readFileFromDisk(WORKSPACE_FILENAME) || "{}") as NitroWorkspace;
   }
   config = Object.assign(config, oldConfig);
 
-  debug(`saving workspace with keys: ${chalk.green(Object.keys(config).join(", "))}`);
+  debug(`saving workspace with ${chalk.green(JSON.stringify(config))}}`);
   fs.writeFileSync(WORKSPACE_FILENAME, JSON.stringify(config, null, 2));
 }
 

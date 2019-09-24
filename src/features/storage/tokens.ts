@@ -1,4 +1,5 @@
-import { az, Config, saveEnvFile } from "../../core/utils";
+import { az, Config, saveEnvFile, saveWorkspace } from "../../core/utils";
+import chalk from "chalk";
 const debug = require("debug")("storage:token");
 
 module.exports = async function() {
@@ -19,6 +20,8 @@ module.exports = async function() {
       `Creating a SAS token...`
     );
     saveEnvFile("AZURE_STORAGE_SAS", sas);
+    debug(`saved SAS key to ${chalk.green(".env")}`);
+
     Config.set("storage", {
       ...storage,
       sas
@@ -30,6 +33,8 @@ module.exports = async function() {
       `Fetching a connection string...`
     );
     saveEnvFile("AZURE_STORAGE_CONNECTION_STRING", connectionString);
+    debug(`saved ConnectionString key to ${chalk.green(".env")}`);
+
     Config.set("storage", {
       ...storage,
       connectionString

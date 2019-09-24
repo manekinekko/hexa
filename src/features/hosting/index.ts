@@ -19,7 +19,7 @@ module.exports = async function() {
     copyTemplate(`init/404.html`, `${folder}/404.html`);
   }
   if (overrideError || typeof overrideError === "undefined") {
-    // copy 404.html
+    // copy errro.html
     copyTemplate(`init/error.html`, `${folder}/error.html`);
   }
 
