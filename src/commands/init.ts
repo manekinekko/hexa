@@ -1,7 +1,7 @@
 import chalk from "chalk";
 import { askForFeatures, askForProjectDetails, askIfOverrideProjectFile } from "../core/prompt";
 import { Config, isProjectFileExists, saveWorkspace } from "../core/utils";
-const debug = require("debug")("nitro");
+const debug = require("debug")("init");
 
 module.exports = async function() {
   if (isProjectFileExists()) {
@@ -13,6 +13,7 @@ module.exports = async function() {
 
   const { name } = await askForProjectDetails();
   debug(`saving project name ${name}`);
+
   Config.set("project", name);
   const subscriptions: AzureSubscription[] = Config.get("subscriptions");
 
@@ -44,4 +45,5 @@ module.exports = async function() {
 
   console.log(`\n${chalk.green("✓")} Configuration saved to ${chalk.green("nitro.json")}`);
   console.log(`${chalk.green("✓")} Tokens saved to ${chalk.green(".env")}`);
+  console.log(`${chalk.green("✓")} Run ${chalk.green("nitro push")} to deploy your app.`);
 };
