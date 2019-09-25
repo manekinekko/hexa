@@ -24,7 +24,7 @@ module.exports = async function() {
     debug(`deploying hosting configuration`);
     // https://docs.microsoft.com/en-us/cli/azure/storage/blob?view=azure-cli-latest#az-storage-blob-upload-batch
     await az(
-      `storage blob upload-batch --source '${workspace.hosting.public}' --destination '\$web' --account-name ${workspace.storage.name} --no-progress`,
+      `storage blob upload-batch --source '${workspace.hosting.folder}' --destination '\$web' --account-name ${workspace.storage.name} --no-progress`,
       `Deploying hosting ${chalk.green(workspace.project)}...`
     );
 
