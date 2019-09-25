@@ -1,10 +1,10 @@
 {
-  "name": "@nitro-stack/cli",
+  "name": "@hexa/cli",
   "version": "1.0.0-preview.0",
   "description": "",
   "main": "./build/index.js",
   "bin": {
-    "nitro": "./build/index.js"
+    "hexa": "./build/index.js"
   },
   "scripts": {
     "start": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts",

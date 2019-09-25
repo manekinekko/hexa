@@ -47,6 +47,6 @@ Thumbs.db
 
 # Config
 workspace_test
-nitro.json
+hexa.json
 /build
 .env

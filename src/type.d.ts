@@ -13,7 +13,7 @@ declare interface NitroWorkspace {
 declare interface AzureEntity {
   id: string & CreationMode;
   name: string;
-  tags?: { "x-created-by": "nitro" } | { [key: string]: string };
+  tags?: { "x-created-by": "hexa" } | { [key: string]: string };
 }
 
 declare interface AzureFunctionApp extends AzureEntity {

@@ -3,7 +3,7 @@ import { az, Config, saveWorkspace } from "../../core/utils";
 
 module.exports = async function() {
 
-  if (process.env.NITRO_AUTO_MODE) {
+  if (process.env.HEXA_AUTO_MODE) {
     return (await require(`./create`))("AUTOMATIC");
   }
   
@@ -15,8 +15,8 @@ module.exports = async function() {
   );
 
   if (resourceGroupsList.length) {
-    // move resource groups created with Nitro to the top
-    resourceGroupsList = resourceGroupsList.sort((a, b) => (a.tags && a.tags["x-created-by"] === "nitro" ? -1 : 1));
+    // move resource groups created with Hexa to the top
+    resourceGroupsList = resourceGroupsList.sort((a, b) => (a.tags && a.tags["x-created-by"] === "hexa" ? -1 : 1));
 
     let selectedResourceId = (await chooseResourceGroup(resourceGroupsList)).resourceGroup as (string & CreationMode);
 

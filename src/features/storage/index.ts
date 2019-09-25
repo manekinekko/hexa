@@ -18,16 +18,16 @@ module.exports = async function() {
   if (storageAccountsList.length) {
     let selectedStorageAccountId = "";
 
-    // if there is only 1 storage account that had been created with Nitro,
+    // if there is only 1 storage account that had been created with Hexa,
     // go ahead and use it.
     if (storageAccountsList.length === 1) {
       const storageAccount = storageAccountsList[0];
-      if (storageAccount.tags && storageAccount.tags["x-created-by"] === "nitro") {
+      if (storageAccount.tags && storageAccount.tags["x-created-by"] === "hexa") {
         selectedStorageAccountId = storageAccountsList[0].id;
       }
     } else {
-      // move storage accounts created with Nitro to the top
-      storageAccountsList = storageAccountsList.sort((a, b) => (a.tags && a.tags["x-created-by"] === "nitro" ? -1 : 1));
+      // move storage accounts created with Hexa to the top
+      storageAccountsList = storageAccountsList.sort((a, b) => (a.tags && a.tags["x-created-by"] === "hexa" ? -1 : 1));
       selectedStorageAccountId = (await chooseAccountStorage(storageAccountsList)).storage as (string & CreationMode);
     }
 

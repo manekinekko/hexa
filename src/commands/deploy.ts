@@ -4,8 +4,8 @@ const debug = require("debug")("push");
 
 module.exports = async function() {
   if (isProjectFileExists() === false) {
-    console.log(chalk.red(`✗ The ${chalk.cyan("nitro push")} command can only be run inside a Nitro project.`));
-    console.log(chalk.red(`✗ Run ${chalk.cyan("nitro init")} first.`));
+    console.log(chalk.red(`✗ The ${chalk.cyan("hexa deploy")} command can only be run inside a Hexa project.`));
+    console.log(chalk.red(`✗ Run ${chalk.cyan("hexa init")} first.`));
     console.log(chalk.red(`✗ Abort.`));
     process.exit(1);
   }

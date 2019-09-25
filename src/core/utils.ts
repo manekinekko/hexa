@@ -6,7 +6,7 @@ const ora = require("ora");
 const Configstore = require("configstore");
 const dotenv = require("dotenv");
 const packageJson = require("../../package.json");
-const debug = require("debug")(`nitro`);
+const debug = require("debug")(`hexa`);
 
 const crypto = require("crypto");
 export const uuid = (lenght = 8) =>
@@ -20,7 +20,7 @@ export const sanitize = (name: string) => name.replace(/[\W_]+/gim, "").trim();
 export const Config = new Configstore(packageJson.name, {
   version: packageJson.version
 });
-export const WORKSPACE_FILENAME = "nitro.json";
+export const WORKSPACE_FILENAME = "hexa.json";
 export const ENV_FILENAME = ".env";
 
 const IS_DEBUG = !!process.env.DEBUG;

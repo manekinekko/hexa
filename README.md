@@ -1,1 +1,1 @@
-# nitro-cli
+# hexa-cli

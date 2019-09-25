@@ -22,7 +22,7 @@ module.exports = async function() {
     `functionapp list --resource-group "${resourceGroup.name}" --subscription "${subscription.id}" --query '[].{id: id, name: name, appServicePlanId: appServicePlanId, hostName: defaultHostName, state: state, tags: tags}'`,
     `Checking storage accounts...`
   );
-  functionAppsList = functionAppsList.sort((a, b) => (a.tags && a.tags["x-created-by"] === "nitro" ? -1 : 1));
+  functionAppsList = functionAppsList.sort((a, b) => (a.tags && a.tags["x-created-by"] === "hexa" ? -1 : 1));
 
   let functionApp = null;
 
@@ -32,7 +32,7 @@ module.exports = async function() {
   } else {
     // https://docs.microsoft.com/en-us/cli/azure/functionapp?view=azure-cli-latest#az-functionapp-create
     functionApp = await az<AzureFunctionApp>(
-      `functionapp create --resource-group ${resourceGroup.name} --consumption-plan-location ${resourceGroup.location} --name ${functionAppName} --storage-account ${storage.name} --runtime node --tag 'x-created-by=nitro' --query '{hostName: defaultHostName}'`,
+      `functionapp create --resource-group ${resourceGroup.name} --consumption-plan-location ${resourceGroup.location} --name ${functionAppName} --storage-account ${storage.name} --runtime node --tag 'x-created-by=hexa' --query '{hostName: defaultHostName}'`,
       `Enabling Functions...`
     );
     debug(`created functionApp ${chalk.green(functionApp.name)}`);

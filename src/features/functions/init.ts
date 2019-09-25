@@ -17,7 +17,7 @@ module.exports = async function() {
 
   let functionAppDirectory = `./functions`;
 
-  if (process.env.NITRO_AUTO_MODE) {
+  if (process.env.HEXA_AUTO_MODE) {
     createDirectoryIfNotExists(functionAppDirectory);
   } else {
     functionAppDirectory = (await askForFunctionsAppFolder()).folder;

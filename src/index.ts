@@ -4,10 +4,10 @@ import chalk from "chalk";
 import clear from "clear";
 import program from "commander";
 const CFonts = require("cfonts");
-const prettyFont = CFonts.render("NITRO", {
-  font: "3d",
+const prettyFont = CFonts.render("Hexa", {
+  font: "block",
   colors: ["candy"],
-  letterSpacing: 5
+  letterSpacing: 1
 });
 
 clear();
@@ -26,7 +26,7 @@ console.log(prettyFont.string);
     }
   };
   program
-    .name("nitro")
+    .name("hexa")
     .usage("<command>")
     .version(require("../package.json").version)
     .option("login", "connect to your Azure")
@@ -36,14 +36,14 @@ console.log(prettyFont.string);
     .option("-c, --create", "enable resource creation", true)
     .option("-r, --relogin", "force login", false)
     .option("-s, --sas", "use SAS token (only: storage and database)", false)
-    .option("-a, --auto", "enable Nitro Auto mode", true)
+    .option("-a, --auto", "enable Hexa Auto mode", true)
     .parse(process.argv);
 
   if (program.debug) {
     process.env.DEBUG = "*";
   }
   if (program.auto) {
-    process.env.NITRO_AUTO_MODE = "1";
+    process.env.HEXA_AUTO_MODE = "1";
   }
   if (program.create) {
     process.env.NITRO_ENABLE_ADDING_NEW_RESOURCE = "1";
