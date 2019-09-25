@@ -1,7 +1,7 @@
 import inquirer = require("inquirer");
+import chalk from "chalk";
 import { askForHostingFolder } from "../../core/prompt";
 import { az, Config, copyTemplate, saveWorkspace } from "../../core/utils";
-import chalk from "chalk";
 const debug = require("debug")("hosting");
 
 module.exports = async function() {
@@ -30,7 +30,7 @@ module.exports = async function() {
   debug(`using subscription ${chalk.green(JSON.stringify(subscription))}`);
 
   // https://docs.microsoft.com/en-us/cli/azure/storage/blob/service-properties?view=azure-cli-latest#az-storage-blob-service-properties-update
-  await az(
+  await az<string>(
     `storage blob service-properties update --account-name "${storage.name}" --static-website --404-document 404.html --index-document index.html --query '{staticWebsite: staticWebsite}'`,
     `Enabling hosting service...`
   );
@@ -46,7 +46,7 @@ module.exports = async function() {
 
   saveWorkspace({
     hosting: {
-      public: folder
+      folder
     }
   });
 };

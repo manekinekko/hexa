@@ -9,11 +9,11 @@ const packageJson = require("../../package.json");
 const debug = require("debug")(`nitro`);
 
 const crypto = require("crypto");
-export const uuid = () =>
+export const uuid = (lenght = 8) =>
   crypto
     .randomBytes(16)
     .toString("hex")
-    .substr(0, 8);
+    .substr(0, lenght);
 
 export const sanitize = (name: string) => name.replace(/[\W_]+/gim, "").trim();
 
@@ -33,8 +33,10 @@ export async function runCmd(command: string, loadingMessage?: string, options?:
   }
 
   return new Promise((resolve, reject) => {
-    command = `${command} --output json ` + (IS_DEBUG ? "--verbose" : "");
 
+    if (options && options.cwd) {
+      debug(`cwd=${getFullPath(options.cwd)}`);
+    }
     debug(command);
 
     shell.exec(
@@ -63,12 +65,45 @@ export async function runCmd(command: string, loadingMessage?: string, options?:
   });
 }
 
+////////
 export async function az<T>(command: string, loadingMessage?: string) {
+  command = `${command} --output json ` + (IS_DEBUG ? "--verbose" : "");
   const output: string = await runCmd(`az ${command}`, loadingMessage, {
     silent: !IS_DEBUG
   });
   return JSON.parse(output || "{}") as T;
 }
+
+export async function func<T>(command: string, cwd: string, loadingMessage?: string) {
+  if (!directoryExists(cwd)) {
+    console.log(chalk.red(`✗ Folder ${chalk.cyan(cwd)} does not exists. Please create this folder and try again.`));
+    process.exit(1);
+  }
+
+  const output: string = await runCmd(`func ${command}`, loadingMessage, {
+    silent: !IS_DEBUG,
+    cwd
+  });
+  return output;
+}
+
+export async function npm<T>(command: string, cwd?: string, loadingMessage?: string) {
+
+  // if (cwd) {
+  //   command = `cd ${cwd} && npm ${command}`;
+  // }
+  // else {
+  //   command = `npm ${command}`;
+  // }
+
+  const output: string = await runCmd(`npm ${command}`, loadingMessage, {
+    silent: !IS_DEBUG,
+    cwd
+  });
+  return output;
+}
+
+////////
 
 export function getCurrentDirectoryBase() {
   return path.basename(process.cwd());
@@ -169,5 +204,9 @@ export function copyTemplate(src: string, destination: string) {
 }
 
 export function getTemplateFullPath() {
-  return path.join(path.dirname(fs.realpathSync(__filename)), "../templates");
+  return getFullPath("../templates");
+}
+
+export function getFullPath(folder: string) {
+  return path.join(path.dirname(fs.realpathSync(__filename)), folder);
 }

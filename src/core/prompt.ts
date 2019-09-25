@@ -118,8 +118,7 @@ export function askForFeatures(): Promise<Answers> {
         {
           name: "Functions: Configure and deploy an Azure Functions",
           value: "functions",
-          short: "Functions",
-          disabled: "coming soon"
+          short: "Functions"
         },
         {
           name: "Database: Configure and deploy to Azure Table Storage",
@@ -274,5 +273,37 @@ export function askForHostingFolder(): Promise<Answers> {
       when: ({ folder }) => fileExists(`${folder}/error.html`)
     }
   ];
+  return inquirer.prompt(questions);
+}
+
+export function askForFunctionsAppFolder(): Promise<Answers> {
+  const questions: QuestionCollection = [
+    {
+      type: "input",
+      name: "folder",
+      message: "Choose the functions folder (will be created if not present):",
+      default: "functions",
+      validate: function(value: string) {
+        if (value && value.length) {
+          return createDirectoryIfNotExists(value);
+        } else {
+          return "Please enter a folder for your Functions.";
+        }
+      }
+    }
+  ];
+  return inquirer.prompt(questions);
+}
+
+export function askForFunctionNameFolder(functionFolderName: string): Promise<Answers> {
+  const questions: QuestionCollection = [
+    {
+      type: "confirm",
+      name: "override",
+      message: `Function ${functionFolderName} found. Do you want to override it?`,
+      default: false
+    }
+  ];
+
   return inquirer.prompt(questions);
 }
