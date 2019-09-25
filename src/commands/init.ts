@@ -45,5 +45,5 @@ module.exports = async function() {
 
   console.log(`\n${chalk.green("✓")} Configuration saved to ${chalk.green("nitro.json")}`);
   console.log(`${chalk.green("✓")} Tokens saved to ${chalk.green(".env")}`);
-  console.log(`${chalk.green("✓")} Run ${chalk.green("nitro push")} to deploy your app.`);
+  console.log(`🚀  Run ${chalk.green("nitro push")} to deploy your app`);
 };
