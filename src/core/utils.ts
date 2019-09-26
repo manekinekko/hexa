@@ -58,8 +58,10 @@ export async function runCmd(command: string, loadingMessage?: string, options?:
           resolve(stdout);
         }
         try {
-          spinner.stop();
-        } catch (error) {}
+          spinner.succeed();
+        } catch (error) {
+          spinner.fail();
+        }
       }
     );
   });
