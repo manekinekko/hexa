@@ -10,7 +10,7 @@ module.exports = async function() {
   debug(`using storage ${chalk.green(storage.name)}`);
 
   const subscription: AzureSubscription = Config.get("subscription");
-  debug(`using subscription ${chalk.green(subscription.id)}`);
+  debug(`using subscription ${chalk.green(subscription.name)}`);
 
   const resourceGroup: AzureResourceGroup = Config.get("resourceGroup");
   debug(`using resourceGroup ${chalk.green(resourceGroup.name)}`);
@@ -32,21 +32,22 @@ module.exports = async function() {
   } else {
     // https://docs.microsoft.com/en-us/cli/azure/functionapp?view=azure-cli-latest#az-functionapp-create
     functionApp = await az<AzureFunctionApp>(
-      `functionapp create --resource-group ${resourceGroup.name} --consumption-plan-location ${resourceGroup.location} --name ${functionAppName} --storage-account ${storage.name} --runtime node --tag 'x-created-by=hexa' --query '{hostName: defaultHostName}'`,
+      `functionapp create --resource-group ${resourceGroup.name} --consumption-plan-location ${resourceGroup.location} --name ${functionAppName} --storage-account ${storage.name} --runtime node --tag 'x-created-by=hexa' --query '{id: id, name: name, appServicePlanId: appServicePlanId, hostName: defaultHostName, state: state, tags: tags}'`,
       `Enabling Functions...`
     );
     debug(`created functionApp ${chalk.green(functionApp.name)}`);
   }
 
+  functionApp = {
+    ...functionApp,
+    hostName: functionApp.hostName,
+    id: functionApp.id,
+    name: functionApp.name || functionAppName
+  };
+
   Config.set("functionApp", functionApp);
 
-  saveWorkspace({
-    functionApp: {
-      hostName: functionApp.hostName,
-      id: functionApp.id,
-      name: functionApp.name
-    }
-  });
+  saveWorkspace({ functionApp });
 
   // init functions projects
   return (await require("./init"))();
