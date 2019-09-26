@@ -20,7 +20,7 @@ module.exports = async function() {
   // https://docs.microsoft.com/en-us/cli/azure/functionapp?view=azure-cli-latest#az-functionapp-list
   let functionAppsList = await az<AzureFunctionApp[]>(
     `functionapp list --resource-group "${resourceGroup.name}" --subscription "${subscription.id}" --query '[].{id: id, name: name, appServicePlanId: appServicePlanId, hostName: defaultHostName, state: state, tags: tags}'`,
-    `Checking storage accounts...`
+    `Checking storage accounts for resource group ${chalk.cyan(resourceGroup.name)}...`
   );
   functionAppsList = functionAppsList.sort((a, b) => (a.tags && a.tags["x-created-by"] === "hexa" ? -1 : 1));
 

@@ -54,18 +54,14 @@ module.exports = async function() {
   await func<void>(
     `init ${functionAppName} --worker-runtime node --language typescript`,
     functionAppDirectory,
-    `Initilizing a function project...`
+    `Setting Function project ${chalk.cyan(functionAppName)}...`
   );
   await func<void>(
     `new --template httptrigger --name "${functionHttpName}" --language typescript`,
     `${functionAppPath}`,
-    `Scaffolding a function...`
+    `Scaffolding function ${chalk.cyan(functionHttpName)}...`
   );
-  await npm<void>(
-    `install`,
-    functionAppPath,
-    `Installing npm dependencies for ${chalk.green(functionAppDirectory)}...`
-  );
+  await npm<void>(`install`, functionAppPath, `Installing dependencies for ${chalk.cyan(functionAppPath)}...`);
 
   return true;
 };

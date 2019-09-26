@@ -38,7 +38,6 @@ module.exports = async function() {
     }
   }
 
-  console.log(`\n${chalk.green("✓")} Configuration saved to ${chalk.green("hexa.json")}`);
-  console.log(`${chalk.green("✓")} Tokens saved to ${chalk.green(".env")}`);
-  console.log(`🚀  Run ${chalk.green("hexa deploy")} to deploy your app`);
+  console.log(`${chalk.green("✔")} Configuration saved to ${chalk.cyan("hexa.json")}`);
+  console.log(`${chalk.green("✔")} Tokens saved to ${chalk.cyan(".env")}`);
 };

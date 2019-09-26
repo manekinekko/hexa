@@ -65,5 +65,5 @@ console.log(prettyFont.string);
   await runCommand(commandName.replace("--", ""));
 
   const end = process.hrtime(start);
-  console.info(chalk.green("\n✓ Done in %d seconds."), end[0]);
+  console.info(chalk.green("✔ Done in %d seconds."), end[0]);
 })();

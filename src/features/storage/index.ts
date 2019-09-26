@@ -13,7 +13,7 @@ module.exports = async function() {
   // https://docs.microsoft.com/en-us/cli/azure/storage/account?view=azure-cli-latest#az-storage-account-list
   let storageAccountsList = await az<AzureStorage[]>(
     `storage account list --resource-group "${resourceGroup.name}" --subscription "${subscription.id}" --query '[].{name:name, id:id, location:location, tags:tags}'`,
-    `Checking storage accounts...`
+    `Checking storage accounts for resource group ${chalk.cyan(resourceGroup.name)}...`
   );
 
   // In case we dont find any storage account that had been created by Hexa,
