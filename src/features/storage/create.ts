@@ -12,10 +12,10 @@ module.exports = async function(creationMode: CreationMode) {
   debug(`using project ${name}`);
 
   const subscription: AzureSubscription = Config.get("subscription");
-  debug(`using subscription ${JSON.stringify(subscription)}`);
+  debug(`using subscription ${chalk.green(subscription.name)}`);
 
   const resourceGroup: AzureResourceGroup = Config.get("resourceGroup");
-  debug(`using resource group ${JSON.stringify(resourceGroup)}`);
+  debug(`using resource group ${chalk.green(resourceGroup.name)}`);
 
   if (creationMode === "MANUAL") {
     let regionsList = await az<AzureRegion[]>(

@@ -24,10 +24,10 @@ module.exports = async function() {
   }
 
   const storage: AzureStorage = Config.get("storage");
-  debug(`using storage ${chalk.green(JSON.stringify(storage))}`);
+  debug(`using storage ${chalk.green(storage.name)}`);
 
   const subscription: AzureSubscription = Config.get("subscription");
-  debug(`using subscription ${chalk.green(JSON.stringify(subscription))}`);
+  debug(`using subscription ${chalk.green(subscription.name)}`);
 
   // https://docs.microsoft.com/en-us/cli/azure/storage/blob/service-properties?view=azure-cli-latest#az-storage-blob-service-properties-update
   await az<string>(

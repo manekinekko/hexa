@@ -4,13 +4,13 @@ const debug = require("debug")("storage:token");
 
 module.exports = async function() {
   const storage: AzureStorageToken = Config.get("storage");
-  debug(`using storage ${JSON.stringify(storage)}`);
+  debug(`using storage ${chalk.green(storage.name)}`);
 
   const resourceGroup: AzureResourceGroup = Config.get("resourceGroup");
-  debug(`using resource group ${JSON.stringify(resourceGroup)}`);
+  debug(`using resource group ${chalk.green(resourceGroup.name)}`);
 
   const subscription: AzureSubscription = Config.get("subscription");
-  debug(`using subscription ${JSON.stringify(subscription)}`);
+  debug(`using subscription ${chalk.green(subscription.name)}`);
 
   if (process.env.NITRO_STORAGE_USE_SAS) {
     // https://docs.microsoft.com/en-us/cli/azure/storage/account?view=azure-cli-latest#az-storage-account-generate-sas
