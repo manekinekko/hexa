@@ -1,5 +1,6 @@
 import { chooseAccountStorage } from "../../core/prompt";
 import { az, Config, saveWorkspace } from "../../core/utils";
+import chalk from "chalk";
 const debug = require("debug")("storage");
 
 module.exports = async function() {
@@ -16,14 +17,22 @@ module.exports = async function() {
   );
 
   if (storageAccountsList.length) {
-    let selectedStorageAccountId = "";
+    // In case we dont find any storage account that had been created by Hexa,
+    // fallback to either a MANUAL or AUTOMATIC creation, depending on the global config
+    let selectedStorageAccountId = process.env.HEXA_AUTO_MODE ? "AUTOMATIC" : "MANUAL";
 
-    // if there is only 1 storage account that had been created with Hexa,
-    // go ahead and use it.
+    // if there is only 1 storage account,
+    // let's check if it had been created by Hexa...
     if (storageAccountsList.length === 1) {
       const storageAccount = storageAccountsList[0];
-      if (storageAccount.tags && storageAccount.tags["x-created-by"] === "hexa") {
-        selectedStorageAccountId = storageAccountsList[0].id;
+      debug(`found one storage account ${chalk.green(storageAccount.name)}`);
+
+      // is the account had been created by Hexa?
+      if (storageAccount && storageAccount.tags && storageAccount.tags["x-created-by"] === "hexa") {
+        debug(`using storage account ${chalk.green(storageAccount.name)}`);
+
+        // take its ID
+        selectedStorageAccountId = storageAccount.id;
       }
     } else {
       // move storage accounts created with Hexa to the top
@@ -33,7 +42,7 @@ module.exports = async function() {
 
     if (selectedStorageAccountId === "MANUAL") {
       // create a new storage account
-      return (await require(`./create`))(selectedStorageAccountId);
+      return (await require(`./create`))("MANUAL");
     } else {
       const { id, name } = storageAccountsList.find(
         (accountStorage: AzureStorage) => accountStorage.id === selectedStorageAccountId
@@ -53,8 +62,7 @@ module.exports = async function() {
       return (await require("./tokens"))();
     }
   } else {
-    // no storage account found
-    // create a new one
+    // no storage account found create a new one
     return (await require(`./create`))("AUTOMATIC");
   }
 };
