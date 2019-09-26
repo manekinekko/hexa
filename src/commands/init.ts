@@ -24,23 +24,19 @@ module.exports = async function() {
   }
 
   const { features } = await askForFeatures();
-  // const featuresConfiguration: any = {};
 
   // we need to confiure a resource group and storage before creating all other features
   for await (let feature of ["resource-group", "storage", ...features]) {
     debug(`Configuring ${chalk.green(feature)}:`);
     try {
       const featureImplementation = require(`../features/${feature}/index`);
-      const config = await featureImplementation();
-      // featuresConfiguration[feature] = config;
+      await featureImplementation();
     } catch (error) {
-      console.error(error);
+      console.log(chalk.red(`✗ ${error}`));
+      console.log(chalk.red(`✗ Abort.`));
+      process.exit(1);
     }
   }
-
-  saveWorkspace({
-    project: name
-  });
 
   console.log(`\n${chalk.green("✓")} Configuration saved to ${chalk.green("hexa.json")}`);
   console.log(`${chalk.green("✓")} Tokens saved to ${chalk.green(".env")}`);
