@@ -14,6 +14,10 @@ module.exports = async function() {
   const { name } = await askForProjectDetails();
   debug(`saving project name ${name}`);
 
+  saveWorkspace({
+    project: name
+  })
+
   Config.set("project", name);
   const subscriptions: AzureSubscription[] = Config.get("subscriptions");
 
