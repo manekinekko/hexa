@@ -35,9 +35,9 @@ export async function runCmd(command: string, loadingMessage?: string, options?:
   return new Promise((resolve, reject) => {
 
     if (options && options.cwd) {
-      debug(`cwd=${getFullPath(options.cwd)}`);
+      debug(`cwd=${chalk.cyan(getFullPath(options.cwd))}`);
     }
-    debug(command);
+    debug(chalk.cyan(command));
 
     shell.exec(
       command,
@@ -46,7 +46,7 @@ export async function runCmd(command: string, loadingMessage?: string, options?:
       },
       (code: number, stdout: string, stderr: string) => {
         if (stderr.length) {
-          debug("stderr", stderr);
+          debug("stderr", chalk.red(stderr));
           // the Azure CLI uses stderr to output debug information,
           // we have to filter and check only for errors
           if (stderr.includes("ERROR")) {
@@ -54,7 +54,7 @@ export async function runCmd(command: string, loadingMessage?: string, options?:
           }
         }
         if (stdout.length) {
-          debug("stdout", stdout);
+          debug("stdout", chalk.gray(stdout));
           resolve(stdout);
         }
         try {
