@@ -30,19 +30,19 @@ console.log(prettyFont.string);
     .usage("<command>")
     .version(require("../package.json").version)
     .option("login", "connect to your Azure")
-    .option("init", "initialise a new workspace")
+    .option("init", "initialize a new workspace")
     .option("deploy", "deploy to Azure")
-    .option("-d, --debug", "enable debug mode", false)
-    .option("-c, --create", "enable resource creation", true)
     .option("-r, --relogin", "force login", false)
+    .option("-c, --create", "enable resource creation", true)
     .option("-s, --sas", "use SAS token (only: storage and database)", false)
-    .option("-a, --auto", "enable Hexa Auto mode", true)
+    .option("-m, --manual", "enable Manual mode", false)
+    .option("-d, --debug", "enable debug mode", false)
     .parse(process.argv);
 
   if (program.debug) {
     process.env.DEBUG = "*";
   }
-  if (program.auto) {
+  if (program.manual === false) {
     process.env.HEXA_AUTO_MODE = "1";
   }
   if (program.create) {
