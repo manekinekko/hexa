@@ -27,21 +27,18 @@ export function chooseSubscription(subscriptionsList: AzureSubscription[]): Prom
 }
 
 export function chooseResourceGroup(resourceGroups: AzureResourceGroup[]): Promise<Answers> {
+  // move resource groups created with Hexa to the top
+  resourceGroups = resourceGroups.sort((a, b) => (a.tags && a.tags["x-created-by"] === "hexa" ? -1 : 1));
+
   if (process.env.NITRO_ENABLE_ADDING_NEW_RESOURCE) {
     resourceGroups = [
-      {
-        id: "AUTOMATIC",
-        location: "",
-        tags: {},
-        name: "<Create a resource group (auto)>"
-      },
+      ...resourceGroups,
       {
         id: "MANUAL",
         location: "",
         tags: {},
         name: "<Create a resource group>"
-      },
-      ...resourceGroups
+      }
     ];
   }
   const questions: QuestionCollection = [
@@ -70,6 +67,8 @@ export function chooseResourceGroup(resourceGroups: AzureResourceGroup[]): Promi
 }
 
 export function chooseAccountStorage(storageAccounts: AzureStorage[]): Promise<inquirer.Answers> {
+  // move storage accounts created with Hexa to the top
+  storageAccounts = storageAccounts.sort((a, b) => (a.tags && a.tags["x-created-by"] === "hexa" ? -1 : 1));
 
   if (process.env.NITRO_ENABLE_ADDING_NEW_RESOURCE) {
     storageAccounts = [
