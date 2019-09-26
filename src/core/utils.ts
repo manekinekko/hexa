@@ -2,6 +2,7 @@ import chalk from "chalk";
 import fs from "fs";
 import path from "path";
 const shell = require("shelljs");
+const merge = require("deepmerge");
 const ora = require("ora");
 const Configstore = require("configstore");
 const dotenv = require("dotenv");
@@ -33,9 +34,8 @@ export async function runCmd(command: string, loadingMessage?: string, options?:
   }
 
   return new Promise((resolve, reject) => {
-
     if (options && options.cwd) {
-      debug(`cwd=${chalk.cyan(getFullPath(options.cwd))}`);
+      debug(`cwd=${chalk.cyan(options.cwd)}`);
     }
     debug(chalk.cyan(command));
 
@@ -60,7 +60,7 @@ export async function runCmd(command: string, loadingMessage?: string, options?:
         try {
           spinner.succeed();
         } catch (error) {
-          spinner.fail();
+          // don't catch errors here
         }
       }
     );
@@ -90,7 +90,6 @@ export async function func<T>(command: string, cwd: string, loadingMessage?: str
 }
 
 export async function npm<T>(command: string, cwd?: string, loadingMessage?: string) {
-
   // if (cwd) {
   //   command = `cd ${cwd} && npm ${command}`;
   // }
@@ -156,7 +155,8 @@ export function saveWorkspace(config: Partial<NitroWorkspace>) {
   if (fileExists(WORKSPACE_FILENAME)) {
     oldConfig = JSON.parse(readFileFromDisk(WORKSPACE_FILENAME) || "{}") as NitroWorkspace;
   }
-  config = Object.assign(config, oldConfig);
+
+  config = merge(config, oldConfig);
 
   debug(`saving workspace with ${chalk.green(JSON.stringify(config))}`);
   fs.writeFileSync(WORKSPACE_FILENAME, JSON.stringify(config, null, 2));
@@ -211,4 +211,8 @@ export function getTemplateFullPath() {
 
 export function getFullPath(folder: string) {
   return path.join(path.dirname(fs.realpathSync(__filename)), folder);
+}
+
+export function joinPath(...args: string[]) {
+  return path.join(...args);
 }

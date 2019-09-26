@@ -4,8 +4,8 @@ declare interface NitroWorkspace {
   hosting: {
     folder: string;
   };
-  functionApp: AzureFunctionApp | {
-    folder: string;
+  functionApp: AzureFunctionApp & {
+    folder?: string;
   };
   resourceGroup: AzureResourceGroup;
   subscription: AzureSubscription;
@@ -18,7 +18,7 @@ declare interface AzureEntity {
 
 declare interface AzureFunctionApp extends AzureEntity {
   appServicePlanId?: string;
-  hostName: string;
+  hostName?: string;
   state?: boolean;
 }
 
