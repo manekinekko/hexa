@@ -22,7 +22,7 @@ module.exports = async function() {
   const storage: AzureStorage = Config.get("storage");
   debug(`using storage ${chalk.green(storage.name)}`);
 
-  const functionAppName = sanitize(functionApp.name);
+  const functionAppName = functionApp.name;
 
   let functionAppDirectory = `./functions`;
 
@@ -47,7 +47,9 @@ module.exports = async function() {
 
   saveWorkspace({
     functionApp: {
-      folder: functionAppDirectory
+      folder: functionAppDirectory,
+      id: functionApp.id,
+      name: functionApp.name
     }
   });
 

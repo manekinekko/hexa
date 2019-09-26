@@ -47,7 +47,13 @@ module.exports = async function() {
 
   Config.set("functionApp", functionApp);
 
-  saveWorkspace({ functionApp });
+  saveWorkspace({
+    functionApp: {
+      hostName: functionApp.hostName,
+      id: functionApp.id,
+      name: functionApp.name || functionAppName
+    }
+  });
 
   // init functions projects
   return (await require("./init"))();
