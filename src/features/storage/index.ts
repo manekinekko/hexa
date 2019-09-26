@@ -1,14 +1,14 @@
+import chalk from "chalk";
 import { chooseAccountStorage } from "../../core/prompt";
 import { az, Config, saveWorkspace } from "../../core/utils";
-import chalk from "chalk";
 const debug = require("debug")("storage");
 
 module.exports = async function() {
   const subscription: AzureSubscription = Config.get("subscription");
-  debug(`Using subscription ${JSON.stringify(subscription)}`);
+  debug(`Using subscription ${chalk.green(subscription.name)}`);
 
   const resourceGroup: AzureResourceGroup = Config.get("resourceGroup");
-  debug(`Using resource group ${JSON.stringify(resourceGroup)}`);
+  debug(`Using resource group ${chalk.green(resourceGroup.name)}`);
 
   // https://docs.microsoft.com/en-us/cli/azure/storage/account?view=azure-cli-latest#az-storage-account-list
   let storageAccountsList = await az<AzureStorage[]>(
@@ -16,53 +16,55 @@ module.exports = async function() {
     `Checking storage accounts...`
   );
 
-  if (storageAccountsList.length) {
-    // In case we dont find any storage account that had been created by Hexa,
-    // fallback to either a MANUAL or AUTOMATIC creation, depending on the global config
-    let selectedStorageAccountId = process.env.HEXA_AUTO_MODE ? "AUTOMATIC" : "MANUAL";
+  // In case we dont find any storage account that had been created by Hexa,
+  // fallback to either a MANUAL or AUTOMATIC creation, depending on the global config
+  let creationMode = process.env.HEXA_AUTO_MODE ? "AUTOMATIC" : "MANUAL";
+  let selectedStorageAccountId: string | null = null;
 
-    // if there is only 1 storage account,
-    // let's check if it had been created by Hexa...
-    if (storageAccountsList.length === 1) {
+  if (creationMode === "AUTOMATIC") {
+    if (storageAccountsList.length === 0) {
+      return (await require(`./create`))("AUTOMATIC");
+    } else if (storageAccountsList.length === 1) {
       const storageAccount = storageAccountsList[0];
       debug(`found one storage account ${chalk.green(storageAccount.name)}`);
 
-      // is the account had been created by Hexa?
+      // had the account been created with Hexa?
       if (storageAccount && storageAccount.tags && storageAccount.tags["x-created-by"] === "hexa") {
         debug(`using storage account ${chalk.green(storageAccount.name)}`);
 
         // take its ID
         selectedStorageAccountId = storageAccount.id;
+      } else {
+        // we founf one storage account but it was not created by Hexa, go ahead and automatically create one
+        return (await require(`./create`))("AUTOMATIC");
       }
     } else {
-      // move storage accounts created with Hexa to the top
-      storageAccountsList = storageAccountsList.sort((a, b) => (a.tags && a.tags["x-created-by"] === "hexa" ? -1 : 1));
-      selectedStorageAccountId = (await chooseAccountStorage(storageAccountsList)).storage as (string & CreationMode);
+      // we found many storage accounts, let the user choose the right one
+      selectedStorageAccountId = null;
     }
-
-    if (selectedStorageAccountId === "MANUAL") {
-      // create a new storage account
-      return (await require(`./create`))("MANUAL");
-    } else {
-      const { id, name } = storageAccountsList.find(
-        (accountStorage: AzureStorage) => accountStorage.id === selectedStorageAccountId
-      ) as AzureStorage;
-
-      const storage = {
-        id,
-        name
-      };
-
-      Config.set("storage", storage);
-
-      saveWorkspace({
-        storage
-      });
-
-      return (await require("./tokens"))();
-    }
-  } else {
-    // no storage account found create a new one
-    return (await require(`./create`))("AUTOMATIC");
   }
+
+  // if we still could not get the storage account, let the user choose
+  if (selectedStorageAccountId === null) {
+    selectedStorageAccountId = (await chooseAccountStorage(storageAccountsList)).storage as (string & CreationMode);
+  }
+
+  const { id, name } = storageAccountsList.find(
+    (accountStorage: AzureStorage) => accountStorage.id === selectedStorageAccountId
+  ) as AzureStorage;
+
+  debug(`setting storage account ${chalk.green(name)}`);
+
+  const storage = {
+    id,
+    name
+  };
+
+  Config.set("storage", storage);
+
+  saveWorkspace({
+    storage
+  });
+
+  return (await require("./tokens"))();
 };
