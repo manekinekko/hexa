@@ -6,7 +6,7 @@ import program from "commander";
 const CFonts = require("cfonts");
 const prettyFont = CFonts.render("Hexa", {
   font: "block",
-  colors: ["candy"],
+  colors: ["cyan", 'yellow'],
   letterSpacing: 1
 });
 
