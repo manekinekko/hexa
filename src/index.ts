@@ -6,7 +6,7 @@ import program from "commander";
 const CFonts = require("cfonts");
 const prettyFont = CFonts.render("Hexa", {
   font: "block",
-  colors: ["cyan", 'yellow'],
+  colors: ["cyan", "yellow"],
   letterSpacing: 1
 });
 
@@ -38,7 +38,14 @@ console.log(prettyFont.string);
     .option("-s, --sas", "use SAS token (only: storage and database)", false)
     .option("-m, --manual", "enable Manual mode", false)
     .option("-d, --debug", "enable debug mode", false)
+    .option("--yolo", "enale all modes and all services", false)
     .parse(process.argv);
+
+  if (program.yolo) {
+    program.force = true;
+    program.auto = true;
+    process.env.HEXA_YOLO_MODE = "1";
+  }
 
   if (program.debug) {
     process.env.DEBUG = "*";

@@ -5,10 +5,19 @@ import { az, Config, copyTemplate, saveWorkspace } from "../../core/utils";
 const debug = require("debug")("hosting");
 
 module.exports = async function() {
-  let { folder, overrideHtml, override404, overrideError } = await askForHostingFolder();
-  debug(
-    `selected hosting folder=${folder}, overrideHtml=${overrideHtml}, override404=${override404}. overrideError=${overrideError}`
-  );
+  const isForceModeEnabled = !!process.env.HEXA_FORCE_MODE;
+
+  let publicFolder = "public";
+  let folder, overrideHtml, override404, overrideError;
+
+  if (isForceModeEnabled === false) {
+    ({ folder, overrideHtml, override404, overrideError } = await askForHostingFolder(publicFolder));
+    debug(
+      `selected hosting folder=${folder}, overrideHtml=${overrideHtml}, override404=${override404}. overrideError=${overrideError}`
+    );
+  } else {
+    [folder, overrideHtml, override404, overrideError] = [publicFolder, true, true, true];
+  }
 
   if (overrideHtml || typeof overrideHtml === "undefined") {
     // copy index.html

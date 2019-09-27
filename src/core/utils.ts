@@ -149,7 +149,7 @@ export function readFileFromDisk(filePath: string) {
 }
 
 export function saveWorkspace(config: Partial<NitroWorkspace>) {
-  debug(`updating workspace with ${chalk.green(JSON.stringify(config))}}`);
+  debug(`updating workspace with ${chalk.green(JSON.stringify(config))}`);
 
   let oldConfig = {};
   if (fileExists(WORKSPACE_FILENAME)) {

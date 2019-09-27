@@ -35,10 +35,36 @@ module.exports = async function() {
     debug(`found previous subscriptions ${JSON.stringify(subscriptions)}`);
   }
 
-  const { features } = await askForFeatures();
+  const FEATURES = [
+    {
+      name: "Hosting: Configure and deploy to Azure Static Website",
+      value: "hosting",
+      short: "Hosting"
+    },
+    {
+      name: "Functions: Configure and deploy an Azure Functions",
+      value: "functions",
+      short: "Functions"
+    },
+    {
+      name: "Database: Configure and deploy an database on Azure",
+      value: "database",
+      short: "Database"
+    }
+  ];
+
+  let selectedFeatures = [];
+  if (process.env.HEXA_YOLO_MODE) {
+
+    console.log(chalk.yellow(`⭐ YOLO mode enabled. Go grab a coffee, we will take care of rest!`))
+
+    selectedFeatures = FEATURES.map(feat => feat.short);
+  } else {
+    selectedFeatures = (await askForFeatures(FEATURES)).features;
+  }
 
   // we need to confiure a resource group and storage before creating all other features
-  for await (let feature of ["resource-group", "storage", ...features]) {
+  for await (let feature of ["resource-group", "storage", ...selectedFeatures]) {
     debug(`Configuring ${chalk.green(feature)}:`);
     try {
       const featureImplementation = require(`../features/${feature}/index`);

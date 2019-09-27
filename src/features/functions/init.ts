@@ -1,15 +1,6 @@
 import chalk from "chalk";
 import { askForFunctionsAppFolder } from "../../core/prompt";
-import {
-  Config,
-  createDirectoryIfNotExists,
-  directoryExists,
-  func,
-  npm,
-  sanitize,
-  saveWorkspace,
-  uuid
-} from "../../core/utils";
+import { Config, createDirectoryIfNotExists, directoryExists, func, npm, saveWorkspace, uuid } from "../../core/utils";
 const debug = require("debug")("functions:init");
 
 module.exports = async function() {

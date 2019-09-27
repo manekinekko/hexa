@@ -1,19 +1,41 @@
+declare interface ProcessEnv {
+  DEBUG: string;
+  HEXA_AUTO_MODE: "1";
+  HEXA_FORCE_MODE: "1";
+  NITRO_ENABLE_ADDING_NEW_RESOURCE: "1";
+  NITRO_FORCE_LOGIN: "1";
+  NITRO_STORAGE_USE_SAS: "1";
+  HEXA_YOLO_MODE: "1";
+}
+
 declare interface NitroWorkspace {
   project: string;
   storage: AzureStorage;
-  hosting: {
-    folder: string;
-  };
-  functionApp: AzureFunctionApp & {
-    folder?: string;
-  };
   resourceGroup: AzureResourceGroup;
   subscription: AzureSubscription;
+  hosting?: {
+    folder: string;
+  };
+  functionApp?: AzureFunctionApp & {
+    folder?: string;
+  };
+  database?: DatabaseInstance;
 }
 declare interface AzureEntity {
   id: string & CreationMode;
   name: string;
   tags?: { "x-created-by": "hexa" } | { [key: string]: string };
+}
+
+declare interface AzureCosmosDBInstance {
+  documentEndpoint: string;
+}
+
+declare interface AzureTableStorageInstance {}
+
+declare interface DatabaseInstance extends AzureCosmosDBInstance, AzureTableStorageInstance, AzureEntity {
+  kind: "TABLE_STORAGE" | "COSMOSDB";
+  created?: boolean;
 }
 
 declare interface AzureFunctionApp extends AzureEntity {

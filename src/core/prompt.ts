@@ -102,36 +102,13 @@ export function chooseAccountStorage(storageAccounts: AzureStorage[]): Promise<i
   ];
   return inquirer.prompt(questions);
 }
-export function askForFeatures(): Promise<Answers> {
+export function askForFeatures(features: any[]): Promise<Answers> {
   const questions: QuestionCollection = [
     {
       type: "checkbox",
       name: "features",
       message: "Choose features you want to setup:",
-      choices: [
-        {
-          name: "Hosting: Configure and deploy to Azure Static Website",
-          value: "hosting",
-          short: "Hosting"
-        },
-        {
-          name: "Functions: Configure and deploy an Azure Functions",
-          value: "functions",
-          short: "Functions"
-        },
-        {
-          name: "Database: Configure and deploy to Azure Table Storage",
-          value: "database",
-          short: "Database",
-          disabled: "coming soon"
-        },
-        {
-          name: "Auth: Enable and setup Azure AD Authentication",
-          value: "auth",
-          short: "Auth",
-          disabled: "coming soon"
-        }
-      ],
+      choices: features,
       validate: function(value: string) {
         if (value.length) {
           return true;
@@ -205,13 +182,57 @@ export function askForStorageAccountDetails(regions: AzureRegion[], defaultStora
   return inquirer.prompt(questions);
 }
 
-export function askForProjectDetails(): Promise<Answers> {
+export function askForDatabaseDetails(defaultDatabaseName: string): Promise<Answers> {
+  const questions: QuestionCollection = [
+    {
+      type: "input",
+      name: "databaseName",
+      message: "Enter a name for the database:",
+      default: defaultDatabaseName,
+      validate: function(value: string) {
+        if (value.length) {
+          return true;
+        } else {
+          return "Please enter a name for the database.";
+        }
+      }
+    },
+    {
+      type: "list",
+      name: "databaseType",
+      message: "Choose a database type:",
+      default: 0,
+      choices: [
+        {
+          name: `Azure Table Storage`,
+          value: "TABLE_STORAGE",
+          short: `Table Storage`
+        },
+        {
+          name: `Azure Cosmos DB`,
+          value: "COSMOSDB",
+          short: `CosmosDB`
+        }
+      ],
+      validate: function(value: string) {
+        if (value.length) {
+          return true;
+        } else {
+          return "Please choose a Database type.";
+        }
+      }
+    }
+  ];
+  return inquirer.prompt(questions);
+}
+
+export function askForProjectDetails(defaultProjectName: string): Promise<Answers> {
   const questions: QuestionCollection = [
     {
       type: "input",
       name: "name",
       message: "Enter a name for the project:",
-      default: getCurrentDirectoryBase(),
+      default: defaultProjectName,
       validate: function(value: string) {
         if (value.length) {
           return true;
@@ -237,13 +258,13 @@ export function askIfOverrideProjectFile(): Promise<Answers> {
   return inquirer.prompt(questions);
 }
 
-export function askForHostingFolder(): Promise<Answers> {
+export function askForHostingFolder(defaultPublicFolderName: string): Promise<Answers> {
   const questions: QuestionCollection = [
     {
       type: "input",
       name: "folder",
       message: "Enter public folder (will be created if not present):",
-      default: "public",
+      default: defaultPublicFolderName,
       validate: function(value: string) {
         if (value && value.length) {
           // TODO: copy template files if new created folder

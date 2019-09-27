@@ -24,7 +24,7 @@ module.exports = async function() {
   );
   functionAppsList = functionAppsList.sort((a, b) => (a.tags && a.tags["x-created-by"] === "hexa" ? -1 : 1));
 
-  let functionApp = null;
+  let functionApp: AzureFunctionApp | null = null;
 
   if (functionAppsList.length) {
     functionApp = functionAppsList[0];
