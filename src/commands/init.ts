@@ -1,22 +1,30 @@
 import chalk from "chalk";
 import { askForFeatures, askForProjectDetails, askIfOverrideProjectFile } from "../core/prompt";
-import { Config, isProjectFileExists, saveWorkspace } from "../core/utils";
+import { Config, isProjectFileExists, saveWorkspace, getCurrentDirectoryBase } from "../core/utils";
 const debug = require("debug")("init");
 
 module.exports = async function() {
-  if (isProjectFileExists()) {
+  const isForceModeEnabled = !!process.env.HEXA_FORCE_MODE;
+  if (isForceModeEnabled) {
+    debug(chalk.bold(chalk.yellow(`Warning: Flag --force has been set. Hexa won't ask for any confirmation!`)));
+  }
+
+  if (isForceModeEnabled === false && isProjectFileExists()) {
     const shouldOverrideConfigFile = await askIfOverrideProjectFile();
     if (shouldOverrideConfigFile.override === false) {
       process.exit(0);
     }
   }
 
-  const { name } = await askForProjectDetails();
+  let name = getCurrentDirectoryBase();
+  if (isForceModeEnabled === false) {
+    ({ name } = await askForProjectDetails(name));
+  }
   debug(`saving project name ${name}`);
 
   saveWorkspace({
     project: name
-  })
+  });
 
   Config.set("project", name);
   const subscriptions: AzureSubscription[] = Config.get("subscriptions");

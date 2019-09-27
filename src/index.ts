@@ -32,6 +32,7 @@ console.log(prettyFont.string);
     .option("login", "connect to your Azure")
     .option("init", "initialize a new workspace")
     .option("deploy", "deploy to Azure")
+    .option("-f, --force", "override all confirmations", false)
     .option("-r, --relogin", "force login", false)
     .option("-c, --create", "enable resource creation", true)
     .option("-s, --sas", "use SAS token (only: storage and database)", false)
@@ -41,6 +42,9 @@ console.log(prettyFont.string);
 
   if (program.debug) {
     process.env.DEBUG = "*";
+  }
+  if (program.force) {
+    process.env.HEXA_FORCE_MODE = "1";
   }
   if (program.manual === false) {
     process.env.HEXA_AUTO_MODE = "1";
