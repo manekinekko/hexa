@@ -1,6 +1,6 @@
 import chalk from "chalk";
 import { askForFeatures, askForProjectDetails, askIfOverrideProjectFile } from "../core/prompt";
-import { Config, isProjectFileExists, saveWorkspace, getCurrentDirectoryBase } from "../core/utils";
+import { Config, isProjectFileExists, saveWorkspace, getCurrentDirectoryBase, sanitize } from "../core/utils";
 const debug = require("debug")("init");
 
 module.exports = async function() {
@@ -16,14 +16,14 @@ module.exports = async function() {
     }
   }
 
-  let name = getCurrentDirectoryBase();
+  let name = sanitize(getCurrentDirectoryBase());
   if (isForceModeEnabled === false) {
     ({ name } = await askForProjectDetails(name));
   }
   debug(`saving project name ${name}`);
 
   saveWorkspace({
-    project: name
+    project: sanitize(name)
   });
 
   Config.set("project", name);
