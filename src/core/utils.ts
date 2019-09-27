@@ -10,11 +10,17 @@ const packageJson = require("../../package.json");
 const debug = require("debug")(`hexa`);
 
 const crypto = require("crypto");
-export const uuid = (lenght = 8) =>
+
+// generate a Global UUID per execution.
+// We wante the UUID to be the same for all entitites.
+const guuid = ((lenght = 8) =>
   crypto
     .randomBytes(16)
     .toString("hex")
-    .substr(0, lenght);
+    .substr(0, lenght))();
+export const uuid = () => {
+  return guuid;
+};
 
 export const sanitize = (name: string) => name.replace(/[\W_]+/gim, "").trim();
 
@@ -150,6 +156,11 @@ export function readFileFromDisk(filePath: string) {
 
 export function saveWorkspace(config: Partial<NitroWorkspace>) {
   debug(`updating workspace with ${chalk.green(JSON.stringify(config))}`);
+
+  // we don't want to store IDs in the workspace file
+  for (var key in config) {
+    delete config[key].id;
+  }
 
   let oldConfig = {};
   if (fileExists(WORKSPACE_FILENAME)) {
