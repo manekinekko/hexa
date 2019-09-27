@@ -26,13 +26,13 @@ module.exports = async function() {
     // https://docs.microsoft.com/en-us/cli/azure/storage/blob?view=azure-cli-latest#az-storage-blob-upload-batch
     await az(
       `storage blob upload-batch --source '${workspace.hosting.folder}' --destination '\$web' --account-name ${workspace.storage.name} --no-progress`,
-      `Deploying hosting ${chalk.green(workspace.project)}...`
+      `Deploying hosting ${chalk.cyan(workspace.project)}...`
     );
 
     // https://docs.microsoft.com/en-us/cli/azure/storage/account?view=azure-cli-latest#az-storage-account-show
     hostingUrl = await az(
       `storage account show --name ${workspace.storage.name} --query "primaryEndpoints.web"`,
-      `Getting public URL for ${chalk.green(workspace.project)}...`
+      `Fetching URL for ${chalk.cyan(workspace.project)}...`
     );
   }
 
@@ -65,17 +65,23 @@ module.exports = async function() {
     });
   }
 
-  console.log(`${chalk.green("✔")} Application ${chalk.green(workspace.project)} deployed successfully!`);
-  if (hostingUrl) {
-    console.log(`➜ Hosting: ${chalk.green(hostingUrl)}`);
-  }
+  console.log(`${chalk.green("✔")} Application ${chalk.green(workspace.project)} deployed successfully!\n`);
 
+  if (hostingUrl) {
+    console.log(`${chalk.yellow('➜')} Hosting: ${chalk.green(hostingUrl)}`);
+  }
+  
+  if (workspace.database) {
+    console.log(`${chalk.yellow('➜')} Database: ${chalk.green(workspace.database.endpoint)}`);
+  }
+  
   if (functionUrls.length) {
-    console.log(`➜ Functions:`);
+    console.log(`${chalk.yellow('➜')} Functions:`);
     functionUrls.forEach(func => {
       console.log(` - ${func.name}: ${chalk.green(func.url)}`);
     });
   }
+  
 
   return true;
 };
