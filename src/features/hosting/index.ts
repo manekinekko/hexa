@@ -1,13 +1,13 @@
 import inquirer = require("inquirer");
 import chalk from "chalk";
 import { askForHostingFolder } from "../../core/prompt";
-import { az, Config, copyTemplate, saveWorkspace } from "../../core/utils";
+import { az, Config, copyTemplate, saveWorkspace, createDirectoryIfNotExists } from "../../core/utils";
 const debug = require("debug")("hosting");
 
 module.exports = async function() {
   const isForceModeEnabled = !!process.env.HEXA_FORCE_MODE;
 
-  let publicFolder = "public";
+  let publicFolder = "./public";
   let folder, overrideHtml, override404, overrideError;
 
   if (isForceModeEnabled === false) {
@@ -17,6 +17,7 @@ module.exports = async function() {
     );
   } else {
     [folder, overrideHtml, override404, overrideError] = [publicFolder, true, true, true];
+    createDirectoryIfNotExists(publicFolder);
   }
 
   if (overrideHtml || typeof overrideHtml === "undefined") {
