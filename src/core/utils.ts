@@ -13,7 +13,7 @@ const crypto = require("crypto");
 
 // generate a Global UUID per execution.
 // We wante the UUID to be the same for all entitites.
-const guuid = ((lenght = 8) =>
+const guuid = ((lenght = 4) =>
   crypto
     .randomBytes(16)
     .toString("hex")
@@ -22,7 +22,7 @@ export const uuid = () => {
   return guuid;
 };
 
-export const sanitize = (name: string) => name.replace(/[\W_]+/gim, "").trim();
+export const sanitize = (name: string) => name.replace(/[\W_]+/gim, "").trim().substr(0, 20);
 
 export const Config = new Configstore(packageJson.name, {
   version: packageJson.version
