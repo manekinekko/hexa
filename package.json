@@ -1,27 +1,43 @@
 {
-  "name": "@hexa/cli",
-  "version": "1.0.0-preview.0",
-  "description": "",
+  "name": "@manekinekko/hexa",
+  "version": "1.0.0-preview.4",
+  "description": "Project Hexa: The missing companion for Azure. Setup and deploy in seconds.",
   "main": "./build/index.js",
+  "types": "./build/index.d.ts",
   "bin": {
     "hexa": "./build/index.js"
   },
+  "homepage": "https://github.com/manekinekko/hexa#readme",
+  "private": false,
   "scripts": {
     "start": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts",
     "build": "rm -fr build/ && mkdir build && npm run copy && tsc",
-    "copy": "cp -r src/templates build"
+    "copy": "cp -r src/templates build",
+    "prepare": "npm run build",
+    "release": "npm publish --access=public"
   },
-  "keywords": [],
-  "authors": [
-    {
-      "name": "Wassim Chegham",
-      "email": "github@wassim.dev"
-    }
+  "keywords": [
+    "azure",
+    "cloud",
+    "serverless",
+    "hosting",
+    "database",
+    "authentication",
+    "storage"
   ],
+  "author": {
+    "name": "Wassim Chegham",
+    "email": "github@wassim.dev"
+  },
+  "bugs": {
+    "url": "https://github.com/manekinekko/hexa/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/manekinekko/hexa.git"
+  },
   "license": "MIT",
   "dependencies": {
-    "@types/dotenv": "^6.1.1",
-    "azure-functions-core-tools": "^2.7.1585",
     "cfonts": "^2.4.5",
     "chalk": "^2.4.2",
     "clear": "^0.1.0",
@@ -32,15 +48,16 @@
     "dotenv": "^8.1.0",
     "ora": "^3.4.0",
     "shelljs": "^0.8.3",
-    "uuid": "^3.3.3"
+    "uuid": "^3.3.3",
+    "inquirer": "^7.0.0"
   },
   "devDependencies": {
     "@types/clear": "^0.1.0",
+    "@types/dotenv": "^6.1.1",
     "@types/configstore": "^4.0.0",
     "@types/inquirer": "^6.5.0",
     "@types/node": "^12.7.3",
     "@types/ora": "^3.2.0",
-    "inquirer": "^7.0.0",
     "nodemon": "^1.19.1",
     "ts-node": "^8.3.0",
     "typescript": "^3.6.2"
