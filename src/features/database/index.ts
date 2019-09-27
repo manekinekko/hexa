@@ -3,6 +3,8 @@ import { az, Config, sanitize, saveWorkspace, uuid } from "../../core/utils";
 import { askForDatabaseDetails } from "../../core/prompt";
 const debug = require("debug")("database");
 
+const buildTableStorageDatabaseEndpoint = (storage: AzureStorage, databaseName: string) => `https://${storage.name}.table.core.windows.net/${databaseName}`;
+
 module.exports = async function() {
   const project: string = Config.get("project");
   debug(`using project ${chalk.green(project)}`);
@@ -25,6 +27,7 @@ module.exports = async function() {
   }
 
   let databaseInstance: DatabaseInstance | undefined;
+  let databaseEndpoint = null;
 
   if (databaseType === "TABLE_STORAGE") {
     // https://docs.microsoft.com/en-us/cli/azure/storage/table?view=azure-cli-latest#az-storage-table-list
@@ -35,26 +38,24 @@ module.exports = async function() {
 
     if (databasesInstancesList.length) {
       databaseInstance = databasesInstancesList[0];
-      debug(`using databaseInstance ${chalk.green(databaseInstance.name)}`);
+      databaseInstance.endpoint = buildTableStorageDatabaseEndpoint(storage, databaseName);
+      debug(`using table storage instance ${chalk.green(databaseInstance.name)}`);
     } else {
       // https://docs.microsoft.com/en-us/cli/azure/storage/table?view=azure-cli-latest#az-storage-table-create
       databaseInstance = await az<DatabaseInstance>(
-        `storage table create --name ${databaseName} --account-name ${storage.name} --query '[].{name: name}'`,
+        `storage table create --name ${databaseName} --account-name ${storage.name} --query '{created: created}'`,
         `Setting up Table Storage ${chalk.cyan(databaseName)}...`
       );
 
       if (databaseInstance.created) {
         debug(`created table storage instance ${chalk.green(databaseInstance.name)}`);
+        // the creation API does not return the database name and endpoint. Set them manually!
+        databaseInstance.endpoint = buildTableStorageDatabaseEndpoint(storage, databaseName);
+        databaseInstance.name = databaseName;
       } else {
         debug(`table storage instance ${chalk.green(databaseInstance.name)} failed!`);
-        console.log(
-          chalk.red(
-            `✗ Database instance ${chalk.cyan(databaseInstance.name)} (Kind=TableStorage) could not be created.`
-          )
-        );
-        console.log(
-          chalk.red(`✗ Please enable the --debug option and retry again (${chalk.cyan("hexa init --debug")}).`)
-        );
+        console.log(chalk.red(`✗ Database instance ${chalk.cyan(databaseInstance.name)} (Kind=TableStorage) could not be created.`));
+        console.log(chalk.red(`✗ Please enable the --debug option and retry again (${chalk.cyan("hexa init --debug")}).`));
         console.log(chalk.red(`✗ If the issue persist, please open an issue on Github.`));
         process.exit(1);
       }
@@ -68,14 +69,14 @@ module.exports = async function() {
 
     if (databasesInstancesList.length) {
       databaseInstance = databasesInstancesList[0];
-      debug(`using databaseInstance ${chalk.green(databaseInstance.name)}`);
+      debug(`using cosmosdb instance ${chalk.green(databaseInstance.name)}`);
     } else {
       // https://docs.microsoft.com/en-us/cli/azure/cosmosdb?view=azure-cli-latest#az-cosmosdb-create
       databaseInstance = await az<DatabaseInstance>(
-        `cosmosdb create --name ${databaseName} --resource-group ${resourceGroup.name} --tag 'x-created-by=hexa' --query '{id: id, name: name, tags: tags, documentEndpoint: documentEndpoint}'`,
+        `cosmosdb create --name ${databaseName} --resource-group ${resourceGroup.name} --tag 'x-created-by=hexa' --query '{id: id, name: name, tags: tags, endpoint: documentEndpoint}'`,
         `Setting up CosmosDB instance ${chalk.cyan(databaseName)} (this may take few minutes)...`
       );
-      debug(`created databaseInstance ${chalk.green(databaseInstance.name)}`);
+      debug(`created cosmosdb instance ${chalk.green(databaseInstance.name)}`);
     }
   }
 
