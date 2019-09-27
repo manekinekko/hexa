@@ -1,4 +1,4 @@
-import { Config, az, readWorkspace, isProjectFileExists } from "../core/utils";
+import { Config, az, readWorkspace, isProjectFileExists, npm, func, getFullPath, joinPath } from "../core/utils";
 import chalk from "chalk";
 const debug = require("debug")("push");
 
@@ -18,10 +18,11 @@ module.exports = async function() {
     process.env.AZURE_STORAGE_CONNECTION_STRING = workspace.storage.connectionString;
     debug(`set env variable AZURE_STORAGE_CONNECTION_STRING`);
   }
-  
-  let hostingUrl = '';
+
+  let hostingUrl = "";
+  let functionUrls: { name: string; url: string }[] = [];
   if (workspace.hosting) {
-    debug(`deploying hosting configuration`);
+    debug(`deploying hosting`);
     // https://docs.microsoft.com/en-us/cli/azure/storage/blob?view=azure-cli-latest#az-storage-blob-upload-batch
     await az(
       `storage blob upload-batch --source '${workspace.hosting.folder}' --destination '\$web' --account-name ${workspace.storage.name} --no-progress`,
@@ -35,8 +36,46 @@ module.exports = async function() {
     );
   }
 
-  console.log(`${chalk.green("✓")} Application ${chalk.green(workspace.project)} deployed:`);
-  if (hostingUrl) {
-    console.log(`\t- Hosting: ${chalk.green(hostingUrl)}`);
+  if (workspace.functionApp) {
+    debug(`deploying functions`);
+
+    const functionApp = workspace.functionApp;
+
+    await npm<void>(
+      `run build:production`,
+      joinPath(process.cwd(), functionApp.folder as string, functionApp.name),
+      `Building Function app ${chalk.cyan(functionApp.name)}...`
+    );
+    const functionAppPublishResult = await func<void>(
+      `azure functionapp publish ${functionApp.name}`,
+      joinPath(process.cwd(), functionApp.folder as string, functionApp.name),
+      `Deploying Function app ${chalk.cyan(functionApp.name)}....`
+    );
+
+    const matchedFunctionUrls = functionAppPublishResult.match(/(https:\/\/[\w-_.\/?=]+)/gm) as string[];
+
+    functionUrls = matchedFunctionUrls.map(url => {
+      return {
+        name: url
+          .split("?")[0]
+          .split("/")
+          .pop() as string,
+        url
+      };
+    });
   }
+
+  console.log(`${chalk.green("✔")} Application ${chalk.green(workspace.project)} deployed successfully!`);
+  if (hostingUrl) {
+    console.log(`➜ Hosting: ${chalk.green(hostingUrl)}`);
+  }
+
+  if (functionUrls.length) {
+    console.log(`➜ Functions:`);
+    functionUrls.forEach(func => {
+      console.log(` - ${func.name}: ${chalk.green(func.url)}`);
+    });
+  }
+
+  return true;
 };
