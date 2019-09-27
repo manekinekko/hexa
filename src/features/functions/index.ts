@@ -33,7 +33,7 @@ module.exports = async function() {
     // https://docs.microsoft.com/en-us/cli/azure/functionapp?view=azure-cli-latest#az-functionapp-create
     functionApp = await az<AzureFunctionApp>(
       `functionapp create --resource-group ${resourceGroup.name} --consumption-plan-location ${resourceGroup.location} --name ${functionAppName} --storage-account ${storage.name} --runtime node --disable-app-insights --tag 'x-created-by=hexa' --query '{id: id, name: name, appServicePlanId: appServicePlanId, hostName: defaultHostName, state: state, tags: tags}'`,
-      `Enabling Functions...`
+      `Enabling Functions (this may take few minutes)...`
     );
     debug(`created functionApp ${chalk.green(functionApp.name)}`);
   }
