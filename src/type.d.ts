@@ -9,6 +9,8 @@ declare interface ProcessEnv {
 }
 
 declare interface NitroWorkspace {
+  [key: string]: any;
+
   project: string;
   storage: AzureStorage;
   resourceGroup: AzureResourceGroup;
@@ -27,15 +29,14 @@ declare interface AzureEntity {
   tags?: { "x-created-by": "hexa" } | { [key: string]: string };
 }
 
-declare interface AzureCosmosDBInstance {
-  documentEndpoint: string;
-}
+declare interface AzureCosmosDBInstance {}
 
 declare interface AzureTableStorageInstance {}
 
 declare interface DatabaseInstance extends AzureCosmosDBInstance, AzureTableStorageInstance, AzureEntity {
   kind: "TABLE_STORAGE" | "COSMOSDB";
   created?: boolean;
+  endpoint: string;
 }
 
 declare interface AzureFunctionApp extends AzureEntity {
