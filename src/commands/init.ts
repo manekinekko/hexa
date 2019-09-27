@@ -47,7 +47,7 @@ module.exports = async function() {
       short: "Functions"
     },
     {
-      name: "Database: Configure and deploy an database on Azure",
+      name: "Database: Configure and deploy a database on Azure",
       value: "database",
       short: "Database"
     }
