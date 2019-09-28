@@ -1,1 +1,1 @@
-# hexa-cli
+# Project Hexa
