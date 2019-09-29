@@ -52,13 +52,6 @@ footer {
   display: block;
 }
 
-@media (min-width: 1024px) and (max-width: 1920px) {
-  header,
-  footer {
-  width: 1120px;
-  }
-}
-
 header nav {
   width: 222px;
 }
