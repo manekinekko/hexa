@@ -31,7 +31,7 @@ a.link__home {
 }
 
 a.button {
-  color: white;
+  color: black;
   background: #5abdca;
   padding: 16px 30px;
   border-radius: 50px;
@@ -127,7 +127,7 @@ main div.code-editor {
   width: 60vw;
   border-radius: 4px;
   box-shadow: 0 0 13px -3px black;
-  color: #707070;
+  color: #cacaca;
   text-align: left;
   margin: 40px 0;
   padding-bottom: 18px;
@@ -174,7 +174,7 @@ code span {
 }
 
 main div.code-editor p span b {
-  color: #ffffff9c;
+  color: white;
 }
 
 span.typed-cursor {
