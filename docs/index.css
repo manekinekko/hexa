@@ -44,8 +44,8 @@ header {
 footer {
   background-image: url(footer-bg.svg);
   background-size: cover;
-  height: 70px;
-  padding-top: 100px;
+  height: 80px;
+  padding-top: 220px;
   background-position: top;
   color: white;
   text-align: center;
@@ -55,11 +55,20 @@ footer {
 header nav {
   width: 222px;
 }
-
 header nav a {
   color: #707070;
   margin: 0 10px;
 }
+
+footer nav {
+  margin: 10px;
+}
+
+footer nav a {
+  margin: 10px;
+  color: #313131;
+}
+
 
 main {
   text-align: center;
