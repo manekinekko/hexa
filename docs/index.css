@@ -1,9 +1,6 @@
 body {
   font-family: "Lato";
   margin: 0;
-  /* background-image: url(header-bg.svg); */
-  /* background-size: cover;
-  background-position: top; */
   height: 200px;
   background-repeat: no-repeat;
   --primary-color: #5abdca;
@@ -66,7 +63,7 @@ footer {
 }
 
 header nav {
-  width: 222px;
+  width: 230px;
 }
 header nav a {
   color: white;
@@ -74,7 +71,6 @@ header nav a {
 }
 
 footer a {
-  margin: 10px;
   color: white;
 }
 
@@ -89,7 +85,6 @@ footer nav {
 }
 
 footer nav a {
-  margin: 10px;
   color: var(--secondary-color);
 }
 
