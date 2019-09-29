@@ -1,0 +1,168 @@
+body {
+  font-family: "Lato";
+  margin: 0;
+}
+
+img.logo {
+  width: 18px;
+  height: 18px;
+  margin: 4px;
+}
+
+a {
+  text-decoration: none;
+}
+
+a.link__home {
+  display: flex;
+  align-items: center;
+  font-weight: lighter;
+  color: #5abdca;
+  font-size: 18px;
+}
+
+a.button {
+  color: white;
+  background: #5abdca;
+  padding: 16px 30px;
+  border-radius: 50px;
+  width: 100px;
+}
+
+header,
+footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 30px;
+}
+
+header {
+  margin-bottom: 100px;
+}
+
+footer {
+  background-image: url(footer-bg.svg);
+  background-size: cover;
+  height: 70px;
+  padding-top: 100px;
+  background-position: top;
+  color: white;
+  text-align: center;
+  display: block;
+}
+
+@media (min-width: 1024px) and (max-width: 1920px) {
+  header,
+  footer {
+  width: 1120px;
+  }
+}
+
+header nav {
+  width: 222px;
+}
+
+header nav a {
+  color: #707070;
+  margin: 0 10px;
+}
+
+main {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 100px;
+}
+
+main h1 {
+  font-weight: lighter;
+}
+
+main h3 {
+  color: #5abdca;
+  display: flex;
+  align-items: center;
+  font-weight: 400;
+}
+
+main div.code-editor {
+  background: #272822;
+  min-width: 340px;
+  width: 60vw;
+  border-radius: 4px;
+  box-shadow: 0 0 13px -3px black;
+  color: #707070;
+  text-align: left;
+  margin: 40px 0;
+  padding-bottom: 18px;
+  max-width: 460px;
+}
+
+main div.code-editor-header {
+  text-align: center;
+  position: relative;
+  padding: 5px;
+  background: #191a15;
+  border-radius: 4px 4px 0 0;
+}
+main div.code-editor-header span.close-icons {
+  display: inline-block;
+  width: 150px;
+  height: 20px;
+  text-align: left;
+  position: absolute;
+  left: 5px;
+}
+main div.code-editor-header span.close-icons i {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  background: #e0c04b;
+  border-radius: 50%;
+  margin: 0 4px;
+}
+main div.code-editor-header span.close-icons i:first-child {
+  background: #ed655a;
+}
+main div.code-editor-header span.close-icons i:last-child {
+  background: #72be47;
+}
+
+main div.code-editor p {
+  margin: 20px;
+  font-family: monospace;
+  font-size: 16px;
+}
+code span {
+  font-size: 16px;
+}
+
+main div.code-editor p span b {
+  color: #ffffff9c;
+}
+
+span.typed-cursor {
+  margin: 0;
+  padding: 0;
+}
+section {
+  padding: 0px 40px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+article {
+  margin: 50px 0;
+}
+article h2 {
+  font-weight: lighter;
+  text-align: left;
+}
+
+article img {
+  width: 30vw;
+}
