@@ -1,11 +1,13 @@
 body {
   font-family: "Lato";
   margin: 0;
-  background-image: url(header-bg.svg);
-  background-size: cover;
-  background-position: top;
+  /* background-image: url(header-bg.svg); */
+  /* background-size: cover;
+  background-position: top; */
   height: 200px;
   background-repeat: no-repeat;
+  --primary-color: #5abdca;
+  --secondary-color: #313131;
 }
 
 b {
@@ -20,7 +22,7 @@ img.logo {
 
 a {
   text-decoration: none;
-  transition: all .3s;
+  transition: all 0.3s;
 }
 
 a.link__home {
@@ -44,10 +46,12 @@ footer {
   justify-content: space-between;
   align-items: center;
   padding: 30px;
+  z-index: 229;
 }
 
 header {
-  margin-bottom: 100px;
+  margin-bottom: 160px;
+  position: relative;
 }
 
 footer {
@@ -74,8 +78,9 @@ footer a {
   color: white;
 }
 
-header a:not(.link__home):hover, footer a:hover {
-  color: #313131;
+header a:not(.link__home):hover,
+footer a:hover {
+  color: var(--secondary-color);
   text-decoration: underline dashed;
 }
 
@@ -85,7 +90,7 @@ footer nav {
 
 footer nav a {
   margin: 10px;
-  color: #313131;
+  color: var(--secondary-color);
 }
 
 footer nav a:hover {
@@ -97,7 +102,7 @@ main {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 100px;
+  margin: 100px 0;
 }
 
 main h1 {
@@ -108,7 +113,7 @@ main h1 {
 
 main h2 {
   font-weight: lighter;
-  color: #5abdca;
+  color: var(--primary-color);
   display: flex;
   align-items: center;
   font-size: 6em;
@@ -207,5 +212,56 @@ article img {
   }
   to {
     transform: rotate(359deg);
+  }
+}
+/* SVG */
+path.a {
+  fill: #4398a8;
+  opacity: 0.53;
+}
+path.b {
+  fill: #5abdca;
+}
+path.c {
+  fill: #57b8c6;
+  opacity: 0.53;
+}
+svg {
+  width: 100%;
+  overflow: visible;
+  position: absolute;
+  top: 0;
+  z-index: 0;
+}
+
+.wave-1 {
+  animation: wave-1 10s ease-in-out infinite alternate;
+}
+.wave-2 {
+  animation: wave-2 20s ease-in-out infinite alternate;
+}
+.wave-3 {
+  animation: wave-3 10s ease-in-out infinite;
+}
+
+@keyframes wave-1 {
+  to {
+    transform: translateY(80px) translateX(-260px);
+  }
+}
+@keyframes wave-2 {
+  to {
+    transform: translateY(40px) translateX(-67px);
+  }
+}
+@keyframes wave-3 {
+  from {
+    transform: translateY(60px) translateX(-67px);
+  }
+  50% {
+    transform: translateY(40px) translateX(-67px);
+  }
+  to {
+    transform: translateY(60px) translateX(-67px);
   }
 }
