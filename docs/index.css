@@ -1,23 +1,32 @@
 body {
   font-family: "Lato";
   margin: 0;
+  background-image: url(header-bg.svg);
+  background-size: cover;
+  background-position: top;
+  height: 200px;
+  background-repeat: no-repeat;
+}
+
+b {
+  font-weight: 300;
 }
 
 img.logo {
-  /* width: 18px; */
   height: 18px;
   margin: 4px;
+  animation: rotate 40s infinite linear;
 }
 
 a {
   text-decoration: none;
+  transition: all .3s;
 }
 
 a.link__home {
   display: flex;
-  align-items: center;
-  font-weight: lighter;
-  color: #5abdca;
+  align-items: end;
+  color: white;
   font-size: 18px;
 }
 
@@ -56,8 +65,18 @@ header nav {
   width: 222px;
 }
 header nav a {
-  color: #707070;
+  color: white;
   margin: 0 10px;
+}
+
+footer a {
+  margin: 10px;
+  color: white;
+}
+
+header a:not(.link__home):hover, footer a:hover {
+  color: #313131;
+  text-decoration: underline dashed;
 }
 
 footer nav {
@@ -69,6 +88,9 @@ footer nav a {
   color: #313131;
 }
 
+footer nav a:hover {
+  text-decoration: underline dashed;
+}
 
 main {
   text-align: center;
@@ -98,7 +120,6 @@ main h2 img.logo {
   height: 68px;
   margin: 4px;
 }
-
 
 main div.code-editor {
   background: #272822;
@@ -178,4 +199,13 @@ article h2 {
 
 article img {
   width: 30vw;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(359deg);
+  }
 }
