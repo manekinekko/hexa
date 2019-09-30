@@ -37,6 +37,29 @@ a.button {
   width: 100px;
 }
 
+header sub {
+  background: white;
+  color: var(--primary-color);
+  padding: 2px 4px;
+  margin: 0px 3px;
+  font-size: 10px;
+  border-radius: 2px;
+  line-height: 11px;
+}
+
+main sub {
+  background: var(--primary-color);
+  color: white;
+  font-size: 16px;
+  line-height: 25px;
+  margin-top: -30px;
+  border-radius: 4px;
+  font-weight: bold;
+  padding-left: 8px;
+  padding-right: 8px;
+  padding-bottom: 4px;
+}
+
 header,
 footer {
   display: flex;
