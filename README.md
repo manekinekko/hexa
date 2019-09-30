@@ -57,7 +57,7 @@ Hexa is driven by community contributions. Please send us your Pull Requests and
 ### Required tools
 
 In order to use Hexa, you will need to install both the Azure CLI and Functions Core Tools:
-- Follow the official guide to install the [Azure CLI](http://bit.ly/2orQ8F3).
+- Follow the official guide to install the [Azure CLI](http://bit.ly/2mgwpYr).
 - Follow the official guide to install the [Azure Functions Core Tools](http://bit.ly/2ow8C7y).
 
 Once these tools are installed and available on your system, you are ready to install and use the Hexa CLI.
