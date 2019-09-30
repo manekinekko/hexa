@@ -1,6 +1,6 @@
 # Privacy Policy
 
-[hexa.run](https://hexa.run), code name "[Project hexa](https://github.com/manekinekko/hexa)" as a open source app. This Service, [hexa.run](https://hexa.run), is provided by [Wassim Chegham](https://twitter.com/manekinekko) at no cost and is intended for use as is.
+[hexa.run](https://hexa.run), code name "[Hexa](https://github.com/manekinekko/hexa)" as a open source app. This Service, [hexa.run](https://hexa.run), is provided by [Wassim Chegham](https://twitter.com/manekinekko) at no cost and is intended for use as is.
 
 This page is used to inform website visitors regarding our policies with the collection, use, and disclosure of Personal Information if anyone decided to use our Service.
 

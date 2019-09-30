@@ -1,6 +1,6 @@
-# Contributing to Project Hexa
+# Contributing to the Hexa project
 
-We would love for you to contribute to Project Hexa and help make it even better
+We would love for you to contribute to the Hexa project and help make it even better
 than it is today! As a contributor, here are the guidelines we would like you
 to follow:
 
@@ -12,7 +12,7 @@ to follow:
  - [Commit Message Guidelines](#commit)
 
 ## <a name="coc"></a> Code of Conduct
-You can read about Project Hexa Code Of Conduct [here](https://github.com/manekinekko/hexa/blob/master/CODE_OF_CONDUCT.md).
+You can read about the Hexa project code of conduct [here](https://github.com/manekinekko/hexa/blob/master/CODE_OF_CONDUCT.md).
 
 ## <a name="question"></a> Got a Question or Problem?
 
@@ -141,7 +141,7 @@ To ensure consistency throughout the source code, keep these rules in mind as yo
 
 We have very precise rules over how our git commit messages can be formatted.  This leads to **more
 readable messages** that are easy to follow when looking through the **project history**.  But also,
-we use the git commit messages to **generate the Project Hexa change log**.
+we use the git commit messages to **generate the Hexa project change log**.
 
 ### Commit Message Format
 Each commit message consists of a **header**, a **body** and a **footer**.  The header has a special
@@ -213,7 +213,7 @@ reference GitHub issues that this commit **Closes**.
 
 A detailed explanation can be found in this [document][commit-message-format].
 
-## Development Hints for working on Project Hexa CLI
+## Development hints for working on the Hexa CLI
 
 ### Working with master
 
@@ -252,4 +252,4 @@ and the [npm-link cheatsheet](http://browsenpm.org/help#linkinganynpmpackageloca
 [commit-message-format]: https://docs.google.com/document/d/1QrDFcIiPjSLDn3EL15IJygNPiHORgU1_OOAqWjiDU5Y/edit#
 [GitHub]: https://github.com/manekinekko/hexa
 [js-style-guide]: https://google.github.io/styleguide/jsguide.html
-[stackoverflow]: http://stackoverflow.com/questions/tagged/project-hexa
+[stackoverflow]: http://stackoverflow.com/questions/tagged/hexa

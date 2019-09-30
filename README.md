@@ -1,8 +1,8 @@
 <h1 align="center">
-  <a href="https://hexa.run">Welcome to Project Hexa</a>
+  <a href="https://hexa.run">Welcome to Hexa</a>
 </h1>
 
-<p align="center">Project Hexa – The ultimate companion for the Azure CLI. Setup and deploy in seconds.</p>
+<p align="center">Hexa – The ultimate companion for the Azure CLI. Setup and deploy in seconds.</p>
 <p align="center">
   <img width="200" align="center" src="https://github.com/manekinekko/hexa/raw/master/docs/hexa.png?raw=true"/>
 </p>
@@ -44,13 +44,13 @@
   
 </p>
 
-## What is Project Hexa?
+## What is Hexa?
 
-[Project Hexa](https://hexa.run) is a open source command line tool to easily setup and deploy your applications to Microsoft Azure. It takes full advantage of the Azure CLI, the Azure Function Core Tools CLI and the NPM CLI.
+[Hexa](https://hexa.run) is a open source command line tool to easily setup and deploy your applications to Microsoft Azure. It takes full advantage of the Azure CLI, the Azure Function Core Tools CLI and the NPM CLI.
 
-Project Hexa allows to seamlessly configure, setup and deploy to different Azure services such as Resource Groups, Storage accounts, Hosting, Azure Functions and Databases (CosmosDB and Table Storage).
+Hexa allows to seamlessly configure, setup and deploy to different Azure services such as Resource Groups, Storage accounts, Hosting, Azure Functions and Databases (CosmosDB and Table Storage).
 
-Project Hexa is driven by community contributions. Please send us your Pull Requests and feedback!
+Hexa is driven by community contributions. Please send us your Pull Requests and feedback!
 
 ## Want to help? [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/manekinekko/hexa/issues)
 Want to file a bug, contribute some code, or improve the documentation? Excellent! Read up on our guidelines for [contributing](https://github.com/manekinekko/hexa/blob/master/CONTRIBUTING.md) and then check out one of our issues in the hotlist: [community-help](https://github.com/manekinekko/hexa/issues).
