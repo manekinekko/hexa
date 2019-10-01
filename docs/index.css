@@ -27,6 +27,7 @@ a.link__home {
   align-items: end;
   color: white;
   font-size: 18px;
+  font-weight: 300;
 }
 
 a.button {
@@ -140,6 +141,7 @@ main h2 {
   align-items: center;
   font-size: 6em;
   margin: 0;
+  font-weight: 300;
 }
 
 main h2 img.logo {
