@@ -1,5 +1,5 @@
 <h1 align="center">
-  <a href="https://hexa.run">Welcome to Hexa</a>
+  <a href="https://hexa.run">Welcome to HEX△</a>
 </h1>
 
 <p align="center">Hexa – The ultimate companion for the Azure CLI. Setup and deploy in seconds.</p>
