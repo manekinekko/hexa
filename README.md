@@ -76,18 +76,20 @@ To make sure the Hexa CLI has been correctly, you can execute the `hexa` command
 Usage: hexa <command>
 
 Options:
-  -V, --version  output the version number
-  login          connect to your Azure
-  init           initialize a new workspace
-  deploy         deploy to Azure
-  -f, --force    override all confirmations (default: false)
-  -r, --relogin  force login (default: false)
-  -c, --create   enable resource creation (default: true)
-  -s, --sas      use SAS token (only: storage and database) (default: false)
-  -m, --manual   enable Manual mode (default: false)
-  -d, --debug    enable debug mode (default: false)
-  --yolo         enale all modes and all services (default: false)
-  -h, --help     output usage information
+  -V, --version          output the version number
+  login                  connect to your Azure
+  init                   initialize a new workspace
+  deploy                 deploy to Azure
+  -f, --force            override all confirmations (default: false)
+  -r, --relogin          force login (default: false)
+  -c, --create           enable resource creation (default: true)
+  -m, --manual           enable Manual mode (default: false)
+  -d, --debug            enable debug mode (default: false)
+  -s, --sas              use SAS token (only: storage and database) (default: false)
+  -t, --token            generate a Storage token into a .env file (default: false)
+  -j, --just <services>  setup or deploy only the selected services (e.g. --just functions,hosting) (default: false)
+  --yolo                 enable all modes and all services (default: false)
+  -h, --help             output usage information
 ```
 
 ## Usage
@@ -101,9 +103,20 @@ For example, if you want to setup your project `Foo`that lives inside the `./foo
 
 Once your project is setup and configured, you will see a newly created file called `hexa.json`. This file contains the configuration for your project `Foo`. 
 
-> Note: Hexa also creates a `.env` file which contains the connection token for your storage account. Hexa does not use this token! It is meant for you to use. You can delete this file if you are not using it.
-
 Whenever your project Foo is ready to be deployed to Azure, you can use the `hexa deploy` inside the `./foo` folder and let Hexa takes care of the deploy process.
+
+### Examples
+
+- `$ hexa init --just=hosting,functions`: Hexa setup and configure just the requested services. Current supported services are `hosting`, `functions` and `database`. Please note that a Resource Group and a Storage Accout will automatically be setup as these are required by the other services.
+
+- `$ hexa init --token`: Hexa will also create a `.env` file which contains the Connectio String token for your storage account. Hexa does not use this token! It is meant for you to use.
+
+- `$ hexa init --token --sas`: Hexa will generate a SAS token for your storage account (instead of a Connection String).
+
+- `$ hexa init --manual`: Hexa will enter a Manual Mode and will ask you to make a choice for each step.
+
+- `$ hexa init --yolo`: Hexa will enter an Auto Mode and will setup all supported services (except if you use the `--just` flag) without asking you any question.
+
 
 Enjoy!
 
