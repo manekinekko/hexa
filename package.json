@@ -1,6 +1,6 @@
 {
   "name": "@manekinekko/hexa",
-  "version": "1.0.0-preview.5",
+  "version": "1.0.0-preview.6",
   "description": "Hexa: The ultimate companion for the Azure CLI. Setup and deploy in seconds.",
   "main": "./build/index.js",
   "types": "./build/index.d.ts",
