@@ -115,7 +115,7 @@ Whenever your project Foo is ready to be deployed to Azure, you can use the `hex
 
 - `$ hexa init --manual`: Hexa will enter a Manual Mode and will ask you to make a choice for each step.
 
-- `$ hexa init --manual --create`: In manual mode, by default, Hexa would only let you choose an existing resource from your exising ones. The `--create` flag allows you to manually create a new resource/service at your convenience.
+- `$ hexa init --manual --create`: In manual mode, by default, Hexa would only let you choose an resource from your existing ones. The `--create` flag allows you to manually create a new resource/service at your convenience.
 
 - `$ hexa init --yolo`: Hexa will enter an Auto Mode and will setup all supported services (except if you use the `--just` flag) without asking you any question.
 
