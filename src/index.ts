@@ -40,7 +40,7 @@ console.log(prettyFont.string);
     .option("deploy", "deploy to Azure")
     .option("-f, --force", "override all confirmations", false)
     .option("-r, --relogin", "force login", false)
-    .option("-c, --create", "enable resource creation", true)
+    .option("-c, --create", "enable resource creation", false)
     .option("-m, --manual", "enable Manual mode", false)
     .option("-d, --debug", "enable debug mode", false)
     .option("-s, --sas", "use SAS token (only: storage and database)", false)

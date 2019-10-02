@@ -37,7 +37,7 @@ export function chooseResourceGroup(resourceGroups: AzureResourceGroup[]): Promi
         id: "MANUAL",
         location: "",
         tags: {},
-        name: "<Create a resource group>"
+        name: "<Create a Resource Group>"
       }
     ];
   }
