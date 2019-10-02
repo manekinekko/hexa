@@ -14,7 +14,7 @@
     "build": "rm -fr build/ && mkdir build && npm run copy && tsc",
     "copy": "cp -r src/templates build",
     "prepare": "npm run build",
-    "release": "npm publish --access=public"
+    "release": "release-it"
   },
   "keywords": [
     "azure",
@@ -62,12 +62,13 @@
     "@types/ora": "^3.2.0",
     "husky": "^3.0.7",
     "nodemon": "^1.19.1",
+    "release-it": "^12.4.2",
     "ts-node": "^8.3.0",
     "typescript": "^3.6.2"
   },
   "husky": {
     "hooks": {
       "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
-    }  
+    }
   }
 }
