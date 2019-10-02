@@ -4,7 +4,7 @@ import chalk from "chalk";
 import clear from "clear";
 import program from "commander";
 const CFonts = require("cfonts");
-const prettyFont = CFonts.render("Hexa", {
+const prettyFont = CFonts.render("HEXA", {
   font: "block",
   colors: ["cyan", "yellow"],
   letterSpacing: 1
@@ -16,9 +16,15 @@ console.log(prettyFont.string);
 (async () => {
   const start = process.hrtime();
 
-  const runCommand = async (commandName: string) => {
+  const runCommand = async (commandName: string, requetedServices: string | undefined) => {
     try {
-      return (await require(`./commands/${commandName}`))();
+      const options: NitroInitOptions = {};
+
+      if (requetedServices) {
+        options.requetedServices = requetedServices.split(',').filter(feat => feat);
+      }
+
+      return (await require(`./commands/${commandName}`))(options);
     } catch (error) {
       console.error(chalk.red(`Command "${commandName}" not supported yet.`));
       console.error(chalk.red(error));
@@ -38,7 +44,8 @@ console.log(prettyFont.string);
     .option("-s, --sas", "use SAS token (only: storage and database)", false)
     .option("-m, --manual", "enable Manual mode", false)
     .option("-d, --debug", "enable debug mode", false)
-    .option("--yolo", "enale all modes and all services", false)
+    .option("-j, --just <services>", "setup or deploy only the selected services (e.g. --just functions,hosting)", false)
+    .option("--yolo", "enable all modes and all services", false)
     .parse(process.argv);
 
   if (program.yolo) {
@@ -73,7 +80,7 @@ console.log(prettyFont.string);
     program.outputHelp();
     process.exit(0);
   }
-  await runCommand(commandName.replace("--", ""));
+  await runCommand(commandName.replace("--", ""), program.just);
 
   const end = process.hrtime(start);
   console.info(chalk.green("✔ Done in %d seconds."), end[0]);

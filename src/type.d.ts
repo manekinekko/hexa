@@ -8,6 +8,11 @@ declare interface ProcessEnv {
   HEXA_YOLO_MODE: "1";
 }
 
+declare interface NitroInitOptions {
+  requetedServices?: string[];
+}
+
+
 declare interface NitroWorkspace {
   [key: string]: any;
 
