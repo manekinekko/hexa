@@ -14,7 +14,7 @@
     "build": "rm -fr build/ && mkdir build && npm run copy && tsc",
     "copy": "cp -r src/templates build",
     "prepare": "npm run build",
-    "release": "release-it"
+    "release": "release-it --no-git.requireUpstream"
   },
   "keywords": [
     "azure",
