@@ -21,7 +21,7 @@ console.log(prettyFont.string);
       const options: NitroInitOptions = {};
 
       if (requetedServices) {
-        options.requetedServices = requetedServices.split(',').filter(feat => feat);
+        options.requetedServices = requetedServices.split(",").filter(feat => feat);
       }
 
       return (await require(`./commands/${commandName}`))(options);
@@ -41,16 +41,20 @@ console.log(prettyFont.string);
     .option("-f, --force", "override all confirmations", false)
     .option("-r, --relogin", "force login", false)
     .option("-c, --create", "enable resource creation", true)
-    .option("-s, --sas", "use SAS token (only: storage and database)", false)
     .option("-m, --manual", "enable Manual mode", false)
     .option("-d, --debug", "enable debug mode", false)
+    .option("-s, --sas", "use SAS token (only: storage and database)", false)
+    .option("-t, --token", "generate a Storage token into a .env file", false)
     .option("-j, --just <services>", "setup or deploy only the selected services (e.g. --just functions,hosting)", false)
     .option("--yolo", "enable all modes and all services", false)
     .parse(process.argv);
 
+  // set confiuration
+  // WARNING: order matters
   if (program.yolo) {
     program.force = true;
     program.auto = true;
+    program.token = true;
     process.env.HEXA_YOLO_MODE = "1";
   }
 
@@ -71,6 +75,10 @@ console.log(prettyFont.string);
   }
   if (program.sas) {
     process.env.NITRO_STORAGE_USE_SAS = "1";
+    program.token = true;
+  }
+  if (program.token) {
+    process.env.NITRO_STORAGE_GENERATE_TOKEN = "1";
   }
 
   // use process.argv not program.argv

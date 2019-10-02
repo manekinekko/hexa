@@ -66,5 +66,8 @@ module.exports = async function() {
     storage
   });
 
-  return (await require("./tokens"))();
+  if (process.env.NITRO_STORAGE_GENERATE_TOKEN) {
+    return (await require("./tokens"))();
+  }
+  return true;
 };
