@@ -1,6 +1,10 @@
 {
   "preRelease": "preview",
-  "increment": "conventional:angular",
+  "plugins": {
+    "@release-it/conventional-changelog": {
+      "preset": "angular"
+    }
+  },
   "git": {
     "commitMessage": "chore(release): v${version}",
     "tagName": "${version}",

@@ -54,6 +54,7 @@
   "devDependencies": {
     "@commitlint/cli": "^8.2.0",
     "@commitlint/config-conventional": "^8.2.0",
+    "@release-it/conventional-changelog": "^1.1.0",
     "@types/clear": "^0.1.0",
     "@types/configstore": "^4.0.0",
     "@types/dotenv": "^6.1.1",
