@@ -109,7 +109,7 @@ Whenever your project Foo is ready to be deployed to Azure, you can use the `hex
 
 - `$ hexa init --just=hosting,functions`: Hexa will setup and configure just the requested services. Current supported services are `hosting`, `functions` and `database`. Please note that a Resource Group and a Storage Accout will automatically be setup as these are required by the other services.
 
-- `$ hexa init --token`: Hexa will also create a `.env` file which contains the Connectio String token for your storage account. Hexa does not use this token! It is meant for you to use.
+- `$ hexa init --token`: Hexa will also create a `.env` file which contains the Connection String token for your storage account. Hexa does not use this token! It is meant for you to use.
 
 - `$ hexa init --token --sas`: Hexa will generate a SAS token for your storage account (instead of a Connection String).
 
