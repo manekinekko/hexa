@@ -74,7 +74,7 @@ module.exports = async function() {
       // https://docs.microsoft.com/en-us/cli/azure/cosmosdb?view=azure-cli-latest#az-cosmosdb-create
       databaseInstance = await az<DatabaseInstance>(
         `cosmosdb create --name ${databaseName} --resource-group ${resourceGroup.name} --tag 'x-created-by=hexa' --query '{id: id, name: name, tags: tags, endpoint: documentEndpoint}'`,
-        `Setting up CosmosDB instance ${chalk.cyan(databaseName)} (this may take few minutes)...`
+        `Setting up CosmosDB instance ${chalk.cyan(databaseName)} (this may take up to 5 minutes)...`
       );
       debug(`created cosmosdb instance ${chalk.green(databaseInstance.name)}`);
     }
