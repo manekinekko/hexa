@@ -128,6 +128,14 @@ main {
   margin: 100px 0;
 }
 
+header img.title {
+  width: 64px;
+}
+
+main img.title {
+  width: 200px;
+}
+
 main h1 {
   font-weight: lighter;
   align-items: center;
