@@ -38,7 +38,7 @@ console.log(prettyFont.string);
     .option("login", "connect to your Azure")
     .option("init", "initialize a new workspace")
     .option("deploy", "deploy to Azure")
-    .option("-f, --force", "override all confirmations", false)
+    .option("-y, --yes", "answer yes to all confirmations", false)
     .option("-r, --relogin", "force login", false)
     .option("-c, --create", "enable resource creation", false)
     .option("-m, --manual", "enable Manual mode", false)
