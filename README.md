@@ -48,7 +48,7 @@
 
 [Hexa](https://hexa.run) is a open source command line tool to easily setup and deploy your applications to Microsoft Azure. It takes full advantage of the Azure CLI, the Azure Function Core Tools CLI and the NPM CLI.
 
-Hexa allows to seamlessly configure, setup and deploy to different Azure services such as Resource Groups, Storage accounts, Hosting, Azure Functions and Databases (CosmosDB and Table Storage).
+Hexa allows you to seamlessly configure, setup and deploy to different Azure services such as Resource Groups, Storage accounts, Hosting, Azure Functions and Databases (CosmosDB and Table Storage).
 
 Hexa is driven by community contributions. Please send us your Pull Requests and feedback!
 
@@ -70,7 +70,7 @@ You can install the Hexa CLI using `npm` or `yarn`:
 $ npm install --global @manekinekko/hexa
 ```
 
-To make sure the Hexa CLI has been correctly, you can execute the `hexa` command from anywhere in your system and you should see the default usage output:
+To make sure the Hexa CLI has been installed correctly, you can execute the `hexa` command from anywhere in your system and you should see the default usage output:
 
 ```bash
 Usage: hexa <command>
@@ -94,30 +94,30 @@ Options:
 
 ## Usage
 
-In order to use the Hexa CLI to configure and setup your Azure services, run the `hexa init` command inside one of your project that you want to setup for Azure. The Hexa CLI will guide you through the setup process.
+In order to use the Hexa CLI to configure and set up your Azure services, run the `hexa init` command inside one of your projects that you want to set up for Azure. The Hexa CLI will guide you through the setup process.
 
-For example, if you want to setup your project `Foo`that lives inside the `./foo` folder, here are the steps:
+For example, if you want to set up your project `Foo` that lives inside the `./foo` folder, here are the steps:
 
 1. `$ cd foo`
 1. `$ hexa init`
 
 Once your project is setup and configured, you will see a newly created file called `hexa.json`. This file contains the configuration for your project `Foo`. 
 
-Whenever your project Foo is ready to be deployed to Azure, you can use the `hexa deploy` inside the `./foo` folder and let Hexa takes care of the deploy process.
+Whenever your project Foo is ready to be deployed to Azure, you can use the `hexa deploy` command inside the `./foo` folder and let Hexa take care of the deploy process.
 
 ### Examples
 
 - `$ hexa init --just=hosting,functions`: Hexa will setup and configure just the requested services. Current supported services are `hosting`, `functions` and `database`. Please note that a Resource Group and a Storage Accout will automatically be setup as these are required by the other services.
 
-- `$ hexa init --token`: Hexa will also create a `.env` file which contains the Connectio String token for your storage account. Hexa does not use this token! It is meant for you to use.
+- `$ hexa init --token`: Hexa will also create a `.env` file which contains the Connection String token for your storage account. Hexa does not use this token! It is meant for you to use.
 
 - `$ hexa init --token --sas`: Hexa will generate a SAS token for your storage account (instead of a Connection String).
 
-- `$ hexa init --manual`: Hexa will enter a Manual Mode and will ask you to make a choice for each step.
+- `$ hexa init --manual`: Hexa will enter Manual Mode and will ask you to make a choice for each step.
 
-- `$ hexa init --manual --create`: In manual mode, by default, Hexa would only let you choose an resource from your existing ones. The `--create` flag allows you to manually create a new resource/service at your convenience.
+- `$ hexa init --manual --create`: In manual mode, by default, Hexa would only let you choose a resource from your existing ones. The `--create` flag allows you to manually create a new resource/service at your convenience.
 
-- `$ hexa init --yolo`: Hexa will enter an Auto Mode and will setup all supported services (except if you use the `--just` flag) without asking you any question.
+- `$ hexa init --yolo`: Hexa will enter Auto Mode and will setup all supported services (except if you use the `--just` flag) without asking you any question.
 
 
 Enjoy!
