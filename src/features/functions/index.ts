@@ -19,7 +19,7 @@ module.exports = async function() {
 
   // https://docs.microsoft.com/en-us/cli/azure/functionapp?view=azure-cli-latest#az-functionapp-list
   let functionAppsList = await az<AzureFunctionApp[]>(
-    `functionapp list --resource-group "${resourceGroup.name}" --subscription "${subscription.id}" --query '[].{id: id, name: name, appServicePlanId: appServicePlanId, hostName: defaultHostName, state: state, tags: tags}'`,
+    `functionapp list --resource-group "${resourceGroup.name}" --subscription "${subscription.id}" --query "[].{id: id, name: name, appServicePlanId: appServicePlanId, hostName: defaultHostName, state: state, tags: tags}"`,
     `Checking storage accounts for resource group ${chalk.cyan(resourceGroup.name)}...`
   );
   functionAppsList = functionAppsList.sort((a, b) => (a.tags && a.tags["x-created-by"] === "hexa" ? -1 : 1));
@@ -32,7 +32,7 @@ module.exports = async function() {
   } else {
     // https://docs.microsoft.com/en-us/cli/azure/functionapp?view=azure-cli-latest#az-functionapp-create
     functionApp = await az<AzureFunctionApp>(
-      `functionapp create --resource-group ${resourceGroup.name} --consumption-plan-location ${resourceGroup.location} --name ${functionAppName} --storage-account ${storage.name} --runtime node --disable-app-insights --tag 'x-created-by=hexa' --query '{id: id, name: name, appServicePlanId: appServicePlanId, hostName: defaultHostName, state: state, tags: tags}'`,
+      `functionapp create --resource-group ${resourceGroup.name} --consumption-plan-location ${resourceGroup.location} --name ${functionAppName} --storage-account ${storage.name} --runtime node --disable-app-insights --tag 'x-created-by=hexa' --query "{id: id, name: name, appServicePlanId: appServicePlanId, hostName: defaultHostName, state: state, tags: tags}"`,
       `Enabling Functions (this may take few minutes)...`
     );
     debug(`created functionApp ${chalk.green(functionApp.name)}`);

@@ -41,7 +41,7 @@ module.exports = async function() {
 
   // https://docs.microsoft.com/en-us/cli/azure/storage/blob/service-properties?view=azure-cli-latest#az-storage-blob-service-properties-update
   await az<string>(
-    `storage blob service-properties update --account-name "${storage.name}" --static-website --404-document 404.html --index-document index.html --query '{staticWebsite: staticWebsite}'`,
+    `storage blob service-properties update --account-name "${storage.name}" --static-website --404-document 404.html --index-document index.html --query "{staticWebsite: staticWebsite}"`,
     `Enabling hosting for storage account ${chalk.cyan(storage.name)}...`
   );
 

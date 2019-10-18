@@ -11,7 +11,7 @@ module.exports = async function(creationMode: CreationMode) {
   if (creationMode === "MANUAL") {
     // https://docs.microsoft.com/en-us/cli/azure/account?view=azure-cli-latest#az-account-list-locations
     let regionsList = await az<AzureRegion[]>(
-      `account list-locations --query '[].{name:name, id:id, displayName:displayName}'`,
+      `account list-locations --query "[].{name:name, id:id, displayName:displayName}"`,
       `Loading Azure regions (this may take few minutes)...`
     );
     ({ name, region } = await askForResourceGroupDetails(regionsList, name, region));
@@ -19,7 +19,7 @@ module.exports = async function(creationMode: CreationMode) {
 
   // https://docs.microsoft.com/en-us/cli/azure/group?view=azure-cli-latest#az-group-create
   let resourceGroup = await az<AzureResourceGroup>(
-    `group create -l ${region} -n ${name} --tag 'x-created-by=hexa' --query '{name:name, id:id, location:location}'`,
+    `group create -l ${region} -n ${name} --tag "x-created-by=hexa" --query "{name:name, id:id, location:location}"`,
     `Setting resource group ${chalk.cyan(name)}`
   );
 

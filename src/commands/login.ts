@@ -3,7 +3,7 @@ import { az, Config, saveWorkspace } from "../core/utils";
 
 module.exports = async function() {
   let subscriptionsList = await az<AzureSubscription[]>(
-    `login --query '[].{name:name, state:state, id:id}'`,
+    `login --query "[].{name:name, state:state, id:id}"`,
     `Loading subscriptions...`
   );
 

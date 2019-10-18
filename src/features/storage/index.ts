@@ -12,7 +12,7 @@ module.exports = async function() {
 
   // https://docs.microsoft.com/en-us/cli/azure/storage/account?view=azure-cli-latest#az-storage-account-list
   let storageAccountsList = await az<AzureStorage[]>(
-    `storage account list --resource-group "${resourceGroup.name}" --subscription "${subscription.id}" --query '[].{name:name, id:id, location:location, tags:tags}'`,
+    `storage account list --resource-group "${resourceGroup.name}" --subscription "${subscription.id}" --query "[].{name:name, id:id, location:location, tags:tags}"`,
     `Checking storage accounts for resource group ${chalk.cyan(resourceGroup.name)}...`
   );
 

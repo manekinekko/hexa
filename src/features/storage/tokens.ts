@@ -29,7 +29,7 @@ module.exports = async function() {
   } else {
     // https://docs.microsoft.com/en-us/cli/azure/storage/account?view=azure-cli-latest#az-storage-account-show-connection-string
     let connectionString = await az<string>(
-      `storage account show-connection-string --name "${storage.name}" --resource-group "${resourceGroup.name}" --subscription "${subscription.name}" --query 'connectionString'`,
+      `storage account show-connection-string --name "${storage.name}" --resource-group "${resourceGroup.name}" --subscription "${subscription.name}" --query "connectionString"`,
       `Fetching a connection string for storage account ${chalk.cyan(storage.name)}...`
     );
     saveEnvFile("AZURE_STORAGE_CONNECTION_STRING", connectionString);

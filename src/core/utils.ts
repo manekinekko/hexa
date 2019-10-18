@@ -22,7 +22,11 @@ export const uuid = () => {
   return guuid;
 };
 
-export const sanitize = (name: string) => name.replace(/[\W_]+/gim, "").trim().substr(0, 20);
+export const sanitize = (name: string) =>
+  name
+    .replace(/[\W_]+/gim, "")
+    .trim()
+    .substr(0, 20);
 
 export const Config = new Configstore(packageJson.name, {
   version: packageJson.version
@@ -199,6 +203,22 @@ export function saveEnvFile(key: string, value: string) {
   }
 
   fs.writeFileSync(ENV_FILENAME, envValues.join("\n"));
+
+  const gitIgnoreFilename = `.gitignore`;
+  if (fileExists(gitIgnoreFilename)) {
+    const gitIgnoreFileContent = readFileFromDisk(gitIgnoreFilename) || "";
+    if (gitIgnoreFileContent.includes('.env')) {
+      debug(`${ENV_FILENAME} file already in ${gitIgnoreFilename}`);
+    }
+    else {
+      debug(`add ${ENV_FILENAME} to ${gitIgnoreFilename}`);
+      fs.writeFileSync(ENV_FILENAME, [gitIgnoreFileContent, ENV_FILENAME].join("\n"));
+    }
+  }
+  else {
+    debug(`add ${ENV_FILENAME} to ${gitIgnoreFilename}`);
+    fs.writeFileSync(gitIgnoreFilename, ENV_FILENAME);
+  }
 }
 
 export function isProjectFileExists() {

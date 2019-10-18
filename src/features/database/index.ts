@@ -32,7 +32,7 @@ module.exports = async function() {
   if (databaseType === "TABLE_STORAGE") {
     // https://docs.microsoft.com/en-us/cli/azure/storage/table?view=azure-cli-latest#az-storage-table-list
     const databasesInstancesList = await az<DatabaseInstance[]>(
-      `storage table list --account-name "${storage.name}" --subscription "${subscription.id}" --query '[].{name: name}'`,
+      `storage table list --account-name "${storage.name}" --subscription "${subscription.id}" --query "[].{name: name}"`,
       `Checking Table Storage instances for Storage Account ${chalk.cyan(storage.name)}...`
     );
 
@@ -43,7 +43,7 @@ module.exports = async function() {
     } else {
       // https://docs.microsoft.com/en-us/cli/azure/storage/table?view=azure-cli-latest#az-storage-table-create
       databaseInstance = await az<DatabaseInstance>(
-        `storage table create --name ${databaseName} --account-name ${storage.name} --query '{created: created}'`,
+        `storage table create --name ${databaseName} --account-name ${storage.name} --query "{created: created}"`,
         `Setting up Table Storage ${chalk.cyan(databaseName)}...`
       );
 
@@ -63,7 +63,7 @@ module.exports = async function() {
   } else if (databaseType === "COSMOSDB") {
     // https://docs.microsoft.com/en-us/cli/azure/cosmosdb?view=azure-cli-latest#az-cosmosdb-list
     const databasesInstancesList = await az<DatabaseInstance[]>(
-      `cosmosdb list --resource-group "${resourceGroup.name}" --subscription "${subscription.id}" --query '[].{id: id, name: name, tags: tags, documentEndpoint: documentEndpoint}'`,
+      `cosmosdb list --resource-group "${resourceGroup.name}" --subscription "${subscription.id}" --query "[].{id: id, name: name, tags: tags, documentEndpoint: documentEndpoint}"`,
       `Checking CosmosDB instances for resource group ${chalk.cyan(resourceGroup.name)}...`
     );
 
@@ -73,7 +73,7 @@ module.exports = async function() {
     } else {
       // https://docs.microsoft.com/en-us/cli/azure/cosmosdb?view=azure-cli-latest#az-cosmosdb-create
       databaseInstance = await az<DatabaseInstance>(
-        `cosmosdb create --name ${databaseName} --resource-group ${resourceGroup.name} --tag 'x-created-by=hexa' --query '{id: id, name: name, tags: tags, endpoint: documentEndpoint}'`,
+        `cosmosdb create --name ${databaseName} --resource-group ${resourceGroup.name} --tag 'x-created-by=hexa' --query "{id: id, name: name, tags: tags, endpoint: documentEndpoint}"`,
         `Setting up CosmosDB instance ${chalk.cyan(databaseName)} (this may take up to 5 minutes)...`
       );
       debug(`created cosmosdb instance ${chalk.green(databaseInstance.name)}`);

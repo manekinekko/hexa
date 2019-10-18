@@ -8,7 +8,7 @@ module.exports = async function() {
 
   // https://docs.microsoft.com/en-us/cli/azure/group?view=azure-cli-latest#az-group-list
   let resourceGroupsList = await az<AzureResourceGroup[]>(
-    `group list --query '[].{name:name, id:id, location:location, tags:tags}'`,
+    `group list --query "[].{name:name, id:id, location:location, tags:tags}"`,
     `Loading resource groups...`
   );
 

@@ -52,7 +52,7 @@ console.log(prettyFont.string);
   // set confiuration
   // WARNING: order matters
   if (program.yolo) {
-    program.force = true;
+    program.yes = true;
     program.auto = true;
     program.token = true;
     process.env.HEXA_YOLO_MODE = "1";
@@ -61,7 +61,7 @@ console.log(prettyFont.string);
   if (program.debug) {
     process.env.DEBUG = "*";
   }
-  if (program.force) {
+  if (program.yes) {
     process.env.HEXA_FORCE_MODE = "1";
   }
   if (program.manual === false) {
