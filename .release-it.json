@@ -1,5 +1,4 @@
 {
-  "preRelease": "preview",
   "plugins": {
     "@release-it/conventional-changelog": {
       "preset": "angular"
