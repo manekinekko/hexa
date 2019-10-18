@@ -4,7 +4,7 @@
 
 <p align="center">Hexa – The ultimate companion for the Azure CLI. Setup and deploy in seconds.</p>
 <p align="center">
-  <img width="200" align="center" src="https://github.com/manekinekko/hexa/raw/master/docs/hexa.png?raw=true"/>
+  <img width="200" align="center" src="https://raw.githubusercontent.com/manekinekko/hexa/master/docs/hexa-title.png"/>
 </p>
 
 <p align="center" >
