@@ -80,9 +80,9 @@ Options:
   login                  connect to your Azure
   init                   initialize a new workspace
   deploy                 deploy to Azure
-  -f, --force            override all confirmations (default: false)
+  -y, --yes              answer yes to all confirmations (default: false)
   -r, --relogin          force login (default: false)
-  -c, --create           enable resource creation (default: true)
+  -c, --create           enable resource creation (default: false)
   -m, --manual           enable Manual mode (default: false)
   -d, --debug            enable debug mode (default: false)
   -s, --sas              use SAS token (only: storage and database) (default: false)

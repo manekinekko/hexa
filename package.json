@@ -10,7 +10,7 @@
   "homepage": "https://github.com/manekinekko/hexa#readme",
   "private": false,
   "scripts": {
-    "start": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts",
+    "start": "npm run build -- --watch",
     "build": "rm -fr build/ && mkdir build && npm run copy && tsc",
     "copy": "cp -r src/templates build",
     "prepare": "npm run build",

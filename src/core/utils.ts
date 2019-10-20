@@ -228,10 +228,18 @@ export function isProjectFileExists() {
   return isFound;
 }
 
-export function copyTemplate(src: string, destination: string) {
+export function copyTemplate(src: string, destination: string, context?: {[key: string]: string}) {
   const templateDir = getTemplateFullPath();
   src = templateDir + "/" + src;
 
+  if (context) {
+    let srcContent = readFileFromDisk(src) || "";
+    for (let key in context) {
+      srcContent = srcContent.replace(new RegExp(`{{(${key})}}`, 'g'), context[key]);
+    }
+    debug(`copying template file src=${chalk.green(src)}, destination=${chalk.green(destination)}, context=${chalk.green(JSON.stringify(context))}`);
+    return fs.writeFileSync(destination, srcContent);
+  }
   debug(`copying template file src=${chalk.green(src)}, destination=${chalk.green(destination)}`);
   return fs.copyFileSync(src, destination);
 }
@@ -246,4 +254,18 @@ export function getFullPath(folder: string) {
 
 export function joinPath(...args: string[]) {
   return path.join(...args);
+}
+
+export function updateFile({filepath, replace, search}: {filepath: string, replace: string, search?: string}) {
+  let srcContent = readFileFromDisk(filepath) || "";
+
+  if (search) {
+    srcContent = srcContent.replace(search, replace);
+  }
+  else {
+    srcContent = [srcContent, replace].join(`\n`);
+  }
+
+  debug(`updating file src=${chalk.green(filepath)}`);
+  return fs.writeFileSync(filepath, srcContent);
 }

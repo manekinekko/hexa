@@ -47,6 +47,7 @@ console.log(prettyFont.string);
     .option("-t, --token", "generate a Storage token into a .env file", false)
     .option("-j, --just <services>", "setup or deploy only the selected services (e.g. --just functions,hosting)", false)
     .option("--yolo", "enable all modes and all services", false)
+    .option("--use <builder>", "use a specific build system (e.g. tsc,bazel)", 'tsc')
     .parse(process.argv);
 
   // set confiuration
@@ -79,6 +80,9 @@ console.log(prettyFont.string);
   }
   if (program.token) {
     process.env.HEXA_STORAGE_GENERATE_TOKEN = "1";
+  }
+  if (program.use === 'bazel') {
+    process.env.HEXA_USE_BAZEL = "1";
   }
 
   // use process.argv not program.argv

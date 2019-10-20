@@ -22,15 +22,15 @@ module.exports = async function() {
 
   if (overrideHtml || typeof overrideHtml === "undefined") {
     // copy index.html
-    copyTemplate(`init/index.html`, `${folder}/index.html`);
+    copyTemplate(`init/hosting/index.html.tpl`, `${folder}/index.html`);
   }
   if (override404 || typeof override404 === "undefined") {
     // copy 404.html
-    copyTemplate(`init/404.html`, `${folder}/404.html`);
+    copyTemplate(`init/hosting/404.html.tpl`, `${folder}/404.html`);
   }
   if (overrideError || typeof overrideError === "undefined") {
     // copy errro.html
-    copyTemplate(`init/error.html`, `${folder}/error.html`);
+    copyTemplate(`init/hosting/error.html.tpl`, `${folder}/error.html`);
   }
 
   const storage: AzureStorage = Config.get("storage");
