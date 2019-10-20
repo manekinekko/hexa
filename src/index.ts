@@ -68,17 +68,17 @@ console.log(prettyFont.string);
     process.env.HEXA_AUTO_MODE = "1";
   }
   if (program.create) {
-    process.env.NITRO_ENABLE_ADDING_NEW_RESOURCE = "1";
+    process.env.HEXA_ENABLE_ADDING_NEW_RESOURCE = "1";
   }
   if (program.relogin) {
-    process.env.NITRO_FORCE_LOGIN = "1";
+    process.env.HEXA_FORCE_LOGIN = "1";
   }
   if (program.sas) {
-    process.env.NITRO_STORAGE_USE_SAS = "1";
+    process.env.HEXA_STORAGE_USE_SAS = "1";
     program.token = true;
   }
   if (program.token) {
-    process.env.NITRO_STORAGE_GENERATE_TOKEN = "1";
+    process.env.HEXA_STORAGE_GENERATE_TOKEN = "1";
   }
 
   // use process.argv not program.argv

@@ -12,7 +12,7 @@ module.exports = async function() {
   const subscription: AzureSubscription = Config.get("subscription");
   debug(`using subscription ${chalk.green(subscription.name)}`);
 
-  if (process.env.NITRO_STORAGE_USE_SAS) {
+  if (process.env.HEXA_STORAGE_USE_SAS) {
     // https://docs.microsoft.com/en-us/cli/azure/storage/account?view=azure-cli-latest#az-storage-account-generate-sas
     const expiryYear = new Date().getFullYear() + 2;
     let sas = await az<string>(

@@ -75,7 +75,7 @@ module.exports = async function(options?: NitroInitOptions) {
   Config.set("project", name);
   const subscriptions: AzureSubscription[] = Config.get("subscriptions");
 
-  if (!subscriptions || (subscriptions && subscriptions.length === 0) || process.env.NITRO_FORCE_LOGIN) {
+  if (!subscriptions || (subscriptions && subscriptions.length === 0) || process.env.HEXA_FORCE_LOGIN) {
     await require(`./login`)();
   } else {
     debug(`found previous subscriptions ${JSON.stringify(subscriptions)}`);

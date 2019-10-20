@@ -30,7 +30,7 @@ export function chooseResourceGroup(resourceGroups: AzureResourceGroup[]): Promi
   // move resource groups created with Hexa to the top
   resourceGroups = resourceGroups.sort((a, b) => (a.tags && a.tags["x-created-by"] === "hexa" ? -1 : 1));
 
-  if (process.env.NITRO_ENABLE_ADDING_NEW_RESOURCE) {
+  if (process.env.HEXA_ENABLE_ADDING_NEW_RESOURCE) {
     resourceGroups = [
       ...resourceGroups,
       {
@@ -70,7 +70,7 @@ export function chooseAccountStorage(storageAccounts: AzureStorage[]): Promise<i
   // move storage accounts created with Hexa to the top
   storageAccounts = storageAccounts.sort((a, b) => (a.tags && a.tags["x-created-by"] === "hexa" ? -1 : 1));
 
-  if (process.env.NITRO_ENABLE_ADDING_NEW_RESOURCE) {
+  if (process.env.HEXA_ENABLE_ADDING_NEW_RESOURCE) {
     storageAccounts = [
       ...storageAccounts,
       {
