@@ -1,6 +1,6 @@
 import chalk from "chalk";
-import { askForFeatures, askForProjectDetails, askIfOverrideProjectFile } from "../core/prompt";
-import { Config, isProjectFileExists, saveWorkspace, getCurrentDirectoryBase, sanitize, absolutePath, pluralize } from "../core/utils";
+import { askForFeatures, askIfOverrideProjectFile } from "../core/prompt";
+import { absolutePath, Config, deleteFile, isProjectFileExists, pluralize } from "../core/utils";
 const debug = require("debug")("init");
 
 module.exports = async function(options?: NitroInitOptions) {
@@ -62,6 +62,8 @@ module.exports = async function(options?: NitroInitOptions) {
     const shouldOverrideConfigFile = await askIfOverrideProjectFile();
     if (shouldOverrideConfigFile.override === false) {
       process.exit(0);
+    } else {
+      deleteFile("./hexa.json");
     }
   }
 

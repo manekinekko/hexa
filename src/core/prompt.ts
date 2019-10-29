@@ -246,7 +246,7 @@ export function askIfOverrideProjectFile(): Promise<Answers> {
     {
       type: "confirm",
       name: "override",
-      message: "Configuration file found. Do you want to override it?",
+      message: "Configuration file found. Do you want to override it? (File will be deleted)",
       default: false
     }
   ];

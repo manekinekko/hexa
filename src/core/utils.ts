@@ -289,3 +289,7 @@ export function updateFile({ filepath, replace, search }: { filepath: string; re
 export function absolutePath(file: string) {
   return path.resolve(file);
 }
+
+export function deleteFile(file: string) {
+  return fs.unlinkSync(file);
+}
