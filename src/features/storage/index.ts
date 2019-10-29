@@ -7,13 +7,13 @@ module.exports = async function() {
   const subscription: AzureSubscription = Config.get("subscription");
   debug(`Using subscription ${chalk.green(subscription.name)}`);
 
-  const resourceGroup: AzureResourceGroup = Config.get("resourceGroup");
+  const resourceGroup: AzureResourceGroup = Config.get("project");
   debug(`Using resource group ${chalk.green(resourceGroup.name)}`);
 
   // https://docs.microsoft.com/en-us/cli/azure/storage/account?view=azure-cli-latest#az-storage-account-list
   let storageAccountsList = await az<AzureStorage[]>(
     `storage account list --resource-group "${resourceGroup.name}" --subscription "${subscription.id}" --query "[].{name:name, id:id, location:location, tags:tags}"`,
-    `Checking storage accounts for resource group ${chalk.cyan(resourceGroup.name)}...`
+    `Checking storage for project ${chalk.cyan(resourceGroup.name)}...`
   );
 
   // In case we dont find any storage account that had been created by Hexa,

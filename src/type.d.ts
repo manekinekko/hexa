@@ -12,13 +12,11 @@ declare interface NitroInitOptions {
   requetedServices?: string[];
 }
 
-
 declare interface NitroWorkspace {
   [key: string]: any;
 
-  project: string;
   storage: AzureStorage;
-  resourceGroup: AzureResourceGroup;
+  project: AzureResourceGroup;
   subscription: AzureSubscription;
   hosting?: {
     folder: string;
@@ -27,6 +25,11 @@ declare interface NitroWorkspace {
     folder?: string;
   };
   database?: DatabaseInstance;
+  k8s?: {
+    name: string;
+    hostname: string;
+  };
+  registry: AzureContainerRegistry
 }
 declare interface AzureEntity {
   id: string & CreationMode;
@@ -56,6 +59,22 @@ declare interface AzureRegion extends AzureEntity {
 
 declare interface AzureSubscription extends AzureEntity {
   state?: "Enabled";
+}
+
+declare interface AzureKubernetesCluster extends AzureEntity {
+  hostname: string;
+}
+
+declare interface AzureContainerRegistry extends AzureEntity {
+  hostname: string;
+}
+
+declare interface AzureServicePrincipal {
+  appId: string;
+  displayName: string;
+  name: string;
+  password: string;
+  tenant: string;
 }
 
 declare interface AzureResourceGroup extends AzureEntity {

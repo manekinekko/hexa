@@ -13,6 +13,8 @@ const prettyFont = CFonts.render("HEXA", {
 clear();
 console.log(prettyFont.string);
 
+let debug: Function;
+
 (async () => {
   const start = process.hrtime();
 
@@ -52,6 +54,11 @@ console.log(prettyFont.string);
 
   // set confiuration
   // WARNING: order matters
+
+  if (program.debug) {
+    process.env.DEBUG = "*";
+  }
+
   if (program.yolo) {
     program.yes = true;
     program.auto = true;
@@ -59,9 +66,7 @@ console.log(prettyFont.string);
     process.env.HEXA_YOLO_MODE = "1";
   }
 
-  if (program.debug) {
-    process.env.DEBUG = "*";
-  }
+
   if (program.yes) {
     process.env.HEXA_FORCE_MODE = "1";
   }

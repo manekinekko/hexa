@@ -28,9 +28,14 @@ export const sanitize = (name: string) =>
     .trim()
     .substr(0, 20);
 
+export const pluralize = (str: string) => str + (str.length > 1 ? "s are" : " is");
+
 export const Config = new Configstore(packageJson.name, {
   version: packageJson.version
 });
+
+debug(`Cached config stored at ${chalk.green(Config.path)}`);
+
 export const WORKSPACE_FILENAME = "hexa.json";
 export const ENV_FILENAME = ".env";
 
@@ -79,11 +84,24 @@ export async function runCmd(command: string, loadingMessage?: string, options?:
 
 ////////
 export async function az<T>(command: string, loadingMessage?: string) {
-  command = `${command} --output json ` + (IS_DEBUG ? "--verbose" : "");
-  const output: string = await runCmd(`az ${command}`, loadingMessage, {
+  const outputJson = `--output json`;
+  command = `${command} ${outputJson} ` + (IS_DEBUG ? "--verbose" : "");
+  const message: string = await runCmd(`az ${command}`, loadingMessage, {
     silent: !IS_DEBUG
   });
-  return JSON.parse(output || "{}") as T;
+
+  if (message.startsWith("{") || message.startsWith("[")) {
+    return JSON.parse(message || "{}") as T;
+  } else {
+    return ({ message } as unknown) as T;
+  }
+}
+
+export async function kubectl(command: string, loadingMessage?: string) {
+  const message: string = await runCmd(`kubectl ${command}`, loadingMessage, {
+    silent: !IS_DEBUG
+  });
+  return message;
 }
 
 export async function func<T>(command: string, cwd: string, loadingMessage?: string) {
@@ -207,15 +225,13 @@ export function saveEnvFile(key: string, value: string) {
   const gitIgnoreFilename = `.gitignore`;
   if (fileExists(gitIgnoreFilename)) {
     const gitIgnoreFileContent = readFileFromDisk(gitIgnoreFilename) || "";
-    if (gitIgnoreFileContent.includes('.env')) {
+    if (gitIgnoreFileContent.includes(".env")) {
       debug(`${ENV_FILENAME} file already in ${gitIgnoreFilename}`);
-    }
-    else {
+    } else {
       debug(`add ${ENV_FILENAME} to ${gitIgnoreFilename}`);
       fs.writeFileSync(ENV_FILENAME, [gitIgnoreFileContent, ENV_FILENAME].join("\n"));
     }
-  }
-  else {
+  } else {
     debug(`add ${ENV_FILENAME} to ${gitIgnoreFilename}`);
     fs.writeFileSync(gitIgnoreFilename, ENV_FILENAME);
   }
@@ -228,20 +244,21 @@ export function isProjectFileExists() {
   return isFound;
 }
 
-export function copyTemplate(src: string, destination: string, context?: {[key: string]: string}) {
+export function copyTemplate(src: string, destination: string, context?: { [key: string]: string }) {
   const templateDir = getTemplateFullPath();
-  src = templateDir + "/" + src;
+  src = path.join(templateDir, path.sep, src);
 
-  if (context) {
-    let srcContent = readFileFromDisk(src) || "";
-    for (let key in context) {
-      srcContent = srcContent.replace(new RegExp(`{{(${key})}}`, 'g'), context[key]);
-    }
-    debug(`copying template file src=${chalk.green(src)}, destination=${chalk.green(destination)}, context=${chalk.green(JSON.stringify(context))}`);
-    return fs.writeFileSync(destination, srcContent);
+  context = {
+    ...context,
+    date: (new Date()).toISOString()
+  };
+
+  let srcContent = readFileFromDisk(src) || "";
+  for (let key in context) {
+    srcContent = srcContent.replace(new RegExp(`{{(${key})}}`, "g"), context[key]);
   }
-  debug(`copying template file src=${chalk.green(src)}, destination=${chalk.green(destination)}`);
-  return fs.copyFileSync(src, destination);
+  debug(`copying template file src=${chalk.green(src)}, destination=${chalk.green(destination)}, context=${chalk.green(JSON.stringify(context))}, size=${chalk.green(srcContent.length + "")}`);
+  return fs.writeFileSync(destination, srcContent);
 }
 
 export function getTemplateFullPath() {
@@ -256,16 +273,19 @@ export function joinPath(...args: string[]) {
   return path.join(...args);
 }
 
-export function updateFile({filepath, replace, search}: {filepath: string, replace: string, search?: string}) {
+export function updateFile({ filepath, replace, search }: { filepath: string; replace: string; search?: string }) {
   let srcContent = readFileFromDisk(filepath) || "";
 
   if (search) {
     srcContent = srcContent.replace(search, replace);
-  }
-  else {
+  } else {
     srcContent = [srcContent, replace].join(`\n`);
   }
 
   debug(`updating file src=${chalk.green(filepath)}`);
   return fs.writeFileSync(filepath, srcContent);
+}
+
+export function absolutePath(file: string) {
+  return path.resolve(file);
 }

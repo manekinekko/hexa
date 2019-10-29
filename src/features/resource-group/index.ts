@@ -23,16 +23,16 @@ module.exports = async function() {
         (resourceGroup: AzureResourceGroup) => resourceGroup.id === (selectedResourceId as string)
       ) as AzureResourceGroup;
 
-      const resourceGroup = {
+      const project = {
         id,
         location,
         name
       };
 
-      Config.set("resourceGroup", resourceGroup);
+      Config.set("project", project);
 
       saveWorkspace({
-        resourceGroup
+        project
       });
     }
   } else {
