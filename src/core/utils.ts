@@ -176,7 +176,7 @@ export function readFileFromDisk(filePath: string) {
   return null;
 }
 
-export function saveWorkspace(config: Partial<NitroWorkspace>) {
+export function saveWorkspace(config: Partial<HexaWorkspace>) {
   debug(`updating workspace with ${chalk.green(JSON.stringify(config))}`);
 
   // we don't want to store IDs in the workspace file
@@ -186,7 +186,7 @@ export function saveWorkspace(config: Partial<NitroWorkspace>) {
 
   let oldConfig = {};
   if (fileExists(WORKSPACE_FILENAME)) {
-    oldConfig = JSON.parse(readFileFromDisk(WORKSPACE_FILENAME) || "{}") as NitroWorkspace;
+    oldConfig = JSON.parse(readFileFromDisk(WORKSPACE_FILENAME) || "{}") as HexaWorkspace;
   }
 
   config = merge(config, oldConfig);

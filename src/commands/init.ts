@@ -3,7 +3,7 @@ import { askForFeatures, askIfOverrideProjectFile } from "../core/prompt";
 import { absolutePath, Config, deleteFile, isProjectFileExists, pluralize } from "../core/utils";
 const debug = require("debug")("init");
 
-module.exports = async function(options?: NitroInitOptions) {
+module.exports = async function(options?: HexaInitOptions) {
   const isForceModeEnabled = !!process.env.HEXA_FORCE_MODE;
   if (isForceModeEnabled) {
     debug(chalk.bold(chalk.yellow(`Warning: Flag --force has been set. Hexa won't ask for any confirmation!`)));

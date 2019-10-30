@@ -19,7 +19,7 @@ let debug: Function;
 
   const runCommand = async (commandName: string, requetedServices: string | undefined) => {
     try {
-      const options: NitroInitOptions = {};
+      const options: HexaInitOptions = {};
 
       if (requetedServices) {
         options.requetedServices = requetedServices.split(",").filter(feat => feat);

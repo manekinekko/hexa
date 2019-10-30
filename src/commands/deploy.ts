@@ -14,7 +14,7 @@ module.exports = async function() {
   const subscription: AzureSubscription = Config.get("subscription");
 
   // Get all other required configs from the current workspace
-  const workspace: NitroWorkspace = readWorkspace();
+  const workspace: HexaWorkspace = readWorkspace();
 
   if (workspace.storage && workspace.storage.connectionString) {
     process.env.AZURE_STORAGE_CONNECTION_STRING = workspace.storage.connectionString;

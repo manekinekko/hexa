@@ -8,11 +8,11 @@ declare interface ProcessEnv {
   HEXA_YOLO_MODE: "1";
 }
 
-declare interface NitroInitOptions {
+declare interface HexaInitOptions {
   requetedServices?: string[];
 }
 
-declare interface NitroWorkspace {
+declare interface HexaWorkspace {
   [key: string]: any;
 
   storage: AzureStorage;
