@@ -1,5 +1,5 @@
 import inquirer, { Answers, QuestionCollection } from "inquirer";
-import { createDirectoryIfNotExists, fileExists, getCurrentDirectoryBase } from "./utils";
+import { createDirectoryIfNotExists, fileExists } from "./utils";
 
 export function chooseSubscription(subscriptionsList: AzureSubscription[]): Promise<Answers> {
   const questions: QuestionCollection = [
@@ -242,11 +242,15 @@ export function askForProjectDetails(defaultProjectName: string): Promise<Answer
 }
 
 export function askIfOverrideProjectFile(): Promise<Answers> {
+
+  const forceDelete = !!process.env.HEXA_RESET_MODE;
+  let deletionWarning = "(File will be deleted)";
+
   const questions: QuestionCollection = [
     {
       type: "confirm",
       name: "override",
-      message: "Configuration file found. Do you want to override it? (File will be deleted)",
+      message: `Configuration file found. Do you want to override it? ${forceDelete && deletionWarning}`,
       default: false
     }
   ];
@@ -267,7 +271,8 @@ export function askForHostingFolder(defaultPublicFolderName: string): Promise<An
         } else {
           return "Please enter a public folder.";
         }
-      }
+      },
+      when: () => !process.env.HEXA_AUTO_MODE
     },
     {
       type: "confirm",

@@ -26,7 +26,7 @@ module.exports = async function(options?: NitroInitOptions) {
       short: "Database"
     },
     {
-      name: "Kubernetes: Configure a Kubernetes cluster",
+      name: "Kubernetes: Configure a Kubernetes cluster (preview)",
       value: "kubernetes",
       short: "Kubernetes"
     }
@@ -62,7 +62,9 @@ module.exports = async function(options?: NitroInitOptions) {
     if (shouldOverrideConfigFile.override === false) {
       process.exit(0);
     } else {
-      deleteFile("./hexa.json");
+      if (process.env.HEXA_RESET_MODE) {
+        deleteFile("./hexa.json");
+      }
     }
   }
 

@@ -39,15 +39,16 @@ let debug: Function;
     .option("login", "connect to your Azure")
     .option("init", "initialize a new workspace")
     .option("deploy", "deploy to Azure")
-    .option("-y, --yes", "answer yes to all confirmations", false)
-    .option("-r, --relogin", "force login", false)
     .option("-c, --create", "enable manual resource creation", false)
-    .option("-m, --manual", "enter Manual mode", false)
     .option("-d, --debug", "enable debug mode", false)
+    .option("-j, --just <services>", "setup or deploy only the selected services (e.g. --just functions,hosting)", false)
+    .option("-l, --login", "force login", false)
+    .option("-m, --manual", "enter Manual mode", false)
+    .option("-r, --reset", "reset (delete) local configuration", false)
     .option("-s, --sas", "use SAS token (only: storage and database)", false)
     .option("-t, --token", "generate a Storage token into a .env file", false)
-    .option("-j, --just <services>", "setup or deploy only the selected services (e.g. --just functions,hosting)", false)
     .option("-u, --use <builder>", "use a specific build system (e.g. tsc,bazel)", 'tsc')
+    .option("-y, --yes", "answer yes to all confirmations", false)
     .parse(process.argv);
 
   // set confiuration
@@ -64,6 +65,9 @@ let debug: Function;
     process.env.HEXA_YOLO_MODE = "1";
   }
 
+  if (program.reset) {
+    process.env.HEXA_RESET_MODE = "1";
+  }
 
   if (program.yes) {
     process.env.HEXA_FORCE_MODE = "1";
@@ -74,7 +78,7 @@ let debug: Function;
   if (program.create) {
     process.env.HEXA_ENABLE_ADDING_NEW_RESOURCE = "1";
   }
-  if (program.relogin) {
+  if (program.login) {
     process.env.HEXA_FORCE_LOGIN = "1";
   }
   if (program.sas) {

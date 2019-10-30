@@ -7,18 +7,18 @@ const debug = require("debug")("hosting");
 module.exports = async function() {
   const isForceModeEnabled = !!process.env.HEXA_FORCE_MODE;
 
-  let publicFolder = "./public";
-  let folder, overrideHtml, override404, overrideError;
+  let defaultPublicFolder = "./dist";
 
-  if (isForceModeEnabled === false) {
-    ({ folder, overrideHtml, override404, overrideError } = await askForHostingFolder(publicFolder));
-    debug(
-      `selected hosting folder=${folder}, overrideHtml=${overrideHtml}, override404=${override404}. overrideError=${overrideError}`
-    );
+  // default values
+  let [folder, overrideHtml, override404, overrideError] = [defaultPublicFolder, false, false, false];
+
+  if (isForceModeEnabled) {
+    [folder, overrideHtml, override404, overrideError] = [defaultPublicFolder, true, true, true];
   } else {
-    [folder, overrideHtml, override404, overrideError] = [publicFolder, true, true, true];
-    createDirectoryIfNotExists(publicFolder);
+    ({ folder = defaultPublicFolder, overrideHtml, override404, overrideError } = await askForHostingFolder(defaultPublicFolder));
+    debug(`selected hosting folder=${folder}, overrideHtml=${overrideHtml}, override404=${override404}. overrideError=${overrideError}`);
   }
+  createDirectoryIfNotExists(defaultPublicFolder);
 
   if (overrideHtml || typeof overrideHtml === "undefined") {
     // copy index.html
