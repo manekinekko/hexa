@@ -43,7 +43,7 @@ module.exports = async function(options?: NitroInitOptions) {
     });
   } else {
     if (process.env.HEXA_YOLO_MODE) {
-      console.log(chalk.yellow(`⭐ YOLO mode enabled. Go grab a coffee, we will take care of rest!`));
+      console.log(chalk.yellow(`⭐ YOLO mode enabled. Go grab a coffee, we will take care of the rest!`));
 
       selectedFeatures = FEATURES.map(feat => feat.short);
     }
