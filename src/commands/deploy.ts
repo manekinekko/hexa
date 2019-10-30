@@ -16,11 +16,12 @@ module.exports = async function() {
   // Get all other required configs from the current workspace
   const workspace: NitroWorkspace = readWorkspace();
 
-  if (workspace.storage.connectionString) {
+  if (workspace.storage && workspace.storage.connectionString) {
     process.env.AZURE_STORAGE_CONNECTION_STRING = workspace.storage.connectionString;
     debug(`set env variable AZURE_STORAGE_CONNECTION_STRING`);
   }
 
+  let deployStatus = false;
   let hostingUrl = "";
   let functionUrls: { name: string; url: string }[] = [];
   let registryPath = "";
@@ -28,10 +29,12 @@ module.exports = async function() {
 
   // Deploy hosting config
   if (workspace.hosting) {
+    deployStatus = true;
+
     debug(`deploying hosting`);
     // https://docs.microsoft.com/en-us/cli/azure/storage/blob?view=azure-cli-latest#az-storage-blob-upload-batch
     await az(
-      `storage blob upload-batch --source '${workspace.hosting.folder}' --destination '\$web' --account-name ${workspace.storage.name} --no-progress`,
+      `storage blob upload-batch --source "${workspace.hosting.folder}" --destination "\$web" --account-name "${workspace.storage.name}" --no-progress`,
       `Deploying hosting ${chalk.cyan(workspace.project.name)}...`
     );
 
@@ -41,6 +44,8 @@ module.exports = async function() {
 
   // Deploy functions config
   if (workspace.functionApp) {
+    deployStatus = true;
+
     debug(`deploying functions`);
 
     const functionApp = workspace.functionApp;
@@ -67,6 +72,8 @@ module.exports = async function() {
 
   // Deploy k8s config
   if (workspace.k8s) {
+    deployStatus = true;
+
     debug(`deploying container`);
     const containerRegistry = workspace.registry;
     const image = `${containerRegistry.hostname}/hexa/${workspace.project.name}:latest`;
@@ -84,7 +91,6 @@ module.exports = async function() {
 
   /////
 
-  console.log(`${chalk.green("✔")} Application ${chalk.green(workspace.project.name)} deployed successfully!\n`);
 
   if (hostingUrl) {
     console.log(`${chalk.yellow("➜")} Hosting: ${chalk.green(hostingUrl)}`);
@@ -105,6 +111,12 @@ module.exports = async function() {
     console.log(`${chalk.yellow("➜")} Kubernetes:`);
     console.log(` - URL: ${chalk.green(serviceUrl)}`);
     console.log(` - Container: ${chalk.green(registryPath)}`);
+  }
+
+  if (deployStatus) {
+    console.log(`${chalk.green("✔")} Application ${chalk.green(workspace.project.name)} deployed successfully!\n`);
+  } else {
+    console.log(chalk.yellow(`✗ No resources deployed. Run hexa init and try again!`));
   }
 
   console.log(`\n`);
