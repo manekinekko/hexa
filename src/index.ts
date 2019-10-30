@@ -10,7 +10,6 @@ const prettyFont = CFonts.render("HEXA", {
   letterSpacing: 1
 });
 
-clear();
 console.log(prettyFont.string);
 
 let debug: Function;
@@ -42,14 +41,13 @@ let debug: Function;
     .option("deploy", "deploy to Azure")
     .option("-y, --yes", "answer yes to all confirmations", false)
     .option("-r, --relogin", "force login", false)
-    .option("-c, --create", "enable resource creation", false)
-    .option("-m, --manual", "enable Manual mode", false)
+    .option("-c, --create", "enable manual resource creation", false)
+    .option("-m, --manual", "enter Manual mode", false)
     .option("-d, --debug", "enable debug mode", false)
     .option("-s, --sas", "use SAS token (only: storage and database)", false)
     .option("-t, --token", "generate a Storage token into a .env file", false)
     .option("-j, --just <services>", "setup or deploy only the selected services (e.g. --just functions,hosting)", false)
-    .option("--yolo", "enable all modes and all services", false)
-    .option("--use <builder>", "use a specific build system (e.g. tsc,bazel)", 'tsc')
+    .option("-u, --use <builder>", "use a specific build system (e.g. tsc,bazel)", 'tsc')
     .parse(process.argv);
 
   // set confiuration
