@@ -27,7 +27,7 @@ module.exports = async function() {
 
   if (kubeClustersList.length === 0) {
     // no cluster found, create one
-    return (await require(`./create`))(creationMode);
+    await (require(`./create`)(creationMode));
   }
 
   if (creationMode === "AUTOMATIC") {
@@ -43,7 +43,7 @@ module.exports = async function() {
         selectedClusterId = cluster.id;
       } else {
         // we founf one cluster but it was not created by Hexa, go ahead and automatically create one
-        return (await require(`./create`))("AUTOMATIC");
+        await (require(`./create`)("AUTOMATIC"));
       }
     } else {
       // we found many clusters, let the user choose the right one
@@ -55,7 +55,7 @@ module.exports = async function() {
 
   if (selectedClusterId === "MANUAL") {
     // the user expliticitly chooses to manually create a new cluster
-    return (await require(`./create`))("MANUAL");
+    await (require(`./create`)("MANUAL"));
   }
 
   const { id, name, hostname } = kubeClustersList.find((cluster: AzureKubernetesCluster) => cluster.id === selectedClusterId) as AzureKubernetesCluster;
