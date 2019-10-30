@@ -49,6 +49,7 @@ let debug: Function;
     .option("-t, --token", "generate a Storage token into a .env file", false)
     .option("-u, --use <builder>", "use a specific build system (e.g. tsc,bazel)", 'tsc')
     .option("-y, --yes", "answer yes to all confirmations", false)
+    .option("--yolo", "enable all modes and all services", false)
     .parse(process.argv);
 
   // set confiuration
