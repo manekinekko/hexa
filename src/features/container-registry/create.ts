@@ -14,7 +14,7 @@ module.exports = async function(creationMode: CreationMode) {
     // https://docs.microsoft.com/en-us/azure/container-registry/container-registry-skus
     const registry = await az<AzureContainerRegistry>(
       `acr create --resource-group ${project.name} --name ${name} --sku Basic --location ${project.location} --tags "x-created-by=hexa" --query "{name:name, id:id, hostname:loginServer}"`,
-      `Creating registry for ${chalk.cyan(project.name)}`
+      `Creating a Container Registry for project ${chalk.cyan(project.name)}...`
     );
 
     Config.set("registry", registry);

@@ -14,7 +14,7 @@ module.exports = async function() {
   // https://docs.microsoft.com/en-us/cli/azure/acr?view=azure-cli-latest#az-acr-list
   const acrList = await az<AzureContainerRegistry[]>(
     `acr list --resource-group "${resourceGroup.name}" --subscription "${subscription.id}" --query "[].{id:id, name:name, hostname:loginServer, tags:tags}"`,
-    `Checking container registry for project ${chalk.cyan(resourceGroup.name)}`
+    `Checking Container Registry for project ${chalk.cyan(resourceGroup.name)}...`
   );
 
   let creationMode = process.env.HEXA_AUTO_MODE ? "AUTOMATIC" : "MANUAL";
