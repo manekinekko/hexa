@@ -50,7 +50,6 @@ module.exports = async function(options?: NitroInitOptions) {
   }
 
   if (requetedServices.length > 0 && selectedFeatures.length === 0) {
-    const len = requetedServices.length;
     console.log(chalk.red(`✗ The requested ${pluralize("service")} not valid: ${requetedServices}`));
     console.log(chalk.red(`✗ Abort.`));
     process.exit(1);
