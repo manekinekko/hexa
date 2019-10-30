@@ -4,8 +4,8 @@ import { Config, createDirectoryIfNotExists, directoryExists, func, npm, saveWor
 const debug = require("debug")("functions:init");
 
 module.exports = async function() {
-  const project: string = Config.get("project");
-  debug(`using project ${chalk.green(project)}`);
+  const project: AzureResourceGroup = Config.get("project");
+  debug(`using project ${chalk.green(project.name)}`);
 
   const functionApp: AzureFunctionApp = Config.get("functionApp");
   debug(`using functionApp ${chalk.green(functionApp.name)}`);

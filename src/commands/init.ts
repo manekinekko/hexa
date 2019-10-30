@@ -1,6 +1,6 @@
 import chalk from "chalk";
-import { askForFeatures, askForProjectDetails, askIfOverrideProjectFile } from "../core/prompt";
-import { Config, isProjectFileExists, saveWorkspace, getCurrentDirectoryBase, sanitize } from "../core/utils";
+import { askForFeatures, askIfOverrideProjectFile } from "../core/prompt";
+import { absolutePath, Config, deleteFile, isProjectFileExists, pluralize } from "../core/utils";
 const debug = require("debug")("init");
 
 module.exports = async function(options?: NitroInitOptions) {
@@ -24,6 +24,11 @@ module.exports = async function(options?: NitroInitOptions) {
       name: "Database: Configure and deploy a database on Azure",
       value: "database",
       short: "Database"
+    },
+    {
+      name: "Kubernetes: Configure a Kubernetes cluster",
+      value: "kubernetes",
+      short: "Kubernetes"
     }
   ];
 
@@ -45,9 +50,6 @@ module.exports = async function(options?: NitroInitOptions) {
   }
 
   if (requetedServices.length > 0 && selectedFeatures.length === 0) {
-    const len = requetedServices.length;
-    const pluralize = (str: string) => str + (len > 1 ? "s are" : " is");
-
     console.log(chalk.red(`✗ The requested ${pluralize("service")} not valid: ${requetedServices}`));
     console.log(chalk.red(`✗ Abort.`));
     process.exit(1);
@@ -59,33 +61,24 @@ module.exports = async function(options?: NitroInitOptions) {
     const shouldOverrideConfigFile = await askIfOverrideProjectFile();
     if (shouldOverrideConfigFile.override === false) {
       process.exit(0);
+    } else {
+      deleteFile("./hexa.json");
     }
   }
 
-  let name = sanitize(getCurrentDirectoryBase());
-  if (isForceModeEnabled === false) {
-    ({ name } = await askForProjectDetails(name));
-  }
-  debug(`saving project name ${name}`);
-
-  saveWorkspace({
-    project: sanitize(name)
-  });
-
-  Config.set("project", name);
   const subscriptions: AzureSubscription[] = Config.get("subscriptions");
 
   if (!subscriptions || (subscriptions && subscriptions.length === 0) || process.env.HEXA_FORCE_LOGIN) {
     await require(`./login`)();
   } else {
-    debug(`found previous subscriptions ${JSON.stringify(subscriptions)}`);
+    debug(`found subscriptions ${chalk.green(JSON.stringify(subscriptions))}`);
   }
 
   // check if there was a selected set of features, otherwise ask the user
   selectedFeatures = selectedFeatures.length ? selectedFeatures : (await askForFeatures(FEATURES)).features;
 
   // we need to confiure a resource group and storage before creating all other features
-  for await (let feature of ["resource-group", "storage", ...selectedFeatures]) {
+  for await (let feature of ["resource-group", "service-principal", "storage", ...selectedFeatures]) {
     debug(`Configuring ${chalk.green(feature)}:`);
     try {
       const featureImplementation = require(`../features/${feature}/index`);
@@ -97,6 +90,8 @@ module.exports = async function(options?: NitroInitOptions) {
     }
   }
 
-  console.log(`${chalk.green("✔")} Configuration saved to ${chalk.cyan("hexa.json")}`);
-  console.log(`${chalk.green("✔")} Tokens saved to ${chalk.cyan(".env")}`);
+  if (process.env.HEXA_STORAGE_GENERATE_TOKEN) {
+    console.log(`${chalk.green("✔")} Tokens saved to ${chalk.cyan(".env")}`);
+  }
+  console.log(`${chalk.green("✔")} Configuration saved to ${chalk.cyan(absolutePath("hexa.json"))}`);
 };

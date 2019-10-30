@@ -6,7 +6,7 @@ module.exports = async function() {
   const storage: AzureStorageToken = Config.get("storage");
   debug(`using storage ${chalk.green(storage.name)}`);
 
-  const resourceGroup: AzureResourceGroup = Config.get("resourceGroup");
+  const resourceGroup: AzureResourceGroup = Config.get("project");
   debug(`using resource group ${chalk.green(resourceGroup.name)}`);
 
   const subscription: AzureSubscription = Config.get("subscription");

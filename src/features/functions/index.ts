@@ -3,8 +3,8 @@ import { az, Config, sanitize, saveWorkspace, uuid } from "../../core/utils";
 const debug = require("debug")("functions");
 
 module.exports = async function() {
-  const project: string = Config.get("project");
-  debug(`using project ${chalk.green(project)}`);
+  const project: AzureResourceGroup = Config.get("project");
+  debug(`using project ${chalk.green(project.name)}`);
 
   const storage: AzureStorage = Config.get("storage");
   debug(`using storage ${chalk.green(storage.name)}`);
@@ -12,15 +12,12 @@ module.exports = async function() {
   const subscription: AzureSubscription = Config.get("subscription");
   debug(`using subscription ${chalk.green(subscription.name)}`);
 
-  const resourceGroup: AzureResourceGroup = Config.get("resourceGroup");
-  debug(`using resourceGroup ${chalk.green(resourceGroup.name)}`);
-
-  const functionAppName = `${sanitize(project)}-${uuid()}`;
+  const functionAppName = `${sanitize(project.name)}-${uuid()}`;
 
   // https://docs.microsoft.com/en-us/cli/azure/functionapp?view=azure-cli-latest#az-functionapp-list
   let functionAppsList = await az<AzureFunctionApp[]>(
-    `functionapp list --resource-group "${resourceGroup.name}" --subscription "${subscription.id}" --query "[].{id: id, name: name, appServicePlanId: appServicePlanId, hostName: defaultHostName, state: state, tags: tags}"`,
-    `Checking storage accounts for resource group ${chalk.cyan(resourceGroup.name)}...`
+    `functionapp list --resource-group "${project.name}" --subscription "${subscription.id}" --query "[].{id: id, name: name, appServicePlanId: appServicePlanId, hostName: defaultHostName, state: state, tags: tags}"`,
+    `Checking storage accounts for resource group ${chalk.cyan(project.name)}...`
   );
   functionAppsList = functionAppsList.sort((a, b) => (a.tags && a.tags["x-created-by"] === "hexa" ? -1 : 1));
 
@@ -32,7 +29,7 @@ module.exports = async function() {
   } else {
     // https://docs.microsoft.com/en-us/cli/azure/functionapp?view=azure-cli-latest#az-functionapp-create
     functionApp = await az<AzureFunctionApp>(
-      `functionapp create --resource-group ${resourceGroup.name} --consumption-plan-location ${resourceGroup.location} --name ${functionAppName} --storage-account ${storage.name} --runtime node --disable-app-insights --tag 'x-created-by=hexa' --query "{id: id, name: name, appServicePlanId: appServicePlanId, hostName: defaultHostName, state: state, tags: tags}"`,
+      `functionapp create --resource-group ${project.name} --consumption-plan-location ${project.location} --name ${functionAppName} --storage-account ${storage.name} --runtime node --disable-app-insights --tag 'x-created-by=hexa' --query "{id: id, name: name, appServicePlanId: appServicePlanId, hostName: defaultHostName, state: state, tags: tags}"`,
       `Enabling Functions (this may take few minutes)...`
     );
     debug(`created functionApp ${chalk.green(functionApp.name)}`);

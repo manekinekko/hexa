@@ -1,11 +1,19 @@
 import chalk from "chalk";
-import { askForResourceGroupDetails } from "../../core/prompt";
-import { az, Config, sanitize, saveWorkspace } from "../../core/utils";
+import { askForResourceGroupDetails, askForProjectDetails } from "../../core/prompt";
+import { az, Config, sanitize, saveWorkspace, getCurrentDirectoryBase } from "../../core/utils";
+const debug = require("debug")("project");
 
 module.exports = async function(creationMode: CreationMode) {
-  // default values
-  const projectName = Config.get("project");
-  let name = sanitize(projectName);
+  const isForceModeEnabled = !!process.env.HEXA_FORCE_MODE;
+
+  let name = sanitize(getCurrentDirectoryBase());
+  if (isForceModeEnabled === false) {
+    ({ name } = await askForProjectDetails(name));
+  }
+
+  Config.set("project", name);
+  debug(`saving project ${name}`);
+
   let region = "westeurope";
 
   if (creationMode === "MANUAL") {
@@ -18,14 +26,14 @@ module.exports = async function(creationMode: CreationMode) {
   }
 
   // https://docs.microsoft.com/en-us/cli/azure/group?view=azure-cli-latest#az-group-create
-  let resourceGroup = await az<AzureResourceGroup>(
+  let project = await az<AzureResourceGroup>(
     `group create -l ${region} -n ${name} --tag "x-created-by=hexa" --query "{name:name, id:id, location:location}"`,
-    `Setting resource group ${chalk.cyan(name)}`
+    `Bootstrapping project ${chalk.cyan(name)}...`
   );
 
-  Config.set("resourceGroup", resourceGroup);
+  Config.set("project", project);
 
   saveWorkspace({
-    resourceGroup
+    project
   });
 };

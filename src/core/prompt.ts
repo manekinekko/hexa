@@ -95,7 +95,7 @@ export function chooseAccountStorage(storageAccounts: AzureStorage[]): Promise<i
         if (value.length) {
           return true;
         } else {
-          return "Please enter a storage account.";
+          return "Please choose a storage account.";
         }
       }
     }
@@ -121,11 +121,7 @@ export function askForFeatures(features: any[]): Promise<Answers> {
   return inquirer.prompt(questions);
 }
 
-export function askForResourceGroupDetails(
-  regions: AzureRegion[],
-  defaultResourceGroupName: string,
-  defaultRegion: string
-): Promise<Answers> {
+export function askForResourceGroupDetails(regions: AzureRegion[], defaultResourceGroupName: string, defaultRegion: string): Promise<Answers> {
   const questions: QuestionCollection = [
     {
       type: "input",
@@ -250,7 +246,7 @@ export function askIfOverrideProjectFile(): Promise<Answers> {
     {
       type: "confirm",
       name: "override",
-      message: "Configuration file found. Do you want to override it?",
+      message: "Configuration file found. Do you want to override it? (File will be deleted)",
       default: false
     }
   ];
@@ -324,5 +320,100 @@ export function askForFunctionNameFolder(functionFolderName: string): Promise<An
     }
   ];
 
+  return inquirer.prompt(questions);
+}
+
+export function askForKubernetesClusterDetails(defaultClusterName: string): Promise<Answers> {
+  const questions: QuestionCollection = [
+    {
+      type: "input",
+      name: "name",
+      message: "Enter a name for the Kubernetes cluster:",
+      default: defaultClusterName,
+      validate: function(value: string) {
+        if (value.length) {
+          return true;
+        } else {
+          return "Please enter a name for the Kubernetes cluster.";
+        }
+      }
+    }
+  ];
+  return inquirer.prompt(questions);
+}
+
+export function chooseKubernetesCluster(kubernetesClusters: AzureKubernetesCluster[]): Promise<inquirer.Answers> {
+  // move clusters created with Hexa to the top
+  kubernetesClusters = kubernetesClusters.sort((a, b) => (a.tags && a.tags["x-created-by"] === "hexa" ? -1 : 1));
+
+  if (process.env.HEXA_ENABLE_ADDING_NEW_RESOURCE) {
+    kubernetesClusters = [
+      ...kubernetesClusters,
+      {
+        id: "MANUAL",
+        tags: {},
+        hostname: "",
+        name: "<Create a Kubernetes Cluster>"
+      }
+    ];
+  }
+  const questions: QuestionCollection = [
+    {
+      type: "list",
+      name: "cluster",
+      message: "Choose a cluster:",
+      choices: kubernetesClusters.map((cluster: AzureKubernetesCluster) => {
+        return {
+          name: cluster.name,
+          value: cluster.id
+        };
+      }),
+      validate: function(value: string) {
+        if (value.length) {
+          return true;
+        } else {
+          return "Please choose a cluster.";
+        }
+      }
+    }
+  ];
+  return inquirer.prompt(questions);
+}
+
+export function chooseAcrAccount(AcrList: AzureContainerRegistry[]): Promise<inquirer.Answers> {
+  // move ACR accounts created with Hexa to the top
+  AcrList = AcrList.sort((a, b) => (a.tags && a.tags["x-created-by"] === "hexa" ? -1 : 1));
+
+  if (process.env.HEXA_ENABLE_ADDING_NEW_RESOURCE) {
+    AcrList = [
+      ...AcrList,
+      {
+        id: "MANUAL",
+        tags: {},
+        hostname: "",
+        name: "<Create a Container Registry>"
+      }
+    ];
+  }
+  const questions: QuestionCollection = [
+    {
+      type: "list",
+      name: "registry",
+      message: "Choose a container registry:",
+      choices: AcrList.map((cluster: AzureContainerRegistry) => {
+        return {
+          name: cluster.name,
+          value: cluster.id
+        };
+      }),
+      validate: function(value: string) {
+        if (value.length) {
+          return true;
+        } else {
+          return "Please choose a container registry.";
+        }
+      }
+    }
+  ];
   return inquirer.prompt(questions);
 }
