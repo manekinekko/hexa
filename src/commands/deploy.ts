@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import { az, Config, func, isProjectFileExists, joinPath, npm, readWorkspace, runCmd, kubectl } from "../core/utils";
+import { az, Config, func, isProjectFileExists, joinPath, kubectl, npm, readWorkspace } from "../core/utils";
 const debug = require("debug")("push");
 
 module.exports = async function() {
@@ -34,7 +34,7 @@ module.exports = async function() {
     debug(`deploying hosting`);
     // https://docs.microsoft.com/en-us/cli/azure/storage/blob?view=azure-cli-latest#az-storage-blob-upload-batch
     await az(
-      `storage blob upload-batch --source "${workspace.hosting.folder}" --destination "\$web" --account-name "${workspace.storage.name}" --no-progress`,
+      `storage blob upload-batch --source "${workspace.hosting.folder}" --destination "\\$web" --account-name "${workspace.storage.name}" --no-progress`,
       `Deploying hosting ${chalk.cyan(workspace.project.name)}...`
     );
 
