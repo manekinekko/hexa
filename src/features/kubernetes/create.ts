@@ -21,7 +21,7 @@ module.exports = async function(creationMode: CreationMode) {
 
   // https://docs.microsoft.com/en-us/cli/azure/aks?view=azure-cli-latest#az-aks-create
   let k8s = await az<AzureKubernetesCluster>(
-    `aks create --location "${project.location}" --name "${name}" --subscription "${subscription.id}" --resource-group "${project.name}" --attach-acr "${registry.id}" --skip-subnet-role-assignment --node-count 1 --node-vm-size "Standard_B2s" --dns-name-prefix="hexa" --generate-ssh-keys --nodepool-name="hexa" --tags "x-created-by=hexa" --query "{name:name, id:id}"`,
+    `aks create --location "${project.location}" --name "${name}" --subscription "${subscription.id}" --resource-group "${project.name}" --attach-acr "${registry.id}" --skip-subnet-role-assignment --node-count 1 --node-vm-size "Standard_B2s" --enable-addons monitoring --dns-name-prefix="${name}" --generate-ssh-keys --nodepool-name="${name}" --tags "x-created-by=hexa" --query "{name:name, id:id}"`,
     `Creating Kubernetes cluster ${chalk.cyan(name)} (this may take up to 10 minutes)...`
   );
 
