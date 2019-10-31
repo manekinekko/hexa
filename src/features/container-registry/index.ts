@@ -60,7 +60,7 @@ module.exports = async function() {
   const servicePrincipal: AzureServicePrincipal = Config.get("servicePrincipal");
   debug(`using servicePrincipal ${chalk.green(servicePrincipal.name)}`);
 
-  await az<AzureEntity>(`role assignment create --assignee "${servicePrincipal.appId}" --scope "${id}" --role owner`, `Checking roles for registry ${chalk.cyan(hostname)}...`);
+  await az<AzureEntity>(`role assignment create --assignee "${servicePrincipal.appId}" --scope "${id}" --role "acrpull"`, `Checking roles for registry ${chalk.cyan(hostname)}...`);
 
   const registry = {
     id,
