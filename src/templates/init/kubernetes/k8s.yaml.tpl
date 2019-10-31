@@ -3,13 +3,11 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
  name: {{containerName}}
- labels:
-   app: {{containerName}}
 spec:
+ replicas: 1
  selector:
    matchLabels:
      app: {{containerName}}
- replicas: 1
  template:
    metadata:
      labels:
@@ -17,11 +15,11 @@ spec:
    spec:
      containers:
      - name: {{containerName}}
-       image: {{containerName}}acr.azurecr.io/{{containerName}}:v1.0.0
+       image: {{containerName}}acr.azurecr.io/{{containerName}}:latest
        resources:
          requests:
            cpu: 100m
-           memory: 100Mi
+           memory: 128Mi
          limits:
            cpu: 200m
            memory: 200Mi
@@ -38,3 +36,5 @@ spec:
  - port: 80
  selector:
    app: {{containerName}}
+
+
