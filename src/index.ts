@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 import chalk from "chalk";
-import clear from "clear";
 import program from "commander";
 const CFonts = require("cfonts");
 const prettyFont = CFonts.render("HEXA", {
@@ -22,7 +21,10 @@ let debug: Function;
       const options: HexaInitOptions = {};
 
       if (requetedServices) {
-        options.requetedServices = requetedServices.split(",").filter(feat => feat);
+        options.requestedServices = requetedServices
+          .replace("k8s", "kubernetes") // remap aliases
+          .split(",")
+          .filter(feat => feat);
       }
 
       return (await require(`./commands/${commandName}`))(options);
@@ -47,7 +49,7 @@ let debug: Function;
     .option("-r, --reset", "reset (delete) local configuration", false)
     .option("-s, --sas", "use SAS token (only: storage and database)", false)
     .option("-t, --token", "generate a Storage token into a .env file", false)
-    .option("-u, --use <builder>", "use a specific build system (e.g. tsc,bazel)", 'tsc')
+    .option("-u, --use <builder>", "use a specific build system (e.g. tsc,bazel)", "tsc")
     .option("-y, --yes", "answer yes to all confirmations", false)
     .option("--yolo", "enable all modes and all services", false)
     .parse(process.argv);
@@ -89,7 +91,7 @@ let debug: Function;
   if (program.token) {
     process.env.HEXA_STORAGE_GENERATE_TOKEN = "1";
   }
-  if (program.use === 'bazel') {
+  if (program.use === "bazel") {
     process.env.HEXA_USE_BAZEL = "1";
   }
 
