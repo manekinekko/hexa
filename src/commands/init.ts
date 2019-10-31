@@ -1,6 +1,6 @@
 import chalk from "chalk";
 import { askForFeatures, askIfOverrideProjectFile } from "../core/prompt";
-import { absolutePath, Config, deleteFile, isProjectFileExists, pluralize } from "../core/utils";
+import { absolutePath, Config, deleteFile, isProjectFileExists, pluralize, FEATURES } from "../core/utils";
 const debug = require("debug")("init");
 
 module.exports = async function(options?: HexaInitOptions) {
@@ -9,31 +9,8 @@ module.exports = async function(options?: HexaInitOptions) {
     debug(chalk.bold(chalk.yellow(`Warning: Flag --force has been set. Hexa won't ask for any confirmation!`)));
   }
 
-  const FEATURES = [
-    {
-      name: "Hosting: Configure and deploy to Azure Static Website",
-      value: "hosting",
-      short: "Hosting"
-    },
-    {
-      name: "Functions: Configure and deploy an Azure Functions",
-      value: "functions",
-      short: "Functions"
-    },
-    {
-      name: "Database: Configure and deploy a database on Azure",
-      value: "database",
-      short: "Database"
-    },
-    {
-      name: "Kubernetes: Configure a Kubernetes cluster (preview)",
-      value: "kubernetes",
-      short: "Kubernetes"
-    }
-  ];
-
   let selectedFeatures: any[] = [];
-  const requetedServices = (options && options.requetedServices) || [];
+  const requetedServices = (options && options.requestedServices) || [];
 
   // if the user requested a subset of services, use that choice...
   if (requetedServices.length) {

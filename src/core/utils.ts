@@ -8,7 +8,6 @@ const Configstore = require("configstore");
 const dotenv = require("dotenv");
 const packageJson = require("../../package.json");
 const debug = require("debug")(`hexa`);
-
 const crypto = require("crypto");
 
 // generate a Global UUID per execution.
@@ -36,6 +35,28 @@ export const Config = new Configstore(packageJson.name, {
 
 debug(`Cached config stored at ${chalk.green(Config.path)}`);
 
+export const FEATURES = [
+  {
+    name: "Hosting: Configure and deploy to Azure Static Website",
+    value: "hosting",
+    short: "Hosting"
+  },
+  {
+    name: "Functions: Configure and deploy an Azure Functions",
+    value: "functions",
+    short: "Functions"
+  },
+  {
+    name: "Database: Configure and deploy a database on Azure",
+    value: "database",
+    short: "Database"
+  },
+  {
+    name: "Kubernetes: Configure a Kubernetes cluster (preview)",
+    value: "kubernetes",
+    short: "Kubernetes"
+  }
+];
 export const WORKSPACE_FILENAME = "hexa.json";
 export const ENV_FILENAME = ".env";
 
@@ -181,7 +202,7 @@ export function saveWorkspace(config: Partial<HexaWorkspace>) {
 
   // we don't want to store IDs in the workspace file
   for (var key in config) {
-    delete config[key].id;
+    delete (config as any)[key].id;
   }
 
   let oldConfig = {};
@@ -250,7 +271,7 @@ export function copyTemplate(src: string, destination: string, context?: { [key:
 
   context = {
     ...context,
-    date: (new Date()).toISOString()
+    date: new Date().toISOString()
   };
 
   let srcContent = readFileFromDisk(src) || "";

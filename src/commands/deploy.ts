@@ -1,8 +1,8 @@
 import chalk from "chalk";
-import { az, Config, func, isProjectFileExists, joinPath, kubectl, npm, readWorkspace } from "../core/utils";
+import { az, Config, func, isProjectFileExists, joinPath, kubectl, npm, readWorkspace, FEATURES } from "../core/utils";
 const debug = require("debug")("push");
 
-module.exports = async function() {
+module.exports = async function(options: HexaInitOptions) {
   if (isProjectFileExists() === false) {
     console.log(chalk.red(`✗ The ${chalk.cyan("hexa deploy")} command can only be run inside a Hexa project.`));
     console.log(chalk.red(`✗ Run ${chalk.cyan("hexa init")} first.`));
@@ -16,16 +16,35 @@ module.exports = async function() {
   // Get all other required configs from the current workspace
   const workspace: HexaWorkspace = readWorkspace();
 
+  const validFeatures = FEATURES.map(feat => feat.value);
+
+  // validate the services that need to be deployed
+  let requestedServices = (options.requestedServices || []) as string[];
+  if (requestedServices.length) {
+    const workspaceKeys = Object.keys(workspace);
+    workspaceKeys.filter(service => validFeatures.includes(service)).map(service => {
+      // don't deploy services that are not requested by the user
+      // project and storage are required entries!
+      if (["project", "storage"].includes(service) === false && requestedServices.includes(service) === false) {
+        (workspace as any)[service] = null;
+      }
+    });
+  }
+
   if (workspace.storage && workspace.storage.connectionString) {
     process.env.AZURE_STORAGE_CONNECTION_STRING = workspace.storage.connectionString;
     debug(`set env variable AZURE_STORAGE_CONNECTION_STRING`);
   }
 
   let deployStatus = false;
-  let hostingUrl = "";
+  let hostingUrl: { message: string } = { message: "" };
   let functionUrls: { name: string; url: string }[] = [];
   let registryPath = "";
   let serviceUrl = "";
+
+  if (requestedServices.length) {
+    console.log(`Deploying services: ${chalk.green(requestedServices.join(","))}`);
+  }
 
   // Deploy hosting config
   if (workspace.hosting) {
@@ -35,7 +54,7 @@ module.exports = async function() {
     // https://docs.microsoft.com/en-us/cli/azure/storage/blob?view=azure-cli-latest#az-storage-blob-upload-batch
     await az(
       `storage blob upload-batch --source "${workspace.hosting.folder}" --destination "\\$web" --account-name "${workspace.storage.name}" --no-progress`,
-      `Deploying hosting ${chalk.cyan(workspace.project.name)}...`
+      `Deploying hosting ${chalk.cyan(workspace.storage.name)}...`
     );
 
     // https://docs.microsoft.com/en-us/cli/azure/storage/account?view=azure-cli-latest#az-storage-account-show
@@ -43,12 +62,12 @@ module.exports = async function() {
   }
 
   // Deploy functions config
-  if (workspace.functionApp) {
+  if (workspace.functions) {
     deployStatus = true;
 
     debug(`deploying functions`);
 
-    const functionApp = workspace.functionApp;
+    const functionApp = workspace.functions;
 
     await npm<void>(`run build:production`, joinPath(process.cwd(), functionApp.folder as string, functionApp.name), `Building Function app ${chalk.cyan(functionApp.name)}...`);
     const functionAppPublishResult = await func<void>(
@@ -82,18 +101,17 @@ module.exports = async function() {
     registryPath = image;
 
     debug(`deploying cluster`);
-    await kubectl(`apply -f k8s.yaml -o json`, `Deploying cluster ${chalk.cyan(workspace.k8s.name)}...`) as any;
+    (await kubectl(`apply -f k8s.yaml -o json`, `Deploying cluster ${chalk.cyan(workspace.k8s.name)}...`)) as any;
 
-    serviceUrl = await kubectl(`get service ${workspace.k8s.name} -o jsonpath='{.status.loadBalancer.ingress[].ip}{":"}{.spec.ports[].targetPort}'`, `Fetching service adrress...`);
-
+    // k8s FQDN
+    serviceUrl = workspace.k8s.hostname;
     debug(`fetching service address=${chalk.green(serviceUrl)}`);
   }
 
   /////
 
-
-  if (hostingUrl) {
-    console.log(`${chalk.yellow("➜")} Hosting: ${chalk.green(hostingUrl)}`);
+  if (hostingUrl.message) {
+    console.log(`${chalk.yellow("➜")} Hosting: ${chalk.green(hostingUrl.message.replace(/"/g, ''))}`);
   }
 
   if (workspace.database) {
@@ -109,7 +127,9 @@ module.exports = async function() {
 
   if (registryPath) {
     console.log(`${chalk.yellow("➜")} Kubernetes:`);
-    console.log(` - URL: ${chalk.green(serviceUrl)}`);
+    if (serviceUrl) {
+      console.log(` - URL: ${chalk.green(serviceUrl)}`);
+    }
     console.log(` - Container: ${chalk.green(registryPath)}`);
   }
 
@@ -118,7 +138,5 @@ module.exports = async function() {
   } else {
     console.log(chalk.yellow(`✗ No resources deployed. Run hexa init and try again!`));
   }
-
-  console.log(`\n`);
   return true;
 };
