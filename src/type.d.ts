@@ -9,19 +9,17 @@ declare interface ProcessEnv {
 }
 
 declare interface HexaInitOptions {
-  requetedServices?: string[];
+  requestedServices?: string[];
 }
 
 declare interface HexaWorkspace {
-  [key: string]: any;
-
   storage: AzureStorage;
   project: AzureResourceGroup;
   subscription: AzureSubscription;
   hosting?: {
     folder: string;
   };
-  functionApp?: AzureFunctionApp & {
+  functions?: AzureFunctionApp & {
     folder?: string;
   };
   database?: DatabaseInstance;

@@ -7,7 +7,7 @@ module.exports = async function() {
   const project: AzureResourceGroup = Config.get("project");
   debug(`using project ${chalk.green(project.name)}`);
 
-  const functionApp: AzureFunctionApp = Config.get("functionApp");
+  const functionApp: AzureFunctionApp = Config.get("functions");
   debug(`using functionApp ${chalk.green(functionApp.name)}`);
 
   const storage: AzureStorage = Config.get("storage");
@@ -37,7 +37,7 @@ module.exports = async function() {
   debug(`selected functions folder=${functionAppDirectory}`);
 
   saveWorkspace({
-    functionApp: {
+    functions: {
       folder: functionAppDirectory,
       id: functionApp.id,
       name: functionApp.name

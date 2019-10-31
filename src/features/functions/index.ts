@@ -35,17 +35,17 @@ module.exports = async function() {
     debug(`created functionApp ${chalk.green(functionApp.name)}`);
   }
 
-  functionApp = {
+  const functions = {
     ...functionApp,
     hostName: functionApp.hostName,
     id: functionApp.id,
     name: functionApp.name || functionAppName
   };
 
-  Config.set("functionApp", functionApp);
+  Config.set("functions", functions);
 
   saveWorkspace({
-    functionApp: {
+    functions: {
       hostName: functionApp.hostName,
       id: functionApp.id,
       name: functionApp.name || functionAppName
