@@ -23,20 +23,22 @@ module.exports = async function() {
     `Checking storage for project ${chalk.cyan(resourceGroup.name)}...`
   );
 
+  debug(`storageAccountsList=${chalk.green(JSON.stringify(storageAccountsList))}`);
+
   // In case we dont find any storage account that had been created by Hexa,
   // fallback to either a MANUAL or AUTOMATIC creation, depending on the global config
   let creationMode = process.env.HEXA_AUTO_MODE ? "AUTOMATIC" : "MANUAL";
 
-  if (storageAccountsList.length === 0) {
+  if (Array.isArray(storageAccountsList) && storageAccountsList.length === 0) {
     // no storage account found, create one using the selected creation mode
     await storageCreation(creationMode);
     storage = Config.get("storage") as AzureStorage;
-  } else if (storageAccountsList.length === 1) {
+  } else if (Array.isArray(storageAccountsList) && storageAccountsList.length === 1) {
     const storageAccount = storageAccountsList[0];
     debug(`found one storage account ${chalk.green(storageAccount.name)}`);
 
     // has the account been created with Hexa?
-    if (creationMode === "AUTOMATIC" && storageAccount && storageAccount.tags && storageAccount.tags["x-created-by"] === "hexa") {
+    if (creationMode === "AUTOMATIC" && storageAccount?.tags?.["x-created-by"] === "hexa") {
       debug(`using storage account ${chalk.green(storageAccount.name)}`);
 
       // use this storage account
@@ -47,7 +49,7 @@ module.exports = async function() {
       // note: the user may wanna create a new storage account
       storage.id = (await chooseAccountStorage(storageAccountsList)).storage as (string & CreationMode);
     }
-  } else {
+  } else if(Array.isArray(storageAccountsList)) {
     // we found many storage accounts, let the user choose the right one
     // note: the user may wanna create a new storage account
     storage.id = (await chooseAccountStorage(storageAccountsList)).storage as (string & CreationMode);

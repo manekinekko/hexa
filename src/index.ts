@@ -50,7 +50,9 @@ let debug: Function;
     .option("-s, --sas", "use SAS token (only: storage and database)", false)
     .option("-t, --token", "generate a Storage token into a .env file", false)
     .option("-u, --use <builder>", "use a specific build system (e.g. tsc,bazel)", "tsc")
+    .option("-v, --verbose", "enable verbose mode", false)
     .option("-y, --yes", "answer yes to all confirmations", false)
+    .option("--dry-run", "do not execute real commands.", false)
     .option("--yolo", "enable all modes and all services", false)
     .parse(process.argv);
 
@@ -58,6 +60,9 @@ let debug: Function;
   // WARNING: order matters
 
   if (program.debug) {
+    process.env.DEBUG = "hexa";
+  }
+  if (program.verbose) {
     process.env.DEBUG = "*";
   }
 
@@ -93,6 +98,9 @@ let debug: Function;
   }
   if (program.use === "bazel") {
     process.env.HEXA_USE_BAZEL = "1";
+  }
+  if (program.dryRun) {
+    process.env.HEXA_DRY_RUN = "1";
   }
 
   // use process.argv not program.argv

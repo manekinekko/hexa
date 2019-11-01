@@ -7,7 +7,8 @@ const ora = require("ora");
 const Configstore = require("configstore");
 const dotenv = require("dotenv");
 const packageJson = require("../../package.json");
-const debug = require("debug")(`hexa`);
+const debugCli = require("debug")(`hexa`);
+const debug = require("debug")(`utils`);
 const crypto = require("crypto");
 
 // generate a Global UUID per execution.
@@ -22,7 +23,7 @@ export const uuid = () => {
 };
 
 export const sanitize = (name: string) =>
-  name
+  (name || "")
     .replace(/[\W_]+/gim, "")
     .trim()
     .substr(0, 20);
@@ -57,7 +58,7 @@ export const FEATURES = [
     short: "Kubernetes"
   }
 ];
-export const WORKSPACE_FILENAME = "hexa.json";
+export const WORKSPACE_FILENAME = process.env.HEXA_DRY_RUN ? "hexa.test.json" : "hexa.json";
 export const ENV_FILENAME = ".env";
 
 const IS_DEBUG = !!process.env.DEBUG;
@@ -73,7 +74,17 @@ export async function runCmd(command: string, loadingMessage?: string, options?:
     if (options && options.cwd) {
       debug(`cwd=${chalk.cyan(options.cwd)}`);
     }
-    debug(chalk.cyan(command));
+
+    debugCli(chalk.cyan(command));
+
+    if (process.env.HEXA_DRY_RUN) {
+      try {
+        spinner.succeed();
+      } catch (error) {
+        // don't catch errors here
+      }
+      return resolve("HEXA_DRY_RUN");
+    }
 
     shell.exec(
       command,

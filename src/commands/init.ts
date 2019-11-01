@@ -65,7 +65,9 @@ module.exports = async function(options?: HexaInitOptions) {
     } catch (error) {
       console.log(chalk.red(`✗ ${error.stack || error}`));
       console.log(chalk.red(`✗ Abort.`));
-      process.exit(1);
+      if (!!process.env.HEXA_DRY_RUN) {
+        process.exit(1);
+      }
     }
   }
 

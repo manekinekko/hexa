@@ -26,7 +26,9 @@ module.exports = async function(creationMode: CreationMode) {
     isProjectExists = await az(`group exists --name ${name}`, `Checking for existing project ${chalk.cyan(name)}...`);
   }
 
-  if (isProjectExists.message.includes("true")) {
+  debug(`isProjectExists=${chalk.green(JSON.stringify(isProjectExists))}`);
+
+  if (isProjectExists?.message.includes("true")) {
     // https://docs.microsoft.com/en-us/cli/azure/group?view=azure-cli-latest#az-group-show
     project = await az<AzureResourceGroup>(`group show -n workspacetest --query "{name:name, id:id, location:location}"`, `Bootstrapping project ${chalk.cyan(name)}...`);
   } else {

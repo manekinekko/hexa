@@ -36,11 +36,11 @@ module.exports = async function() {
   // fallback to either a MANUAL or AUTOMATIC creation, depending on the global config
   let creationMode = process.env.HEXA_AUTO_MODE ? "AUTOMATIC" : "MANUAL";
 
-  if (kubeClustersList.length === 0) {
+  if (Array.isArray(kubeClustersList) && kubeClustersList.length === 0) {
     // no cluster found, create one using the selected creation mode
     await createK8sClutster(creationMode);
     k8s = Config.get("k8s") as AzureKubernetesCluster;
-  } else if (kubeClustersList.length === 1) {
+  } else if (Array.isArray(kubeClustersList) && kubeClustersList.length === 1) {
     const cluster = kubeClustersList[0];
     debug(`found one cluster ${chalk.green(cluster.name)}`);
 
@@ -56,7 +56,7 @@ module.exports = async function() {
       // note: the user may wanna create a new clustor
       k8s.id = (await chooseKubernetesCluster(kubeClustersList)).cluster as (string & CreationMode);
     }
-  } else {
+  } else if (Array.isArray(kubeClustersList)) {
     // we found many clusters, let the user choose the right one
     // note: the user may wanna create a new clustor
     k8s.id = (await chooseKubernetesCluster(kubeClustersList)).cluster as (string & CreationMode);

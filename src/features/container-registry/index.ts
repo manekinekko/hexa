@@ -12,10 +12,14 @@ module.exports = async function() {
   debug(`Using resource group ${chalk.green(resourceGroup.name)}`);
 
   // https://docs.microsoft.com/en-us/cli/azure/acr?view=azure-cli-latest#az-acr-list
-  const acrList = await az<AzureContainerRegistry[]>(
+  let acrList = await az<AzureContainerRegistry[]>(
     `acr list --resource-group "${resourceGroup.name}" --subscription "${subscription.id}" --query "[].{id:id, name:name, hostname:loginServer, tags:tags}"`,
     `Checking Container Registry for project ${chalk.cyan(resourceGroup.name)}...`
   );
+
+  if (!Array.isArray(acrList)) {
+    acrList = [];
+  }
 
   let creationMode = process.env.HEXA_AUTO_MODE ? "AUTOMATIC" : "MANUAL";
   let selectedAcrId: string | null = null;
@@ -26,7 +30,7 @@ module.exports = async function() {
   }
 
   if (creationMode === "AUTOMATIC") {
-    if (acrList.length === 1) {
+    if (Array.isArray(acrList) && acrList.length === 1) {
       const acr = acrList[0];
       debug(`found one container registry ${chalk.green(acr.name)}`);
 
@@ -40,11 +44,11 @@ module.exports = async function() {
         // we founf one cluster but it was not created by Hexa, go ahead and automatically create one
         return (await require(`./create`))("AUTOMATIC");
       }
-    } else {
+    } else if (Array.isArray(acrList)) {
       // we found many ACR accounts, let the user choose the right one
       selectedAcrId = (await chooseAcrAccount(acrList)).registry as (string & CreationMode);
     }
-  } else {
+  } else if (Array.isArray(acrList)) {
     selectedAcrId = (await chooseAcrAccount(acrList)).registry as (string & CreationMode);
   }
 
