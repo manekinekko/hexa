@@ -86,7 +86,7 @@ export async function runCmd(command: string, loadingMessage?: string, options?:
           // the Azure CLI uses stderr to output debug information,
           // we have to filter and check only for errors
           if (stderr.includes("ERROR")) {
-            reject(stderr);
+            reject(`AZURE ERROR DETECTED:\n${stderr}\nPlease run the comnand with the --debug flag to output more details.\nIf the error persists, open an issue on https://github.com/manekinekko/hexa/issues/new/choose`);
           }
         }
         if (stdout.length) {

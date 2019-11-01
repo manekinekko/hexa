@@ -63,7 +63,7 @@ module.exports = async function(options?: HexaInitOptions) {
       const featureImplementation = require(`../features/${feature}/index`);
       await featureImplementation();
     } catch (error) {
-      console.log(chalk.red(`✗ ${error}`));
+      console.log(chalk.red(`✗ ${error.stack || error}`));
       console.log(chalk.red(`✗ Abort.`));
       process.exit(1);
     }
