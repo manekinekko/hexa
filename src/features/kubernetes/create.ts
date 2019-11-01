@@ -15,9 +15,6 @@ module.exports = async function(creationMode: CreationMode) {
   const registry: AzureContainerRegistry = Config.get("registry");
   debug(`using registry ${chalk.green(registry.name)}`);
 
-  const servicePrincipal: AzureServicePrincipal = Config.get("servicePrincipal");
-  debug(`using servicePrincipal ${chalk.green(servicePrincipal.name)}`);
-
   if (creationMode === "MANUAL") {
     ({ name } = await askForKubernetesClusterDetails(name));
   }
@@ -25,19 +22,21 @@ module.exports = async function(creationMode: CreationMode) {
   // https://docs.microsoft.com/en-us/cli/azure/aks?view=azure-cli-latest#az-aks-create
   let k8s = await az<AzureKubernetesCluster>(
     `aks create --location "${project.location}" --name "${name}" --subscription "${subscription.id}" --resource-group "${project.name}" ` +
-      `--attach-acr "${registry.id}" --service-principal "${servicePrincipal.appId}" --client-secret "${servicePrincipal.password}" ` +
-      `--skip-subnet-role-assignment --node-count 1 --node-vm-size "Standard_B2s" --dns-name-prefix="${name}" --generate-ssh-keys ` +
-      `--nodepool-name="hexa" --tags "x-created-by=hexa" --query "{name:name, id:id, hostname:fqdn, nodeResourceGroup:nodeResourceGroup, tags:tags}"`,
+      `--attach-acr "${registry.id}" --skip-subnet-role-assignment --node-count 1 --node-vm-size "Standard_B2s" ` +
+      `--dns-name-prefix="${name}" --generate-ssh-keys --nodepool-name="hexa" --tags "x-created-by=hexa" ` +
+      `--query "{name:name, id:id, hostname:fqdn, nodeResourceGroup:nodeResourceGroup, tags:tags}"`,
     `Creating Kubernetes cluster ${chalk.cyan(name)} (this may take up to 10 minutes)...`
   );
+
+  debug(`created resource group ${chalk.green(JSON.stringify(k8s))}`);
 
   // https://docs.microsoft.com/en-us/cli/azure/aks?view=azure-cli-latest#az-aks-get-credentials
   await az<string>(`aks get-credentials --resource-group "${project.name}" --name "${name}"`, `Checking credentials for cluster ${chalk.cyan(name)}...`);
 
   // https://docs.microsoft.com/en-us/cli/azure/network/public-ip?view=azure-cli-latest#az-network-public-ip-list
   const k8sIPAdressDetails = await az<AzurePublicIpAddress[]>(
-    `network public-ip list --resource-group ${k8s.nodeResourceGroup.name} --query "[?tags.service == 'default/${name}'].{ip:ipAddress, id:id, name:name}"`,
-    `Checking DNS records for pods project ${chalk.cyan(k8s.nodeResourceGroup.name)}...`
+    `network public-ip list --resource-group ${k8s.nodeResourceGroup} --query "[?tags.service == 'default/${name}'].{ip:ipAddress, id:id, name:name}"`,
+    `Checking DNS records for pods project ${chalk.cyan(k8s.nodeResourceGroup)}...`
   );
 
   if (k8sIPAdressDetails.length) {
@@ -45,8 +44,8 @@ module.exports = async function(creationMode: CreationMode) {
 
     // https://docs.microsoft.com/en-us/cli/azure/network/public-ip?view=azure-cli-latest#az-network-public-ip-update
     k8s.publicIp = await az<AzurePublicIpAddress>(
-      `network public-ip update --resource-group ${k8s.nodeResourceGroup.name} --name ${ip.name} --dns-name ${name} --query {ip:ipAddress, id:id, name:name}`,
-      `Updating DNS for pods project ${chalk.cyan(k8s.nodeResourceGroup.name)}...`
+      `network public-ip update --resource-group ${k8s.nodeResourceGroup} --name ${ip.name} --dns-name ${name} --query {ip:ipAddress, id:id, name:name}`,
+      `Updating DNS for pods project ${chalk.cyan(k8s.nodeResourceGroup)}...`
     );
   }
 
