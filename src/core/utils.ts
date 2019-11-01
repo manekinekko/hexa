@@ -12,13 +12,13 @@ const crypto = require("crypto");
 
 // generate a Global UUID per execution.
 // We wante the UUID to be the same for all entitites.
-const guuid = ((lenght = 4) =>
+const guuid = ((lenght = 2) =>
   crypto
     .randomBytes(16)
     .toString("hex")
     .substr(0, lenght))();
 export const uuid = () => {
-  return guuid;
+  return process.pid || guuid;
 };
 
 export const sanitize = (name: string) =>
@@ -203,6 +203,7 @@ export function saveWorkspace(config: Partial<HexaWorkspace>) {
   // we don't want to store IDs in the workspace file
   for (var key in config) {
     delete (config as any)[key].id;
+    delete (config as any)[key].tags;
   }
 
   let oldConfig = {};
