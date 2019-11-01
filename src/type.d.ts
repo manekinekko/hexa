@@ -27,7 +27,7 @@ declare interface HexaWorkspace {
     name: string;
     hostname: string;
   };
-  registry: AzureContainerRegistry
+  registry: AzureContainerRegistry;
 }
 declare interface AzureEntity {
   id: string & CreationMode;
@@ -61,10 +61,20 @@ declare interface AzureSubscription extends AzureEntity {
 
 declare interface AzureKubernetesCluster extends AzureEntity {
   hostname: string;
+  nodeResourceGroup: AzureResourceGroup;
+  publicIp: AzurePublicIpAddress
 }
 
 declare interface AzureContainerRegistry extends AzureEntity {
   hostname: string;
+}
+
+declare interface AzurePublicIpAddress extends AzureEntity {
+  ip: string;
+  dns: {
+    domainNameLabel: string;
+    fqdn: string;
+  };
 }
 
 declare interface AzureServicePrincipal {

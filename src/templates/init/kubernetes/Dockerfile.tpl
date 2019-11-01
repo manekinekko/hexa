@@ -16,3 +16,5 @@ RUN echo -e "server {\n" \
           "}\n" > /etc/nginx/conf.d/default.conf
 
 RUN echo "<html><body><h1>Host: <!--#echo var=\"HOSTNAME\" --></h1>Hello Hexa</body></html>" > /usr/share/nginx/html/index.html
+
+EXPOSE 80

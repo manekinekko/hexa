@@ -358,6 +358,8 @@ export function chooseKubernetesCluster(kubernetesClusters: AzureKubernetesClust
         id: "MANUAL",
         tags: {},
         hostname: "",
+        publicIp: {} as any,
+        nodeResourceGroup: {} as any,
         name: "<Create a Kubernetes Cluster>"
       }
     ];
