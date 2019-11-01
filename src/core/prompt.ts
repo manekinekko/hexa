@@ -360,7 +360,7 @@ export function chooseKubernetesCluster(kubernetesClusters: AzureKubernetesClust
         tags: {},
         hostname: "",
         publicIp: {} as any,
-        nodeResourceGroup: {} as any,
+        nodeResourceGroup: "",
         name: "<Create a Kubernetes Cluster>"
       }
     ];

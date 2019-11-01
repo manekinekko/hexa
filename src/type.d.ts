@@ -61,7 +61,7 @@ declare interface AzureSubscription extends AzureEntity {
 
 declare interface AzureKubernetesCluster extends AzureEntity {
   hostname: string;
-  nodeResourceGroup: AzureResourceGroup;
+  nodeResourceGroup: string;
   publicIp: AzurePublicIpAddress
 }
 

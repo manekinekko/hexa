@@ -22,7 +22,7 @@ module.exports = async function() {
     id: null as any,
     name: "",
     hostname: "",
-    nodeResourceGroup: {} as any,
+    nodeResourceGroup: "",
     publicIp: null as any
   };
 
