@@ -103,7 +103,7 @@ module.exports = async function(options: HexaInitOptions) {
     debug(`deploying cluster`);
     (await kubectl(`apply -f k8s.yaml -o json`, `Deploying cluster ${chalk.cyan(workspace.k8s.name)}...`)) as any;
 
-    // k8s FQDN
+    // k8s FQDN or loadbalancer public IP address
     serviceUrl = workspace.k8s.hostname;
     debug(`fetching service address=${chalk.green(serviceUrl)}`);
   }
