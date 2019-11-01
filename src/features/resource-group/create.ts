@@ -15,7 +15,7 @@ module.exports = async function(creationMode: CreationMode) {
   debug(`saving project ${name}`);
 
   let region = "westeurope";
-  let isProjectExists = false;
+  let isProjectExists = {message: "false"};
   let project: AzureResourceGroup;
 
   if (creationMode === "MANUAL") {
@@ -23,10 +23,10 @@ module.exports = async function(creationMode: CreationMode) {
     let regionsList = await az<AzureRegion[]>(`account list-locations --query "[].{name:name, id:id, displayName:displayName}"`, `Loading regions (this may take few minutes)...`);
     ({ name, region } = await askForResourceGroupDetails(regionsList, name, region));
   } else {
-    isProjectExists = await az<boolean>(`group exists --name ${name}`, `Checking for existing project ${chalk.cyan(name)}...`);
+    isProjectExists = await az(`group exists --name ${name}`, `Checking for existing project ${chalk.cyan(name)}...`);
   }
 
-  if (isProjectExists) {
+  if (isProjectExists.message.includes("true")) {
     // https://docs.microsoft.com/en-us/cli/azure/group?view=azure-cli-latest#az-group-show
     project = await az<AzureResourceGroup>(`group show -n workspacetest --query "{name:name, id:id, location:location}"`, `Bootstrapping project ${chalk.cyan(name)}...`);
   } else {
