@@ -39,7 +39,7 @@ module.exports = async function() {
   if (kubeClustersList.length === 0) {
     // no cluster found, create one using the selected creation mode
     await createK8sClutster(creationMode);
-    k8s = Config.get("k8s");
+    k8s = Config.get("k8s") as AzureKubernetesCluster;
   } else if (kubeClustersList.length === 1) {
     const cluster = kubeClustersList[0];
     debug(`found one cluster ${chalk.green(cluster.name)}`);
@@ -51,8 +51,8 @@ module.exports = async function() {
       // use this cluster
       k8s = cluster;
     } else {
-      // we either in manual mode or we could not find a valid cluster
-      // let the user chooses
+      // we are either in manual mode or we could not find a valid cluster
+      // let the user choose
       // note: the user may wanna create a new clustor
       k8s.id = (await chooseKubernetesCluster(kubeClustersList)).cluster as (string & CreationMode);
     }
