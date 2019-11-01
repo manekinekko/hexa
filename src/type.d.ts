@@ -92,6 +92,7 @@ declare interface AzureResourceGroup extends AzureEntity {
 declare interface AzureStorage extends AzureEntity {
   sas?: string;
   connectionString?: string;
+  location: string;
 }
 declare interface AzureStorageToken extends AzureStorage {
   sas?: string;

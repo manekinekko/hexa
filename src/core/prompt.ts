@@ -47,9 +47,9 @@ export function chooseResourceGroup(resourceGroups: AzureResourceGroup[]): Promi
       name: "resourceGroup",
       message: "Choose resource group:",
       choices: resourceGroups.map((resourceGroup: AzureResourceGroup) => {
+        const isCreatedByHexa = resourceGroup.tags && resourceGroup.tags["x-created-by"] === "hexa";
         return {
-          suffix: resourceGroup.tags && resourceGroup.tags["x-created-by"],
-          name: resourceGroup.name,
+          name: `${resourceGroup.name} ${isCreatedByHexa ? "(hexa)":""}`,
           value: resourceGroup.id,
           short: resourceGroup.name
         };
@@ -76,6 +76,7 @@ export function chooseAccountStorage(storageAccounts: AzureStorage[]): Promise<i
       {
         id: "MANUAL",
         tags: {},
+        location: "",
         name: "<Create Storage Account>"
       }
     ];
