@@ -2,6 +2,7 @@
 
 import chalk from "chalk";
 import program from "commander";
+import { dumpCommands } from "./core/utils";
 const CFonts = require("cfonts");
 const prettyFont = CFonts.render("HEXA", {
   font: "block",
@@ -41,6 +42,7 @@ let debug: Function;
     .option("login", "connect to your Azure")
     .option("init", "initialize a new workspace")
     .option("deploy", "deploy to Azure")
+    .option("-b, --shell", "generate a bash script of all commands", false)
     .option("-c, --create", "enable manual resource creation", false)
     .option("-d, --debug", "enable debug mode", false)
     .option("-j, --just <services>", "setup or deploy only the selected services (e.g. --just functions,hosting)", false)
@@ -102,6 +104,9 @@ let debug: Function;
   if (program.dryRun) {
     process.env.HEXA_DRY_RUN = "1";
   }
+  if (program.shell) {
+    process.env.HEXA_DUMP_COMMANDS = "1";
+  }
 
   // use process.argv not program.argv
   const commandName = process.argv[2];
@@ -111,6 +116,10 @@ let debug: Function;
     process.exit(0);
   }
   await runCommand(commandName.replace("--", ""), program.just);
+
+  if (process.env.HEXA_DUMP_COMMANDS) {
+    dumpCommands();
+  }
 
   const end = process.hrtime(start);
   console.info(chalk.green("✔ Done in %d seconds."), end[0]);
