@@ -59,6 +59,7 @@ Hexa is driven by community contributions. Please send us your Pull Requests and
 In order to use Hexa, you will need to install both the Azure CLI and Functions Core Tools:
 - Follow the official guide to install the [Azure CLI](http://bit.ly/2mgwpYr).
 - Follow the official guide to install the [Azure Functions Core Tools](http://bit.ly/2ow8C7y).
+- NPM and Node.js.
 
 Once these tools are installed and available on your system, you are ready to install and use the Hexa CLI.
 
@@ -123,6 +124,35 @@ Whenever your project Foo is ready to be deployed to Azure, you can use the `hex
 
 - `$ hexa init --yolo`: Hexa will enter Auto Mode and will setup all supported services (except if you use the `--just` flag) without asking you any question.
 
+### Running on CI
+
+### Notes
+
+If you want to run Hexa on a Continuous Integration enviroment, you will need to make sure that the required dependencies ([see above](#Required-tools)) are installed.
+
+#### Set up Hexa for CI
+
+1. On your local machine, make sure you are logged in to your Azure account from the CLI by running `hexa login`.
+1. Then run `hexa ci` to create a Service Principal account. You should have a similar output:
+
+```
+{
+  appId: 'xx4362xx-aaxx-40xx-8bxx-xx6ea0c351xx',
+  displayName: 'appname',
+  name: 'http://appname',
+  password: 'xxce72xx-1axx-44xx-81xx-35xxb15xxa1e',
+  tenant: 'xxf988xx-86xx-41xx-91xx-2d7cd011dbxx'
+}
+```
+
+1. Configure your CI with the following environment variables (secrets):
+  - `AZURE_SERVICE_PRINCIPAL_ID`: the `appId` from the service principal config.
+  - `AZURE_SERVICE_PRINCIPAL_PASSWORD`: the `password` from the service principal config.
+  - `AZURE_SERVICE_PRINCIPAL_TENANT`: The `tenant` from the service principal config.
+
+1. On your CI environment, before deploying with Hexa, run `hexa login`. Hexa will attempt to login to your Azure account using these service principal credentials. Hexa will automatically detect and use the environment variables if they are set.
+
+1. Then, simply run the usual `hexa deploy` command.
 
 Enjoy!
 
