@@ -52,12 +52,14 @@ export const FEATURES = [
     value: "database",
     short: "Database"
   },
-  {
-    name: "Kubernetes: Configure a Kubernetes cluster (preview)",
-    value: "kubernetes",
-    short: "Kubernetes"
-  }
+  // @todo: this feature needs more testing scenarios before going public
+  // {
+  //   name: "Kubernetes: Configure a Kubernetes cluster (preview)",
+  //   value: "kubernetes",
+  //   short: "Kubernetes"
+  // }
 ];
+
 export const WORKSPACE_FILENAME = process.env.HEXA_DRY_RUN ? "hexa.test.json" : "hexa.json";
 export const ENV_FILENAME = ".env";
 
