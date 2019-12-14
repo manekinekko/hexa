@@ -80,14 +80,18 @@ Options:
   login                  connect to your Azure
   init                   initialize a new workspace
   deploy                 deploy to Azure
-  -y, --yes              answer yes to all confirmations (default: false)
-  -r, --relogin          force login (default: false)
-  -c, --create           enable resource creation (default: false)
-  -m, --manual           enable Manual mode (default: false)
+  -c, --create           enable manual resource creation (default: false)
   -d, --debug            enable debug mode (default: false)
+  -j, --just <services>  setup or deploy only the selected services (e.g. --just functions,hosting) (default: false)
+  -l, --login            force login (default: false)
+  -m, --manual           enter Manual mode (default: false)
+  -r, --reset            reset (delete) local configuration (default: false)
   -s, --sas              use SAS token (only: storage and database) (default: false)
   -t, --token            generate a Storage token into a .env file (default: false)
-  -j, --just <services>  setup or deploy only the selected services (e.g. --just functions,hosting) (default: false)
+  -u, --use <builder>    use a specific build system (e.g. tsc,bazel) (default: "tsc")
+  -v, --verbose          enable verbose mode (default: false)
+  -y, --yes              answer yes to all confirmations (default: false)
+  --dry-run              do not execute real commands. (default: false)
   --yolo                 enable all modes and all services (default: false)
   -h, --help             output usage information
 ```
