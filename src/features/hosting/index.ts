@@ -23,10 +23,6 @@ module.exports = async function() {
 
   createDirectoryIfNotExists(defaultPublicFolder);
 
-  if (overrideHtml || typeof overrideHtml === "undefined") {
-    // copy index.html
-    copyTemplate(`init/hosting/index.html.tpl`, `${folder}/index.html`);
-  }
   if (override404 || typeof override404 === "undefined") {
     // copy 404.html
     copyTemplate(`init/hosting/404.html.tpl`, `${folder}/404.html`);
