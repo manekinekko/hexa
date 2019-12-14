@@ -1,10 +1,10 @@
 import chalk from "chalk";
 import { askForStorageAccountDetails } from "../../core/prompt";
-import { az, Config, sanitize, saveWorkspace, uuid } from "../../core/utils";
+import { az, Config, sanitize, saveWorkspace, uuid, readWorkspace } from "../../core/utils";
 const debug = require("debug")("storage:create");
 
 module.exports = async function(creationMode: CreationMode) {
-  const project: AzureResourceGroup = Config.get("project");
+  const {project} = readWorkspace();
 
   // Note: the storage account name must be globally unique!
   let name = sanitize(project.name) + uuid();

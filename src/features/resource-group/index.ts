@@ -29,8 +29,6 @@ module.exports = async function() {
         name
       };
 
-      Config.set("project", project);
-
       saveWorkspace({
         project
       });

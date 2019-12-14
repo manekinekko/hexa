@@ -1,13 +1,13 @@
-import { az, Config, saveEnvFile, saveWorkspace } from "../../core/utils";
+import { az, Config, saveEnvFile, saveWorkspace, readWorkspace } from "../../core/utils";
 import chalk from "chalk";
 const debug = require("debug")("storage:token");
 
 module.exports = async function() {
-  const storage: AzureStorageToken = Config.get("storage");
+  const {storage} = readWorkspace();
   debug(`using storage ${chalk.green(storage.name)}`);
 
-  const resourceGroup: AzureResourceGroup = Config.get("project");
-  debug(`using resource group ${chalk.green(resourceGroup.name)}`);
+  const {project} = readWorkspace();
+  debug(`using resource group ${chalk.green(project.name)}`);
 
   const subscription: AzureSubscription = Config.get("subscription");
   debug(`using subscription ${chalk.green(subscription.name)}`);
@@ -29,7 +29,7 @@ module.exports = async function() {
   } else {
     // https://docs.microsoft.com/en-us/cli/azure/storage/account?view=azure-cli-latest#az-storage-account-show-connection-string
     let connectionString = await az<string>(
-      `storage account show-connection-string --name "${storage.name}" --resource-group "${resourceGroup.name}" --subscription "${subscription.name}" --query "connectionString"`,
+      `storage account show-connection-string --name "${storage.name}" --resource-group "${project.name}" --subscription "${subscription.name}" --query "connectionString"`,
       `Fetching a connection string for storage account ${chalk.cyan(storage.name)}...`
     );
     saveEnvFile("AZURE_STORAGE_CONNECTION_STRING", connectionString);

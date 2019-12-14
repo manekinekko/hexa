@@ -11,7 +11,6 @@ module.exports = async function(creationMode: CreationMode) {
     ({ name } = await askForProjectDetails(name));
   }
 
-  Config.set("project", name);
   debug(`saving project ${name}`);
 
   let region = "westeurope";
@@ -30,7 +29,7 @@ module.exports = async function(creationMode: CreationMode) {
 
   if (isProjectExists?.message.includes("true")) {
     // https://docs.microsoft.com/en-us/cli/azure/group?view=azure-cli-latest#az-group-show
-    project = await az<AzureResourceGroup>(`group show -n workspacetest --query "{name:name, id:id, location:location}"`, `Bootstrapping project ${chalk.cyan(name)}...`);
+    project = await az<AzureResourceGroup>(`group show -n ${name} --query "{name:name, id:id, location:location}"`, `Bootstrapping project ${chalk.cyan(name)}...`);
   } else {
     // https://docs.microsoft.com/en-us/cli/azure/group?view=azure-cli-latest#az-group-create
     project = await az<AzureResourceGroup>(
@@ -38,8 +37,6 @@ module.exports = async function(creationMode: CreationMode) {
       `Bootstrapping project ${chalk.cyan(name)}...`
     );
   }
-
-  Config.set("project", project);
 
   saveWorkspace({
     project

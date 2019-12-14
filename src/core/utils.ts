@@ -222,14 +222,14 @@ export function saveWorkspace(config: Partial<HexaWorkspace>) {
     oldConfig = JSON.parse(readFileFromDisk(WORKSPACE_FILENAME) || "{}") as HexaWorkspace;
   }
 
-  config = merge(config, oldConfig);
+  config = merge(oldConfig, config);
 
   debug(`saving workspace with ${chalk.green(JSON.stringify(config))}`);
   fs.writeFileSync(WORKSPACE_FILENAME, JSON.stringify(config, null, 2));
 }
 
 export function readWorkspace() {
-  return JSON.parse(readFileFromDisk(WORKSPACE_FILENAME) || "{}");
+  return JSON.parse(readFileFromDisk(WORKSPACE_FILENAME) || "{}") as HexaWorkspace;
 }
 
 export function saveEnvFile(key: string, value: string) {

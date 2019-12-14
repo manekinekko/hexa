@@ -272,8 +272,7 @@ export function askForHostingFolder(defaultPublicFolderName: string): Promise<An
         } else {
           return "Please enter a public folder.";
         }
-      },
-      when: () => !process.env.HEXA_AUTO_MODE
+      }
     },
     {
       type: "confirm",

@@ -1,6 +1,6 @@
 import chalk from "chalk";
 import { chooseAccountStorage } from "../../core/prompt";
-import { az, Config, saveWorkspace } from "../../core/utils";
+import { az, Config, saveWorkspace, readWorkspace } from "../../core/utils";
 const debug = require("debug")("storage");
 const storageCreation = require(`./create`);
 
@@ -8,8 +8,8 @@ module.exports = async function() {
   const subscription: AzureSubscription = Config.get("subscription");
   debug(`Using subscription ${chalk.green(subscription.name)}`);
 
-  const resourceGroup: AzureResourceGroup = Config.get("project");
-  debug(`Using resource group ${chalk.green(resourceGroup.name)}`);
+  const {project} = readWorkspace();
+  debug(`Using resource group ${chalk.green(project.name)}`);
 
   let storage: AzureStorage = {
     id: "" as any,
@@ -19,8 +19,8 @@ module.exports = async function() {
 
   // https://docs.microsoft.com/en-us/cli/azure/storage/account?view=azure-cli-latest#az-storage-account-list
   let storageAccountsList = await az<AzureStorage[]>(
-    `storage account list --resource-group "${resourceGroup.name}" --subscription "${subscription.id}" --query "[].{name:name, id:id, location:location, tags:tags}"`,
-    `Checking storage for project ${chalk.cyan(resourceGroup.name)}...`
+    `storage account list --resource-group "${project.name}" --subscription "${subscription.id}" --query "[].{name:name, id:id, location:location, tags:tags}"`,
+    `Checking storage for project ${chalk.cyan(project.name)}...`
   );
 
   debug(`storageAccountsList=${chalk.green(JSON.stringify(storageAccountsList))}`);
@@ -32,7 +32,7 @@ module.exports = async function() {
   if (Array.isArray(storageAccountsList) && storageAccountsList.length === 0) {
     // no storage account found, create one using the selected creation mode
     await storageCreation(creationMode);
-    storage = Config.get("storage") as AzureStorage;
+    ({storage} = readWorkspace());
   } else if (Array.isArray(storageAccountsList) && storageAccountsList.length === 1) {
     const storageAccount = storageAccountsList[0];
     debug(`found one storage account ${chalk.green(storageAccount.name)}`);
@@ -48,24 +48,27 @@ module.exports = async function() {
       // let the user choose
       // note: the user may wanna create a new storage account
       storage.id = (await chooseAccountStorage(storageAccountsList)).storage as (string & CreationMode);
+      debug(`choosen storage account ${chalk.green(JSON.stringify(storage))}`);
     }
   } else if(Array.isArray(storageAccountsList)) {
     // we found many storage accounts, let the user choose the right one
     // note: the user may wanna create a new storage account
     storage.id = (await chooseAccountStorage(storageAccountsList)).storage as (string & CreationMode);
+    debug(`choosen storage account ${chalk.green(JSON.stringify(storage))}`);
   }
 
   // the user choose to create a new storage account
   if (storage.id === "MANUAL") {
     await storageCreation(creationMode);
-    storage = Config.get("storage") as AzureStorage;
+    ({storage} = readWorkspace());
   }
 
-  // const { id, name } = storageAccountsList.find((accountStorage: AzureStorage) => accountStorage.id === storage.id) as AzureStorage;
+  // use previously selected storage account ID and get the right storage information from the accounts list
+  storage = storageAccountsList.find((accountStorage: AzureStorage) => accountStorage.id === storage.id) as AzureStorage;
 
-  debug(`setting storage account ${chalk.green(storage.name)}`);
+  debug(`setting storage account ${chalk.green(JSON.stringify(storage))}`);
 
-  Config.set("storage", storage);
+  // Config.set("storage", storage);
 
   saveWorkspace({
     storage

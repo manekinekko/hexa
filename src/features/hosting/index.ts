@@ -1,7 +1,7 @@
 import inquirer = require("inquirer");
 import chalk from "chalk";
 import { askForHostingFolder } from "../../core/prompt";
-import { az, Config, copyTemplate, saveWorkspace, createDirectoryIfNotExists } from "../../core/utils";
+import { az, Config, copyTemplate, saveWorkspace, createDirectoryIfNotExists, readWorkspace } from "../../core/utils";
 const debug = require("debug")("hosting");
 
 module.exports = async function() {
@@ -13,11 +13,14 @@ module.exports = async function() {
   let [folder, overrideHtml, override404, overrideError] = [defaultPublicFolder, false, false, false];
 
   if (isForceModeEnabled) {
+    // when the Force mode is enabled, use all defaults
     [folder, overrideHtml, override404, overrideError] = [defaultPublicFolder, true, true, true];
   } else {
+    // when either manual or automatic mode are enabled, ask the user for all the details
     ({ folder = defaultPublicFolder, overrideHtml, override404, overrideError } = await askForHostingFolder(defaultPublicFolder));
     debug(`selected hosting folder=${folder}, overrideHtml=${overrideHtml}, override404=${override404}. overrideError=${overrideError}`);
   }
+
   createDirectoryIfNotExists(defaultPublicFolder);
 
   if (overrideHtml || typeof overrideHtml === "undefined") {
@@ -33,7 +36,7 @@ module.exports = async function() {
     copyTemplate(`init/hosting/error.html.tpl`, `${folder}/error.html`);
   }
 
-  const storage: AzureStorage = Config.get("storage");
+  const { storage } = readWorkspace();
   debug(`using storage ${chalk.green(storage.name)}`);
 
   const subscription: AzureSubscription = Config.get("subscription");
