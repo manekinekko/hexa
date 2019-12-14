@@ -273,24 +273,6 @@ export function askForHostingFolder(defaultPublicFolderName: string): Promise<An
           return "Please enter a public folder.";
         }
       }
-    },
-    {
-      type: "confirm",
-      name: "overrideHtml",
-      message: ({ folder }) => `Override ${folder}/index.html?`,
-      when: ({ folder }) => fileExists(`${folder}/index.html`)
-    },
-    {
-      type: "confirm",
-      name: "override404",
-      message: ({ folder }) => `Override ${folder}/404.html?`,
-      when: ({ folder }) => fileExists(`${folder}/404.html`)
-    },
-    {
-      type: "confirm",
-      name: "overrideError",
-      message: ({ folder }) => `Override ${folder}/error.html?`,
-      when: ({ folder }) => fileExists(`${folder}/error.html`)
     }
   ];
   return inquirer.prompt(questions);
