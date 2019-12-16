@@ -1,12 +1,13 @@
 import chalk from "chalk";
-import { az, Config, sanitize, saveWorkspace, uuid } from "../../core/utils";
+import { az, Config, sanitize, saveWorkspace, uuid, readWorkspace } from "../../core/utils";
 const debug = require("debug")("functions");
 
 module.exports = async function() {
-  const project: AzureResourceGroup = Config.get("project");
+  const workspace = readWorkspace();
+  const project: AzureResourceGroup = workspace.project;
   debug(`using project ${chalk.green(project.name)}`);
 
-  const storage: AzureStorage = Config.get("storage");
+  const storage: AzureStorage = workspace.storage;
   debug(`using storage ${chalk.green(storage.name)}`);
 
   const subscription: AzureSubscription = Config.get("subscription");
