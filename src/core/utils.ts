@@ -117,9 +117,8 @@ export async function runCmd(command: string, loadingMessage?: string, options?:
 }
 
 ////////
-export async function az<T>(command: string, loadingMessage?: string) {
-  const outputJson = `--output json`;
-  command = `${command} ${outputJson} ` + (IS_DEBUG ? "--verbose" : "");
+export async function az<T>(command: string, loadingMessage?: string, output = `json`) {
+  command = `${command} --output ${output} ` + (IS_DEBUG ? "--verbose" : "");
   const message: string = await runCmd(`az ${command}`, loadingMessage, {
     silent: !IS_DEBUG
   });
