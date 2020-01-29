@@ -1,16 +1,17 @@
 import chalk from "chalk";
 import { askForFunctionsAppFolder } from "../../core/prompt";
-import { Config, createDirectoryIfNotExists, directoryExists, func, npm, saveWorkspace, uuid, copyTemplate, sanitize, updateFile } from "../../core/utils";
+import { Config, createDirectoryIfNotExists, directoryExists, func, npm, saveWorkspace, uuid, copyTemplate, sanitize, updateFile, readWorkspace } from "../../core/utils";
 const debug = require("debug")("functions:init");
 
 module.exports = async function() {
-  const project: AzureResourceGroup = Config.get("project");
+  const workspace = readWorkspace();
+  const project: AzureResourceGroup = workspace.project;
   debug(`using project ${chalk.green(project.name)}`);
 
   const functionApp: AzureFunctionApp = Config.get("functions");
   debug(`using functionApp ${chalk.green(functionApp.name)}`);
 
-  const storage: AzureStorage = Config.get("storage");
+  const storage: AzureStorage = workspace.storage;
   debug(`using storage ${chalk.green(storage.name)}`);
 
   const functionAppName = functionApp.name;
