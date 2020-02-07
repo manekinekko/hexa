@@ -1,9 +1,10 @@
 import chalk from "chalk";
-import { az, Config, sanitize, saveWorkspace, uuid } from "../../core/utils";
+import { az, Config, sanitize, saveWorkspace, uuid, readWorkspace } from "../../core/utils";
 const debug = require("debug")("container");
 
 module.exports = async function(creationMode: CreationMode) {
-  const project: AzureResourceGroup = Config.get("project");
+  const workspace = readWorkspace();
+  const project: AzureResourceGroup = workspace.project;
 
   // must be globally unique
   let name = sanitize(project.name) + uuid();
@@ -16,8 +17,6 @@ module.exports = async function(creationMode: CreationMode) {
       `acr create --resource-group ${project.name} --name ${name} --sku Standard --location ${project.location} --tags "x-created-by=hexa" --query "{name:name, id:id, hostname:loginServer}"`,
       `Creating a Container Registry for project ${chalk.cyan(project.name)}...`
     );
-
-    Config.set("registry", registry);
 
     saveWorkspace({
       registry

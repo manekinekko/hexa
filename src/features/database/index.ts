@@ -78,8 +78,6 @@ module.exports = async function() {
     }
   }
 
-  Config.set("databaseInstance", databaseInstance);
-
   saveWorkspace({
     database: databaseInstance
   });

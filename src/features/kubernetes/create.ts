@@ -1,10 +1,11 @@
 import chalk from "chalk";
 import { askForKubernetesClusterDetails } from "../../core/prompt";
-import { az, Config, sanitize, saveWorkspace, uuid } from "../../core/utils";
+import { az, Config, sanitize, saveWorkspace, uuid, readWorkspace } from "../../core/utils";
 const debug = require("debug")("k8s:create");
 
 module.exports = async function(creationMode: CreationMode) {
-  const project: AzureResourceGroup = Config.get("project");
+  const workspace = readWorkspace();
+  const project: AzureResourceGroup = workspace.project;
 
   let name = sanitize(project.name) + uuid();
   debug(`using project ${name}`);
@@ -49,15 +50,13 @@ module.exports = async function(creationMode: CreationMode) {
     );
   }
 
-  Config.set("k8s", k8s);
-  debug(`k8s ${JSON.stringify(Config.get("k8s"))}`);
-
   saveWorkspace({
     k8s: {
       name: k8s.name,
       hostname: k8s.publicIp.dns.fqdn || k8s.publicIp.ip
     }
   });
+  debug(`k8s ${JSON.stringify(workspace.k8s)}`);
 
   return true;
 };

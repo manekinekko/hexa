@@ -68,8 +68,6 @@ module.exports = async function() {
 
   debug(`setting storage account ${chalk.green(JSON.stringify(storage))}`);
 
-  // Config.set("storage", storage);
-
   saveWorkspace({
     storage
   });
