@@ -66,16 +66,11 @@ module.exports = async function() {
   // use previously selected storage account ID and get the right storage information from the accounts list
   storage = storageAccountsList.find((accountStorage: AzureStorage) => accountStorage.id === storage.id) as AzureStorage;
 
-  debug(`setting storage account ${chalk.green(JSON.stringify(storage))}`);
-
-  // Config.set("storage", storage);
+  debug(`setting storage account ${chalk.green(JSON.stringify(storage))}`)
 
   saveWorkspace({
     storage
   });
 
-  if (process.env.HEXA_STORAGE_GENERATE_TOKEN) {
-    return (await require("./tokens"))();
-  }
-  return true;
+  return await (require("./tokens"))();
 };
