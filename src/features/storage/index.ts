@@ -72,8 +72,5 @@ module.exports = async function() {
     storage
   });
 
-  if (process.env.HEXA_STORAGE_GENERATE_TOKEN) {
-    return (await require("./tokens"))();
-  }
-  return true;
+  return await (require("./tokens"))();
 };

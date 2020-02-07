@@ -11,6 +11,9 @@ declare interface ProcessEnv {
 declare interface HexaInitOptions {
   requestedServices?: string[];
 }
+declare interface HexaMessageResponse {
+  message: string;
+}
 
 declare interface HexaWorkspace {
   storage: AzureStorage;

@@ -117,15 +117,18 @@ export async function runCmd(command: string, loadingMessage?: string, options?:
 }
 
 ////////
-export async function az<T>(command: string, loadingMessage?: string, output = `json`) {
+export async function az<T>(command: string, loadingMessage?: string, output: "json" | "tsv" = `json`) {
   command = `${command} --output ${output} ` + (IS_DEBUG ? "--verbose" : "");
-  const message: string = await runCmd(`az ${command}`, loadingMessage, {
+  let message: string = await runCmd(`az ${command}`, loadingMessage, {
     silent: !IS_DEBUG
   });
 
+  // guess if the output response is a JSON format
   if (message.startsWith("{") || message.startsWith("[")) {
     return JSON.parse(message || "{}") as T;
   } else {
+    // for other output formats, ie. TSV
+    message = message.trim();
     return ({ message } as unknown) as T;
   }
 }
@@ -211,6 +214,11 @@ export function readFileFromDisk(filePath: string) {
 
 export function saveWorkspace(config: Partial<HexaWorkspace>) {
   debug(`updating workspace with ${chalk.green(JSON.stringify(config))}`);
+
+  if (!config || Object.keys(config).length === 0) {
+    debug(`skipping saving workspace because config option is empty!`);
+    return false;
+  }
 
   // we don't want to store IDs in the workspace file
   for (var key in config) {

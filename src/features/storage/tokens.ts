@@ -15,30 +15,27 @@ module.exports = async function() {
   if (process.env.HEXA_STORAGE_USE_SAS) {
     // https://docs.microsoft.com/en-us/cli/azure/storage/account?view=azure-cli-latest#az-storage-account-generate-sas
     const expiryYear = new Date().getFullYear() + 2;
-    let sas = await az<string>(
+    let sas = await az<HexaMessageResponse>(
       `storage account generate-sas --account-key 00000000 --account-name "${storage.name}" --expiry ${expiryYear}-01-01 --https-only --permissions acuw --resource-types sco --services b`,
-      `Creating a SAS token...`
+      `Creating a SAS token...`,
+      `tsv`
     );
-    saveEnvFile("AZURE_STORAGE_SAS", sas);
-    debug(`saved SAS key to ${chalk.green(".env")}`);
+    debug(`got SAS key ${chalk.green(JSON.stringify(sas))}`);
 
-    Config.set("storage", {
-      ...storage,
-      sas
-    });
+    saveEnvFile("AZURE_STORAGE_SAS", sas.message);
+    debug(`saved AZURE_STORAGE_SAS key to ${chalk.green(".env")}`);
   } else {
     // https://docs.microsoft.com/en-us/cli/azure/storage/account?view=azure-cli-latest#az-storage-account-show-connection-string
-    let connectionString = await az<{ message: string }>(
+    let connectionString = await az<HexaMessageResponse>(
       `storage account show-connection-string --name "${storage.name}" --resource-group "${project.name}" --subscription "${subscription.name}" --query "connectionString"`,
       `Fetching a connection string for storage account ${chalk.cyan(storage.name)}...`,
       `tsv`
     );
-    saveEnvFile("AZURE_STORAGE_CONNECTION_STRING", connectionString.message);
-    debug(`saved ConnectionString key to ${chalk.green(".env")}`);
+    debug(`got ConnectionString key ${chalk.green(JSON.stringify(connectionString))}`);
 
-    Config.set("storage", {
-      ...storage,
-      connectionString: connectionString.message
-    });
+    saveEnvFile("AZURE_STORAGE_CONNECTION_STRING", connectionString.message);
+    debug(`saved AZURE_STORAGE_CONNECTION_STRING key to ${chalk.green(".env")}`);
   }
+
+  return true;
 };
