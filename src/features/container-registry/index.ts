@@ -27,7 +27,7 @@ module.exports = async function() {
 
   if (acrList.length === 0) {
     // no ACR accout found, create one
-    return await require(`./create`)("AUTOMATIC");
+    return await (require(`./create`))("AUTOMATIC");
   }
 
   if (creationMode === "AUTOMATIC") {
@@ -43,7 +43,7 @@ module.exports = async function() {
         selectedAcrId = acr.id;
       } else {
         // we founf one cluster but it was not created by Hexa, go ahead and automatically create one
-        return (await require(`./create`))("AUTOMATIC");
+        return await (require(`./create`))("AUTOMATIC");
       }
     } else if (Array.isArray(acrList)) {
       // we found many ACR accounts, let the user choose the right one
@@ -55,7 +55,7 @@ module.exports = async function() {
 
   if (selectedAcrId === "MANUAL") {
     // the user expliticitly chooses to manually create a ACR account
-    return (await require(`./create`))("MANUAL");
+    return await (require(`./create`))("MANUAL");
   }
 
   const { id, name, hostname } = acrList.find((acr: AzureContainerRegistry) => acr.id === selectedAcrId) as AzureContainerRegistry;

@@ -48,7 +48,7 @@ module.exports = async function(options?: HexaInitOptions) {
   const subscriptions: AzureSubscription[] = Config.get("subscriptions");
 
   if (!subscriptions || (subscriptions && subscriptions.length === 0) || process.env.HEXA_FORCE_LOGIN) {
-    await require(`./login`)();
+    await (require(`./login`))();
   } else {
     debug(`found subscriptions ${chalk.green(JSON.stringify(subscriptions))}`);
   }

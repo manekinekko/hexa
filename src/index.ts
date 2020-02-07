@@ -27,7 +27,7 @@ let debug: Function;
           .filter(feat => feat);
       }
 
-      return (await require(`./commands/${commandName}`))(options);
+      return await (require(`./commands/${commandName}`))(options);
     } catch (error) {
       console.error(chalk.red(`Command "${commandName}" not supported yet.`));
       console.error(chalk.red(error));

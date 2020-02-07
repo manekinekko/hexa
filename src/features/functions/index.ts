@@ -52,5 +52,5 @@ module.exports = async function() {
   });
 
   // init functions projects
-  return (await require("./init"))();
+  return await (require("./init"))();
 };

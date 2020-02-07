@@ -34,5 +34,5 @@ module.exports = async function(creationMode: CreationMode) {
     storage
   });
 
-  return (await require("./tokens"))();
+  return await (require("./tokens"))();
 };
