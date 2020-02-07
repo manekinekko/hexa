@@ -28,8 +28,7 @@ module.exports = async function(creationMode: CreationMode) {
     `Creating storage account ${chalk.cyan(name)} (this may take few minutes)...`
   );
 
-  Config.set("storage", storage);
-  debug(`storage ${JSON.stringify(Config.get("storage"))}`);
+  debug(`storage ${JSON.stringify(storage)}`);
 
   saveWorkspace({
     storage

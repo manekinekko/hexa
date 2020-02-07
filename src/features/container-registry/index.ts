@@ -1,4 +1,4 @@
-import { Config, az, saveWorkspace } from "../../core/utils";
+import { Config, az, saveWorkspace, readWorkspace } from "../../core/utils";
 import chalk from "chalk";
 import { chooseAcrAccount } from "../../core/prompt";
 
@@ -8,7 +8,8 @@ module.exports = async function() {
   const subscription: AzureSubscription = Config.get("subscription");
   debug(`Using subscription ${chalk.green(subscription.name)}`);
 
-  const resourceGroup: AzureResourceGroup = Config.get("project");
+  const workspace = readWorkspace();
+  const resourceGroup: AzureResourceGroup = workspace.project;
   debug(`Using resource group ${chalk.green(resourceGroup.name)}`);
 
   // https://docs.microsoft.com/en-us/cli/azure/acr?view=azure-cli-latest#az-acr-list
@@ -77,7 +78,6 @@ module.exports = async function() {
     name,
     hostname
   };
-  Config.set("registry", registry);
 
   saveWorkspace({
     registry

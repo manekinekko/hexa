@@ -1,6 +1,6 @@
 import chalk from "chalk";
 import { chooseKubernetesCluster } from "../../core/prompt";
-import { az, Config, copyTemplate, saveWorkspace, updateFile } from "../../core/utils";
+import { az, Config, copyTemplate, saveWorkspace, updateFile, readWorkspace } from "../../core/utils";
 const debug = require("debug")("k8s");
 const createK8sClutster = require(`./create`);
 const acr = require(`../container-registry/index`);
@@ -12,10 +12,11 @@ module.exports = async function() {
   const subscription: AzureSubscription = Config.get("subscription");
   debug(`Using subscription ${chalk.green(subscription.name)}`);
 
-  const resourceGroup: AzureResourceGroup = Config.get("project");
+  const workspace = readWorkspace();
+  const resourceGroup: AzureResourceGroup = workspace.project;
   debug(`Using resource group ${chalk.green(resourceGroup.name)}`);
 
-  const registry: AzureContainerRegistry = Config.get("registry");
+  const registry: AzureContainerRegistry = workspace.registry;
   debug(`using registry ${chalk.green(registry.name)}`);
 
   let k8s: AzureKubernetesCluster = {
@@ -87,8 +88,6 @@ node_modules
 npm-debug.log
     `
   });
-
-  Config.set("k8s", k8s);
 
   saveWorkspace({
     k8s
