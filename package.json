@@ -38,6 +38,7 @@
   },
   "license": "MIT",
   "dependencies": {
+    "azure-functions-core-tools": "^3.0.2106",
     "cfonts": "^2.4.5",
     "chalk": "^2.4.2",
     "clear": "^0.1.0",
@@ -46,10 +47,10 @@
     "debug": "^4.1.1",
     "deepmerge": "^4.0.0",
     "dotenv": "^8.1.0",
+    "inquirer": "^7.0.0",
     "ora": "^3.4.0",
     "shelljs": "^0.8.3",
-    "uuid": "^3.3.3",
-    "inquirer": "^7.0.0"
+    "uuid": "^3.3.3"
   },
   "devDependencies": {
     "@commitlint/cli": "^8.2.0",

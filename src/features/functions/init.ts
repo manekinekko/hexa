@@ -45,6 +45,9 @@ module.exports = async function() {
     }
   });
 
+  const azFuncCoreTools = 'azure-functions-core-tools@3';
+  await npm<void>(`install ${azFuncCoreTools} --unsafe-perm true`, functionAppPath, `Installing ${azFuncCoreTools} for ${chalk.cyan(functionAppPath)}...`);
+
   await func<void>(
     `init ${functionAppName} --worker-runtime node --language typescript`,
     functionAppDirectory,
