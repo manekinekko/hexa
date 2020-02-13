@@ -185,6 +185,7 @@ export function directoryExists(filePath: string) {
 export function createDirectoryIfNotExists(filePath: string) {
   if (directoryExists(filePath) === false) {
     fs.mkdirSync(filePath);
+    shell.mkdir('-p', filePath);
     debug(`created directory ${chalk.green(filePath)}`);
   } else {
     debug(`directory already created ${chalk.green(filePath)}`);
