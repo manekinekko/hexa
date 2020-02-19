@@ -1,6 +1,6 @@
 import chalk from "chalk";
-import { az, Config, func, isProjectFileExists, joinPath, kubectl, npm, readWorkspace, FEATURES } from "../core/utils";
-const debug = require("debug")("push");
+import { az, directoryExists, FEATURES, func, isProjectFileExists, joinPath, kubectl, npm, readEnvFile, readWorkspace, updateFile, readFileFromDisk } from "../core/utils";
+const debug = require("debug")("deploy");
 
 module.exports = async function(options: HexaInitOptions) {
   if (isProjectFileExists() === false) {
@@ -9,9 +9,6 @@ module.exports = async function(options: HexaInitOptions) {
     console.log(chalk.red(`✗ Abort.`));
     process.exit(1);
   }
-
-  // DON'T READ GLOBAL CONFIG, EXCEPT FOR SUBSCRIPTIO ID
-  const subscription: AzureSubscription = Config.get("subscription");
 
   // Get all other required configs from the current workspace
   const workspace: HexaWorkspace = readWorkspace();
@@ -22,18 +19,22 @@ module.exports = async function(options: HexaInitOptions) {
   let requestedServices = (options.requestedServices || []) as string[];
   if (requestedServices.length) {
     const workspaceKeys = Object.keys(workspace);
-    workspaceKeys.filter(service => validFeatures.includes(service)).map(service => {
-      // don't deploy services that are not requested by the user
-      // project and storage are required entries!
-      if (["project", "storage"].includes(service) === false && requestedServices.includes(service) === false) {
-        (workspace as any)[service] = null;
-      }
-    });
+    workspaceKeys
+      .filter(service => validFeatures.includes(service))
+      .map(service => {
+        // don't deploy services that are not requested by the user
+        // project and storage are required entries!
+        if (["project", "storage"].includes(service) === false && requestedServices.includes(service) === false) {
+          (workspace as any)[service] = null;
+        }
+      });
   }
 
-  if (workspace.storage && workspace.storage.connectionString) {
-    process.env.AZURE_STORAGE_CONNECTION_STRING = workspace.storage.connectionString;
-    debug(`set env variable AZURE_STORAGE_CONNECTION_STRING`);
+  const envFile = readEnvFile();
+
+  if (workspace.storage && envFile) {
+    process.env.AZURE_STORAGE_CONNECTION_STRING = envFile.AZURE_STORAGE_CONNECTION_STRING;
+    debug(`settting AZURE_STORAGE_CONNECTION_STRING=${chalk.green(process.env.AZURE_STORAGE_CONNECTION_STRING as string)}`);
   }
 
   let deployStatus = false;
@@ -48,45 +49,75 @@ module.exports = async function(options: HexaInitOptions) {
 
   // Deploy hosting config
   if (workspace.hosting) {
-    deployStatus = true;
+    if (directoryExists(workspace.hosting.folder)) {
+      deployStatus = true;
 
-    debug(`deploying hosting`);
-    // https://docs.microsoft.com/en-us/cli/azure/storage/blob?view=azure-cli-latest#az-storage-blob-upload-batch
-    await az(
-      `storage blob upload-batch --source "${workspace.hosting.folder}" --destination "\\$web" --account-name "${workspace.storage.name}" --no-progress`,
-      `Deploying hosting ${chalk.cyan(workspace.storage.name)}...`
-    );
+      const currentDeployTime = `${new Date().toISOString().substr(0, 16)}Z`;
+      const lastDeployMetadataFile = ".hexalastdeploy";
+      const deployTimeMetadaFile = `${workspace.hosting.folder}/${lastDeployMetadataFile}`;
+      const lastDeployTimeFromFile = readFileFromDisk(deployTimeMetadaFile);
+      let lastDeployTime: string = "";
 
-    // https://docs.microsoft.com/en-us/cli/azure/storage/account?view=azure-cli-latest#az-storage-account-show
-    hostingUrl = await az(`storage account show --name ${workspace.storage.name} --query "primaryEndpoints.web"`, `Fetching URL for ${chalk.cyan(workspace.project.name)}...`);
+      // validate the deploy time
+      if (lastDeployTimeFromFile && lastDeployTimeFromFile.length === 17 && /(\d{4}\-\d{2}\-\d{2}\T\d{2}:\d{2}Z)/.test(lastDeployTimeFromFile)) {
+        lastDeployTime = lastDeployTimeFromFile;
+      } else {
+        lastDeployTime = currentDeployTime;
+      }
+
+      debug(`deploying hosting if-modified-since "${chalk.green(lastDeployTime)}"`);
+      // https://docs.microsoft.com/en-us/cli/azure/storage/blob?view=azure-cli-latest#az-storage-blob-upload-batch
+      const uploadedFiles = await az<any[]>(
+        `storage blob upload-batch --source "${workspace.hosting.folder}" --destination "\\$web" --account-name "${workspace.storage.name}" --no-progress --max-connections "5" --validate-content --content-cache-control "no-cache"`,
+        `Deploying hosting for ${chalk.cyan(workspace.project.name)}...`
+      );
+
+      if (uploadedFiles.length > 0) {
+        updateFile({
+          filepath: deployTimeMetadaFile,
+          search: "*",
+          replace: currentDeployTime
+        });
+      }
+
+      // https://docs.microsoft.com/en-us/cli/azure/storage/account?view=azure-cli-latest#az-storage-account-show
+      hostingUrl = await az(`storage account show --name ${workspace.storage.name} --query "primaryEndpoints.web"`, `Fetching URL for ${chalk.cyan(workspace.project.name)}...`);
+
+    } else {
+      console.log(`${chalk.yellow("✗")} Skipping hosting: the ${workspace.hosting.folder} folder is missing!`);
+    }
   }
 
   // Deploy functions config
   if (workspace.functions) {
-    deployStatus = true;
+    if (directoryExists(workspace.functions.folder as string)) {
+      deployStatus = true;
 
-    debug(`deploying functions`);
+      debug(`deploying functions`);
 
-    const functionApp = workspace.functions;
+      const functionApp = workspace.functions;
 
-    await npm<void>(`run build:production`, joinPath(process.cwd(), functionApp.folder as string, functionApp.name), `Building Function app ${chalk.cyan(functionApp.name)}...`);
-    const functionAppPublishResult = await func<void>(
-      `azure functionapp publish ${functionApp.name}`,
-      joinPath(process.cwd(), functionApp.folder as string, functionApp.name),
-      `Deploying Function app ${chalk.cyan(functionApp.name)}....`
-    );
+      await npm<void>(`run build:production`, joinPath(process.cwd(), functionApp.folder as string, functionApp.name), `Building Function app ${chalk.cyan(functionApp.name)}...`);
+      const functionAppPublishResult = await func<void>(
+        `azure functionapp publish ${functionApp.name}`,
+        joinPath(process.cwd(), functionApp.folder as string, functionApp.name),
+        `Deploying Function app ${chalk.cyan(functionApp.name)}....`
+      );
 
-    const matchedFunctionUrls = functionAppPublishResult.match(/(https:\/\/[\w-_.\/?=]+)/gm) as string[];
+      const matchedFunctionUrls = functionAppPublishResult.match(/(https:\/\/[\w-_.\/?=]+)/gm) as string[];
 
-    functionUrls = matchedFunctionUrls.map(url => {
-      return {
-        name: url
-          .split("?")[0]
-          .split("/")
-          .pop() as string,
-        url
-      };
-    });
+      functionUrls = matchedFunctionUrls.map(url => {
+        return {
+          name: url
+            .split("?")[0]
+            .split("/")
+            .pop() as string,
+          url
+        };
+      });
+    } else {
+      console.log(`${chalk.yellow("✗")} Skipping functions: the ${workspace.functions.folder} folder is missing!`);
+    }
   }
 
   // Deploy k8s config
@@ -111,7 +142,7 @@ module.exports = async function(options: HexaInitOptions) {
   /////
 
   if (hostingUrl.message) {
-    console.log(`${chalk.yellow("➜")} Hosting: ${chalk.green(hostingUrl.message.replace(/"/g, ''))}`);
+    console.log(`${chalk.yellow("➜")} Hosting: ${chalk.green(hostingUrl.message.replace(/"/g, ""))}`);
   }
 
   if (workspace.database) {

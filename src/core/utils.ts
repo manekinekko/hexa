@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import fs from "fs";
+import fs, { readFile } from "fs";
 import path from "path";
 const shell = require("shelljs");
 const merge = require("deepmerge");
@@ -51,7 +51,7 @@ export const FEATURES = [
     name: "Database: Configure and deploy a database on Azure",
     value: "database",
     short: "Database"
-  },
+  }
   // @todo: this feature needs more testing scenarios before going public
   // {
   //   name: "Kubernetes: Configure a Kubernetes cluster (preview)",
@@ -99,7 +99,9 @@ export async function runCmd(command: string, loadingMessage?: string, options?:
           // the Azure CLI uses stderr to output debug information,
           // we have to filter and check only for errors
           if (stderr.includes("ERROR")) {
-            reject(`AZURE ERROR DETECTED:\n${stderr}\nPlease run the comnand with the --debug flag to output more details.\nIf the error persists, open an issue on https://github.com/manekinekko/hexa/issues/new/choose`);
+            reject(
+              `AZURE ERROR DETECTED:\n${stderr}\nPlease run the comnand with the --debug flag to output more details.\nIf the error persists, open an issue on https://github.com/manekinekko/hexa/issues/new/choose`
+            );
           }
         }
         if (stdout.length) {
@@ -185,7 +187,7 @@ export function directoryExists(filePath: string) {
 export function createDirectoryIfNotExists(filePath: string) {
   if (directoryExists(filePath) === false) {
     fs.mkdirSync(filePath);
-    shell.mkdir('-p', filePath);
+    shell.mkdir("-p", filePath);
     debug(`created directory ${chalk.green(filePath)}`);
   } else {
     debug(`directory already created ${chalk.green(filePath)}`);
@@ -240,6 +242,17 @@ export function saveWorkspace(config: Partial<HexaWorkspace>) {
 
 export function readWorkspace() {
   return JSON.parse(readFileFromDisk(WORKSPACE_FILENAME) || "{}") as HexaWorkspace;
+}
+
+export function readEnvFile() {
+  debug(`reading env file`);
+
+  let oldEnv = "";
+  if (fileExists(ENV_FILENAME)) {
+    oldEnv = readFileFromDisk(ENV_FILENAME) || "";
+  }
+  const buf = Buffer.from(oldEnv);
+  return dotenv.parse(buf);
 }
 
 export function saveEnvFile(key: string, value: string) {
@@ -320,12 +333,17 @@ export function updateFile({ filepath, replace, search }: { filepath: string; re
   let srcContent = readFileFromDisk(filepath) || "";
 
   if (search) {
-    srcContent = srcContent.replace(search, replace);
+    if (search === '*') {
+      srcContent = replace;
+    }
+    else {
+      srcContent = srcContent.replace(search, replace);
+    }
   } else {
     srcContent = [srcContent, replace].join(`\n`);
   }
 
-  debug(`updating file src=${chalk.green(filepath)}`);
+  debug(`updating file ${chalk.green(filepath)}`);
   return fs.writeFileSync(filepath, srcContent);
 }
 
