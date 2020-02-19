@@ -29,9 +29,7 @@ let debug: Function;
 
       return await (require(`./commands/${commandName}`))(options);
     } catch (error) {
-      console.error(chalk.red(`Command "${commandName}" not supported yet.`));
       console.error(chalk.red(error));
-      program.outputHelp();
     }
   };
   program
