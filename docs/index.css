@@ -17,9 +17,17 @@ img.logo {
   animation: rotate 40s infinite linear;
 }
 
+kbd {
+  background: #272822;
+  border-radius: 4px;
+  color: #cacaca;
+  padding: 1px 6px;
+}
+
 a {
   text-decoration: none;
   transition: all 0.3s;
+  color: #5abdca;
 }
 
 a.link__home {
@@ -36,6 +44,7 @@ a.button {
   padding: 16px 30px;
   border-radius: 50px;
   width: 100px;
+  margin: 20px;
 }
 
 header sub {
@@ -87,11 +96,12 @@ footer {
 }
 
 header nav {
-  width: 230px;
+  width: 320px;
+  text-align: right;
 }
 header nav a {
   color: white;
-  margin: 0 10px;
+  margin: 10px;
 }
 
 footer a {
@@ -125,7 +135,7 @@ main {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 100px 0;
+  margin: 100px 0 0;
 }
 
 header img.title {
@@ -225,10 +235,19 @@ section {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  max-width: 1000px;
+  margin: 0 auto;
 }
 article {
   margin: 50px 0;
 }
+
+hr {
+  border: 1px dotted #cdeaee;
+  box-shadow: 0px -1px 0px 0px #57b8c66e;
+  width: 100%;
+}
+
 article h2 {
   font-weight: lighter;
   text-align: left;

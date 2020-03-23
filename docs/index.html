@@ -35,7 +35,12 @@
   <body>
     <svg>
       <g transform="translate(1.811 1.303)">
-        <path class="wave-1" d="M-10.57,9.034,16.263,53.44S31.277,74.69,734.5,80.5c703.237,5.814,1208.69-63.23,1727.266,0S4492.413-53.53,4492.413-53.53H-10.57Z" transform="translate(11 54)" fill="#4398a8" />
+        <path
+          class="wave-1"
+          d="M-10.57,9.034,16.263,53.44S31.277,74.69,734.5,80.5c703.237,5.814,1208.69-63.23,1727.266,0S4492.413-53.53,4492.413-53.53H-10.57Z"
+          transform="translate(11 54)"
+          fill="#4398a8"
+        />
         <path class="wave-2" d="M64.413-61.919V69.033s1162.7-58.9,2307.479-43.744S4643.538,129.644,4643.538,129.644s1.126-41.006-.309-190.983Z" transform="translate(-66.224 60.617)" fill="#5abdca" />
         <path
           d="M511.522,81.286c531.393,74.291,1275.224-67.11,1608.361-64.733S4567.53,67.218,4567.53,67.218v-122.5L-11.527-54.248S-19.87,6.995,511.522,81.286Z"
@@ -53,6 +58,7 @@
       </a>
       <nav>
         <a href="#core-principals" title="read more about the core principals of hexa">Core Principals</a>
+        <a href="#examples" title="see more hexa examples">Examples</a>
         <a href="https://github.com/manekinekko/hexa" target="__blank" title="contribute to hexa" rel="noopener">Contribute</a>
       </nav>
     </header>
@@ -75,6 +81,31 @@
     </main>
 
     <section>
+      <article>
+        <h1>What is Hexa?</h1>
+
+        <iframe
+          width="560"
+          height="315"
+          src="https://www.youtube.com/embed/hmeQ2hZmN7k"
+          frameborder="0"
+          allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+        ></iframe>
+        <h2>
+          Hexa is a open source command line tool to easily setup and deploy your applications to <a href="https://bit.ly/2WB8wdR" target="__blank">Microsoft Azure</a>. It takes full advantage of the
+          Azure CLI, the Azure Function Core Tools CLI and the NPM CLI.
+        </h2>
+        <h2>
+          Hexa allows you to seamlessly configure, setup and deploy to different Azure services such as Resource Groups, Storage accounts, Hosting, Azure Functions and Databases (CosmosDB and Table
+          Storage) and more.
+        </h2>
+        <h2>
+          Hexa is driven by community contributions. Please send us
+          <a href="https://github.com/manekinekko/hexa" target="__blank" title="contribute to hexa" rel="noopener">your Pull Requests and feedback</a>!
+        </h2>
+      </article>
+
       <article id="core-principals">
         <img src="undraw_team_spirit_hrr4.svg" alt="team spirit image" />
         <h2>Hexa is built on the <b>shoulders of giants</b> and takes full advantage of the <b>Azure CLI</b>.</h2>
@@ -87,7 +118,36 @@
         <img src="undraw_selection_92i4.svg" alt="configuration selection image" />
         <h2>Hexa can be <b>opinionated</b>, yet very <b>configurable</b>.</h2>
       </article>
+
+      <hr />
+
+      <article id="examples">
+        <h1>Examples</h1>
+
+        <h2>
+          <kbd>$ hexa init --just=hosting,functions</kbd>: Hexa will setup and configure just the requested services. Current supported services are hosting, functions and database. Please note that a
+          Resource Group and a Storage Accout will automatically be setup as these are required by the other services.
+        </h2>
+
+        <h2>
+          <kbd>$ hexa init --token</kbd>: Hexa will also create a .env file which contains the Connection String token for your storage account. Hexa does not use this token! It is meant for you to
+          use.
+        </h2>
+
+        <h2><kbd>$ hexa init --token --sas</kbd>: Hexa will generate a SAS token for your storage account (instead of a Connection String).</h2>
+
+        <h2><kbd>$ hexa init --manual</kbd>: Hexa will enter Manual Mode and will ask you to make a choice for each step.</h2>
+
+        <h2>
+          <kbd>$ hexa init --manual --create</kbd>: In manual mode, by default, Hexa would only let you choose a resource from your existing ones. The <kbd>--create</kbd> flag allows you to manually
+          create a new resource/service at your convenience.
+        </h2>
+
+        <h2><kbd>$ hexa init --yolo</kbd>: Hexa will enter Auto Mode and will setup all supported services (except if you use the <kbd>--just</kbd> flag) without asking you any question.</h2>
+      </article>
+      <a class="button" href="https://github.com/manekinekko/hexa#get-started" target="__blank" title="contribute to hexa" rel="noopener">Lear more</a>
     </section>
+
     <footer>
       <span> Built with ❤ by <a href="https://twitter.com/manekinekko" title="visit Wassim Chegham's twitter profile">Wassim Chegham</a> </span><br />
       <nav>
