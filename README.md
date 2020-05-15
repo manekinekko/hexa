@@ -1,5 +1,5 @@
 <h1 align="center">
-  <a href="https://hexa.run">Welcome to 𝖧𝖤𝖷△</a>
+  <a href="https://www.hexa.run">Welcome to 𝖧𝖤𝖷△</a>
 </h1>
 
 <p align="center">Hexa – The ultimate companion for the Azure CLI. Setup and deploy in seconds.</p>
@@ -8,7 +8,7 @@
 </p>
 
 <p align="center" >
-   <a href="https://hexa.run">
+   <a href="https://www.hexa.run">
     <img src="https://img.shields.io/website-up-down-5abdca-ff69b4/http/shields.io.svg?label=hexa.run"/>
   </a>
   
@@ -46,7 +46,7 @@
 
 ## What is Hexa?
 
-[Hexa](https://hexa.run) is a open source command line tool to easily setup and deploy your applications to Microsoft Azure. It takes full advantage of the Azure CLI, the Azure Function Core Tools CLI and the NPM CLI.
+[Hexa](https://www.hexa.run) is a open source command line tool to easily setup and deploy your applications to Microsoft Azure. It takes full advantage of the Azure CLI, the Azure Function Core Tools CLI and the NPM CLI.
 
 Hexa allows you to seamlessly configure, setup and deploy to different Azure services such as Resource Groups, Storage accounts, Hosting, Azure Functions and Databases (CosmosDB and Table Storage).
 
