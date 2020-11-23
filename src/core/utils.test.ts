@@ -18,20 +18,13 @@ describe("utils", () => {
     });
   });
 
-  // describe("az", () => {
-  //   it("should output response in a JSON format", async () => {
-  //     const str = '{ "test": "test" }';
-  //     jest.spyOn(utils, "runCmd").mockImplementationOnce(() => Promise.resolve(str));
-  //     expect(await utils.az("")).toBe({ test: "test" });
-  //   });
-
-  //   it("should output response in other format", () => {
-  //     const str = "  test   ";
-  //     // @ts-ignore
-  //     // utils.runCmd = jest.fn().mockReturnValue(str)
-  //     // expect(utils.az("")).toBe('test');
-  //   });
-  // });
+  describe("az", () => {
+    it("should output response in a JSON format", () => {
+      const str = '{ "test": "test" }';
+      jest.spyOn(utils, "runCmd").mockImplementationOnce(() => Promise.resolve(str));
+      utils.az("").then((re) => expect(re).toBe({ test: "test" }));
+    });
+  });
 
   describe("directoryExists", () => {
     it("should return if the directory exists", () => {
