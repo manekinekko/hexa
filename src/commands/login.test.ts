@@ -1,17 +1,8 @@
 import * as utils from "../core/utils";
 import * as prompt from "../core/prompt";
+const login = require("./login");
 
-describe("login", () => {
-  jest.spyOn(utils, "az").mockImplementationOnce(() =>
-    Promise.resolve([
-      {
-        id: "test_id",
-        name: "name",
-        location: "location",
-      },
-    ])
-  );
-
+describe("init", () => {
   jest.spyOn(prompt, "chooseSubscription").mockImplementationOnce(() =>
     Promise.resolve({
       subscription: "test_id",
@@ -24,8 +15,28 @@ describe("login", () => {
     return false;
   });
 
-  it("should log principal service", async () => {
-    const login = require("./login");
-    await login();
+  it("should save workspace", async () => {
+    jest.spyOn(utils, "az").mockImplementationOnce(() =>
+      Promise.resolve([
+        {
+          id: "test_id",
+          name: "name",
+          location: "location",
+        },
+      ])
+    );
+    const result = await login();
+    expect(result).toBe(undefined);
+  });
+
+  it("should not save workspace", async () => {
+    process.env = {
+      AZURE_SERVICE_PRINCIPAL_ID: "AZURE_SERVICE_PRINCIPAL_ID",
+      AZURE_SERVICE_PRINCIPAL_PASSWORD: "AZURE_SERVICE_PRINCIPAL_PASSWORD",
+      AZURE_SERVICE_PRINCIPAL_TENANT: "AZURE_SERVICE_PRINCIPAL_TENANT",
+    };
+    jest.spyOn(utils, "az").mockImplementationOnce(() => Promise.resolve());
+    const result = await login();
+    expect(result).toBe(true);
   });
 });
