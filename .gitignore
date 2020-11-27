@@ -50,3 +50,5 @@ workspace_test
 hexa.json
 /build
 .env
+
+/coverage
