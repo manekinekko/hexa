@@ -11,8 +11,6 @@ const prettyFont = CFonts.render("HEXA", {
 
 console.log(prettyFont.string);
 
-let debug: Function;
-
 (async () => {
   const start = process.hrtime();
 

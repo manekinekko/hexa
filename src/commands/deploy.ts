@@ -97,8 +97,8 @@ module.exports = async function(options: HexaInitOptions) {
 
       const functionApp = workspace.functions;
 
-      await npm<void>(`run build:production`, joinPath(process.cwd(), functionApp.folder as string, functionApp.name), `Building Function app ${chalk.cyan(functionApp.name)}...`);
-      const functionAppPublishResult = await func<void>(
+      await npm(`run build:production`, joinPath(process.cwd(), functionApp.folder as string, functionApp.name), `Building Function app ${chalk.cyan(functionApp.name)}...`);
+      const functionAppPublishResult = await func(
         `azure functionapp publish ${functionApp.name}`,
         joinPath(process.cwd(), functionApp.folder as string, functionApp.name),
         `Deploying Function app ${chalk.cyan(functionApp.name)}....`

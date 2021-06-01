@@ -1,15 +1,15 @@
 import chalk from "chalk";
-import fs, { readFile } from "fs";
+import Configstore from "configstore";
+import crypto from "crypto";
+import merge from "deepmerge";
+import dotenv from "dotenv";
+import fs from "fs";
+import ora from "ora";
 import path from "path";
-const shell = require("shelljs");
-const merge = require("deepmerge");
-const ora = require("ora");
-const Configstore = require("configstore");
-const dotenv = require("dotenv");
+import shell from "shelljs";
 const packageJson = require("../../package.json");
 const debugCli = require("debug")(`hexa`);
 const debug = require("debug")(`utils`);
-const crypto = require("crypto");
 
 // generate a Global UUID per execution.
 // We wante the UUID to be the same for all entitites.
@@ -66,7 +66,7 @@ export const ENV_FILENAME = ".env";
 const IS_DEBUG = !!process.env.DEBUG;
 
 export async function runCmd(command: string, loadingMessage?: string, options?: CommandOptions): Promise<string> {
-  let spinner: typeof ora = null;
+  let spinner: ora.Ora;
 
   if (loadingMessage && IS_DEBUG === false) {
     spinner = ora(loadingMessage).start();
@@ -93,7 +93,7 @@ export async function runCmd(command: string, loadingMessage?: string, options?:
       {
         ...options
       },
-      (code: number, stdout: string, stderr: string) => {
+      (_code: number, stdout: string, stderr: string) => {
         if (stderr.length) {
           debug("stderr", chalk.red(stderr));
           // the Azure CLI uses stderr to output debug information,
@@ -142,7 +142,7 @@ export async function kubectl(command: string, loadingMessage?: string) {
   return message;
 }
 
-export async function func<T>(command: string, cwd: string, loadingMessage?: string) {
+export async function func(command: string, cwd: string, loadingMessage?: string) {
   if (!directoryExists(cwd)) {
     console.log(chalk.red(`✗ Folder ${chalk.cyan(cwd)} does not exists. Please create this folder and try again.`));
     process.exit(1);
@@ -155,7 +155,7 @@ export async function func<T>(command: string, cwd: string, loadingMessage?: str
   return output;
 }
 
-export async function npm<T>(command: string, cwd?: string, loadingMessage?: string) {
+export async function npm(command: string, cwd?: string, loadingMessage?: string) {
   // if (cwd) {
   //   command = `cd ${cwd} && npm ${command}`;
   // }
@@ -238,6 +238,8 @@ export function saveWorkspace(config: Partial<HexaWorkspace>) {
 
   debug(`saving workspace with ${chalk.green(JSON.stringify(config))}`);
   fs.writeFileSync(WORKSPACE_FILENAME, JSON.stringify(config, null, 2));
+
+  return true;
 }
 
 export function readWorkspace() {

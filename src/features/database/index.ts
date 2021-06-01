@@ -1,11 +1,11 @@
 import chalk from "chalk";
-import { az, Config, sanitize, saveWorkspace, uuid, readWorkspace } from "../../core/utils";
 import { askForDatabaseDetails } from "../../core/prompt";
+import { az, Config, readWorkspace, sanitize, saveWorkspace } from "../../core/utils";
 const debug = require("debug")("database");
 
 const buildTableStorageDatabaseEndpoint = (storage: AzureStorage, databaseName: string) => `https://${storage.name}.table.core.windows.net/${databaseName}`;
 
-module.exports = async function() {
+module.exports = async function () {
   const workspace = readWorkspace();
   const project: AzureResourceGroup = workspace.project;
   debug(`using project ${chalk.green(project.name)}`);
@@ -25,7 +25,6 @@ module.exports = async function() {
   }
 
   let databaseInstance: DatabaseInstance | undefined;
-  let databaseEndpoint = null;
 
   if (databaseType === "TABLE_STORAGE") {
     // https://docs.microsoft.com/en-us/cli/azure/storage/table?view=azure-cli-latest#az-storage-table-list

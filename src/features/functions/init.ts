@@ -45,12 +45,12 @@ module.exports = async function() {
     }
   });
 
-  await func<void>(
+  await func(
     `init ${functionAppName} --worker-runtime node --language typescript`,
     functionAppDirectory,
     `Setting Function project ${chalk.cyan(functionAppName)}...`
   );
-  await func<void>(
+  await func(
     `new --template httptrigger --name "${functionHttpName}" --language typescript`,
     `${functionAppPath}`,
     `Scaffolding function ${chalk.cyan(functionHttpName)}...`
@@ -59,11 +59,11 @@ module.exports = async function() {
   // override the function index.ts with a simpler example
   copyTemplate(`init/functions/index.ts.tpl`, `${functionAppPath}/${functionHttpName}/index.ts`, {functionHttpName: sanitize(functionHttpName)});
 
-  await npm<void>(`install`, functionAppPath, `Installing dependencies for ${chalk.cyan(functionAppPath)}...`);
+  await npm(`install`, functionAppPath, `Installing dependencies for ${chalk.cyan(functionAppPath)}...`);
 
   // should be setup Bazel config?
   if (process.env.HEXA_USE_BAZEL) {
-    await npm<void>(`install -D @bazel/ibazel@latest @bazel/bazel@latest @bazel/typescript@latest`, functionAppPath, `Adding Bazel configuration for ${chalk.cyan(functionAppPath)}...`);
+    await npm(`install -D @bazel/ibazel@latest @bazel/bazel@latest @bazel/typescript@latest`, functionAppPath, `Adding Bazel configuration for ${chalk.cyan(functionAppPath)}...`);
 
     // create the WORKSPACE
     copyTemplate(`init/functions/WORKSPACE.tpl`, `${functionAppPath}/WORKSPACE`, {functionAppName: sanitize(functionAppName)});

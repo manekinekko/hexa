@@ -1,7 +1,7 @@
 import { chooseSubscription } from "../core/prompt";
 import { az, Config, saveWorkspace } from "../core/utils";
 
-module.exports = async function() {
+export default async function() {
   const { AZURE_SERVICE_PRINCIPAL_ID, AZURE_SERVICE_PRINCIPAL_PASSWORD, AZURE_SERVICE_PRINCIPAL_TENANT } = process.env;
 
   let subscriptionsList = [];
@@ -31,4 +31,7 @@ module.exports = async function() {
       }
     });
   }
+
+  return true;
+
 };

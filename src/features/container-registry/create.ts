@@ -1,8 +1,8 @@
 import chalk from "chalk";
-import { az, Config, sanitize, saveWorkspace, uuid, readWorkspace } from "../../core/utils";
+import { az, readWorkspace, sanitize, saveWorkspace, uuid } from "../../core/utils";
 const debug = require("debug")("container");
 
-module.exports = async function(creationMode: CreationMode) {
+module.exports = async function (creationMode: CreationMode) {
   const workspace = readWorkspace();
   const project: AzureResourceGroup = workspace.project;
 

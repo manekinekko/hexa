@@ -1,9 +1,9 @@
 import chalk from "chalk";
-import { askForResourceGroupDetails, askForProjectDetails } from "../../core/prompt";
-import { az, Config, sanitize, saveWorkspace, getCurrentDirectoryBase } from "../../core/utils";
+import { askForProjectDetails, askForResourceGroupDetails } from "../../core/prompt";
+import { az, getCurrentDirectoryBase, sanitize, saveWorkspace } from "../../core/utils";
 const debug = require("debug")("project");
 
-module.exports = async function(creationMode: CreationMode) {
+module.exports = async function (creationMode: CreationMode) {
   const isForceModeEnabled = !!process.env.HEXA_FORCE_MODE;
 
   let name = sanitize(getCurrentDirectoryBase());
@@ -14,7 +14,7 @@ module.exports = async function(creationMode: CreationMode) {
   debug(`saving project ${name}`);
 
   let region = "westeurope";
-  let isProjectExists = {message: "false"};
+  let isProjectExists = { message: "false" };
   let project: AzureResourceGroup;
 
   if (creationMode === "MANUAL") {

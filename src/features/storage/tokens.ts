@@ -1,8 +1,8 @@
-import { az, Config, saveEnvFile, saveWorkspace, readWorkspace } from "../../core/utils";
 import chalk from "chalk";
+import { az, Config, readWorkspace, saveEnvFile } from "../../core/utils";
 const debug = require("debug")("storage:token");
 
-module.exports = async function() {
+module.exports = async function () {
   const { storage } = readWorkspace();
   debug(`using storage ${chalk.green(storage.name)}`);
 

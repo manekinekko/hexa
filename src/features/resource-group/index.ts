@@ -1,7 +1,7 @@
 import { chooseResourceGroup } from "../../core/prompt";
-import { az, Config, saveWorkspace } from "../../core/utils";
+import { az, saveWorkspace } from "../../core/utils";
 
-module.exports = async function() {
+module.exports = async function () {
   if (process.env.HEXA_AUTO_MODE) {
     return await (require(`./create`))("AUTOMATIC");
   }

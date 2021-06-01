@@ -1,10 +1,9 @@
-import inquirer = require("inquirer");
 import chalk from "chalk";
 import { askForHostingFolder } from "../../core/prompt";
-import { az, Config, copyTemplate, saveWorkspace, createDirectoryIfNotExists, readWorkspace } from "../../core/utils";
+import { az, Config, createDirectoryIfNotExists, readWorkspace, saveWorkspace } from "../../core/utils";
 const debug = require("debug")("hosting");
 
-module.exports = async function() {
+export default async function () {
   const isForceModeEnabled = !!process.env.HEXA_FORCE_MODE;
 
   let defaultPublicFolder = "./dist";

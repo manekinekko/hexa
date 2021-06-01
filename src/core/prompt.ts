@@ -1,5 +1,5 @@
 import inquirer, { Answers, QuestionCollection } from "inquirer";
-import { createDirectoryIfNotExists, fileExists } from "./utils";
+import { createDirectoryIfNotExists } from "./utils";
 
 export function chooseSubscription(subscriptionsList: AzureSubscription[]): Promise<Answers> {
   const questions: QuestionCollection = [
@@ -14,7 +14,7 @@ export function chooseSubscription(subscriptionsList: AzureSubscription[]): Prom
           value: subscription.id
         };
       }),
-      validate: function(value: string) {
+      validate: function (value: string) {
         if (value.length) {
           return true;
         } else {
@@ -28,7 +28,7 @@ export function chooseSubscription(subscriptionsList: AzureSubscription[]): Prom
 
 export function chooseResourceGroup(resourceGroups: AzureResourceGroup[]): Promise<Answers> {
   // move resource groups created with Hexa to the top
-  resourceGroups = resourceGroups.sort((a, b) => (a.tags && a.tags["x-created-by"] === "hexa" ? -1 : 1));
+  resourceGroups = resourceGroups.sort((a, _b) => (a.tags && a.tags["x-created-by"] === "hexa" ? -1 : 1));
 
   if (process.env.HEXA_ENABLE_ADDING_NEW_RESOURCE) {
     resourceGroups = [
@@ -49,12 +49,12 @@ export function chooseResourceGroup(resourceGroups: AzureResourceGroup[]): Promi
       choices: resourceGroups.map((resourceGroup: AzureResourceGroup) => {
         const isCreatedByHexa = resourceGroup.tags && resourceGroup.tags["x-created-by"] === "hexa";
         return {
-          name: `${resourceGroup.name} ${isCreatedByHexa ? "(hexa)":""}`,
+          name: `${resourceGroup.name} ${isCreatedByHexa ? "(hexa)" : ""}`,
           value: resourceGroup.id,
           short: resourceGroup.name
         };
       }),
-      validate: function(value: string) {
+      validate: function (value: string) {
         if (value.length) {
           return true;
         } else {
@@ -68,7 +68,7 @@ export function chooseResourceGroup(resourceGroups: AzureResourceGroup[]): Promi
 
 export function chooseAccountStorage(storageAccounts: AzureStorage[]): Promise<inquirer.Answers> {
   // move storage accounts created with Hexa to the top
-  storageAccounts = storageAccounts.sort((a, b) => (a.tags && a.tags["x-created-by"] === "hexa" ? -1 : 1));
+  storageAccounts = storageAccounts.sort((a, _b) => (a.tags && a.tags["x-created-by"] === "hexa" ? -1 : 1));
 
   if (process.env.HEXA_ENABLE_ADDING_NEW_RESOURCE) {
     storageAccounts = [
@@ -92,7 +92,7 @@ export function chooseAccountStorage(storageAccounts: AzureStorage[]): Promise<i
           value: storageAccount.id
         };
       }),
-      validate: function(value: string) {
+      validate: function (value: string) {
         if (value.length) {
           return true;
         } else {
@@ -110,7 +110,7 @@ export function askForFeatures(features: any[]): Promise<Answers> {
       name: "features",
       message: "Choose features you want to setup:",
       choices: features,
-      validate: function(value: string) {
+      validate: function (value: string) {
         if (value.length) {
           return true;
         } else {
@@ -129,7 +129,7 @@ export function askForResourceGroupDetails(regions: AzureRegion[], defaultResour
       name: "name",
       message: "Enter a name for the resource group:",
       default: defaultResourceGroupName,
-      validate: function(value: string) {
+      validate: function (value: string) {
         if (value.length) {
           return true;
         } else {
@@ -149,7 +149,7 @@ export function askForResourceGroupDetails(regions: AzureRegion[], defaultResour
           short: region.displayName
         };
       }),
-      validate: function(value: string) {
+      validate: function (value: string) {
         if (value.length) {
           return true;
         } else {
@@ -160,14 +160,14 @@ export function askForResourceGroupDetails(regions: AzureRegion[], defaultResour
   ];
   return inquirer.prompt(questions);
 }
-export function askForStorageAccountDetails(regions: AzureRegion[], defaultStorageName: string): Promise<Answers> {
+export function askForStorageAccountDetails(_regions: AzureRegion[], defaultStorageName: string): Promise<Answers> {
   const questions: QuestionCollection = [
     {
       type: "input",
       name: "name",
       message: "Enter a name for the storage account:",
       default: defaultStorageName,
-      validate: function(value: string) {
+      validate: function (value: string) {
         if (value.length) {
           return true;
         } else {
@@ -186,7 +186,7 @@ export function askForDatabaseDetails(defaultDatabaseName: string): Promise<Answ
       name: "databaseName",
       message: "Enter a name for the database:",
       default: defaultDatabaseName,
-      validate: function(value: string) {
+      validate: function (value: string) {
         if (value.length) {
           return true;
         } else {
@@ -211,7 +211,7 @@ export function askForDatabaseDetails(defaultDatabaseName: string): Promise<Answ
           short: `CosmosDB`
         }
       ],
-      validate: function(value: string) {
+      validate: function (value: string) {
         if (value.length) {
           return true;
         } else {
@@ -230,7 +230,7 @@ export function askForProjectDetails(defaultProjectName: string): Promise<Answer
       name: "name",
       message: "Enter a name for the project:",
       default: defaultProjectName,
-      validate: function(value: string) {
+      validate: function (value: string) {
         if (value.length) {
           return true;
         } else {
@@ -266,7 +266,7 @@ export function askForHostingFolder(defaultPublicFolderName: string): Promise<An
       name: "folder",
       message: "Enter public folder (will be created if not present):",
       default: defaultPublicFolderName,
-      validate: function(value: string) {
+      validate: function (value: string) {
         if (value && value.length) {
           return createDirectoryIfNotExists(value);
         } else {
@@ -285,7 +285,7 @@ export function askForFunctionsAppFolder(): Promise<Answers> {
       name: "folder",
       message: "Choose the functions folder (will be created if not present):",
       default: "functions",
-      validate: function(value: string) {
+      validate: function (value: string) {
         if (value && value.length) {
           return createDirectoryIfNotExists(value);
         } else {
@@ -317,7 +317,7 @@ export function askForKubernetesClusterDetails(defaultClusterName: string): Prom
       name: "name",
       message: "Enter a name for the Kubernetes cluster:",
       default: defaultClusterName,
-      validate: function(value: string) {
+      validate: function (value: string) {
         if (value.length) {
           return true;
         } else {
@@ -331,7 +331,7 @@ export function askForKubernetesClusterDetails(defaultClusterName: string): Prom
 
 export function chooseKubernetesCluster(kubernetesClusters: AzureKubernetesCluster[]): Promise<inquirer.Answers> {
   // move clusters created with Hexa to the top
-  kubernetesClusters = kubernetesClusters.sort((a, b) => (a.tags && a.tags["x-created-by"] === "hexa" ? -1 : 1));
+  kubernetesClusters = kubernetesClusters.sort((a, _b) => (a.tags && a.tags["x-created-by"] === "hexa" ? -1 : 1));
 
   if (process.env.HEXA_ENABLE_ADDING_NEW_RESOURCE) {
     kubernetesClusters = [
@@ -357,7 +357,7 @@ export function chooseKubernetesCluster(kubernetesClusters: AzureKubernetesClust
           value: cluster.id
         };
       }),
-      validate: function(value: string) {
+      validate: function (value: string) {
         if (value.length) {
           return true;
         } else {
@@ -371,7 +371,7 @@ export function chooseKubernetesCluster(kubernetesClusters: AzureKubernetesClust
 
 export function chooseAcrAccount(AcrList: AzureContainerRegistry[]): Promise<inquirer.Answers> {
   // move ACR accounts created with Hexa to the top
-  AcrList = AcrList.sort((a, b) => (a.tags && a.tags["x-created-by"] === "hexa" ? -1 : 1));
+  AcrList = AcrList.sort((a, _b) => (a.tags && a.tags["x-created-by"] === "hexa" ? -1 : 1));
 
   if (process.env.HEXA_ENABLE_ADDING_NEW_RESOURCE) {
     AcrList = [
@@ -395,7 +395,7 @@ export function chooseAcrAccount(AcrList: AzureContainerRegistry[]): Promise<inq
           value: cluster.id
         };
       }),
-      validate: function(value: string) {
+      validate: function (value: string) {
         if (value.length) {
           return true;
         } else {

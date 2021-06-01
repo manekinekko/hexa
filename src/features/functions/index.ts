@@ -20,7 +20,7 @@ module.exports = async function() {
     `functionapp list --resource-group "${project.name}" --subscription "${subscription.id}" --query "[].{id: id, name: name, appServicePlanId: appServicePlanId, hostName: defaultHostName, state: state, tags: tags}"`,
     `Checking existing functions for project ${chalk.cyan(project.name)}...`
   );
-  functionAppsList = functionAppsList.sort((a, b) => (a.tags && a.tags["x-created-by"] === "hexa" ? -1 : 1));
+  functionAppsList = functionAppsList.sort((a, _b) => (a.tags && a.tags["x-created-by"] === "hexa" ? -1 : 1));
 
   let functionApp: AzureFunctionApp | null = null;
 
@@ -35,13 +35,6 @@ module.exports = async function() {
     );
     debug(`created functionApp ${chalk.green(functionApp.name)}`);
   }
-
-  const functions = {
-    ...functionApp,
-    hostName: functionApp.hostName,
-    id: functionApp.id,
-    name: functionApp.name || functionAppName
-  };
 
   saveWorkspace({
     functions: {
