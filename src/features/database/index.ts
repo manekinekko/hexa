@@ -1,11 +1,12 @@
 import chalk from "chalk";
 import { askForDatabaseDetails } from "../../core/prompt";
 import { az, Config, readWorkspace, sanitize, saveWorkspace } from "../../core/utils";
-const debug = require("debug")("database");
+import debug from "debug";
+debug("database");
 
 const buildTableStorageDatabaseEndpoint = (storage: AzureStorage, databaseName: string) => `https://${storage.name}.table.core.windows.net/${databaseName}`;
 
-module.exports = async function () {
+export default async function () {
   const workspace = readWorkspace();
   const project: AzureResourceGroup = workspace.project;
   debug(`using project ${chalk.green(project.name)}`);

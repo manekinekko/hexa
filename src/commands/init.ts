@@ -1,9 +1,11 @@
+import fs from "fs";
 import chalk from "chalk";
 import { askForFeatures, askIfOverrideProjectFile } from "../core/prompt";
 import { absolutePath, Config, deleteFile, isProjectFileExists, pluralize, FEATURES } from "../core/utils";
-const debug = require("debug")("init");
+import debug from "debug";
+debug("init");
 
-module.exports = async function(options?: HexaInitOptions) {
+export default async function (options?: HexaInitOptions) {
   const isForceModeEnabled = !!process.env.HEXA_FORCE_MODE;
   if (isForceModeEnabled) {
     debug(chalk.bold(chalk.yellow(`Warning: Flag --force has been set. Hexa won't ask for any confirmation!`)));
@@ -48,7 +50,9 @@ module.exports = async function(options?: HexaInitOptions) {
   const subscriptions: AzureSubscription[] = Config.get("subscriptions");
 
   if (!subscriptions || (subscriptions && subscriptions.length === 0) || process.env.HEXA_FORCE_LOGIN) {
-    await (require(`./login`))();
+    const { default: login } = await import('./login');
+    return await login();
+
   } else {
     debug(`found subscriptions ${chalk.green(JSON.stringify(subscriptions))}`);
   }
@@ -60,11 +64,17 @@ module.exports = async function(options?: HexaInitOptions) {
   for await (let feature of ["resource-group", "service-principal", "storage", ...selectedFeatures]) {
     debug(`Configuring ${chalk.green(feature)}:`);
     try {
-      const featureImplementation = require(`../features/${feature}/index`);
+      const { default: featureImplementation } = await import(`../features/${feature}/index`);
       await featureImplementation();
     } catch (error) {
-      console.log(chalk.red(`✗ ${error.stack || error}`));
-      console.log(chalk.red(`✗ Abort.`));
+      if (error.toString().includes(`Credentials have expired due to inactivity`)) {
+        console.log(chalk.red(`✗ Credentials have expired due to inactivity. Please run 'hexa login'`));
+        break;
+      }
+      else {
+        console.log(chalk.red(`✗ ${error.stack || error}`));
+        console.log(chalk.red(`✗ Abort.`));
+      }
       if (!!process.env.HEXA_DRY_RUN) {
         process.exit(1);
       }
@@ -74,5 +84,11 @@ module.exports = async function(options?: HexaInitOptions) {
   if (process.env.HEXA_STORAGE_GENERATE_TOKEN) {
     console.log(`${chalk.green("✔")} Tokens saved to ${chalk.cyan(".env")}`);
   }
-  console.log(`${chalk.green("✔")} Configuration saved to ${chalk.cyan(absolutePath("hexa.json"))}`);
+
+  const configFile = absolutePath("hexa.json");
+  if (fs.existsSync(configFile)) {
+    console.log(`${chalk.green("✔")} Configuration saved to ${chalk.cyan(configFile)}`);
+  }
+
+  return;
 };

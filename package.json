@@ -11,7 +11,7 @@
   "private": false,
   "scripts": {
     "start": "npm run build -- --watch",
-    "build": "rm -fr build/ && mkdir build && npm run copy:templates && npm run copy:bin && tsc",
+    "build": "rm -fr dist/ && mkdir dist && npm run copy:templates && npm run copy:bin && tsc",
     "copy:templates": "cp -r src/templates dist",
     "copy:bin": "cp src/bin.js dist",
     "prepare": "npm run build",
@@ -51,7 +51,7 @@
     "dotenv": "^8.1.0",
     "inquirer": "^7.0.0",
     "ora": "^3.4.0",
-    "shelljs": "^0.8.3",
+    "shelljs": "^0.8.4",
     "uuid": "^3.3.3"
   },
   "devDependencies": {
@@ -60,6 +60,7 @@
     "@release-it/conventional-changelog": "^2.0.1",
     "@types/clear": "^0.1.0",
     "@types/configstore": "^4.0.0",
+    "@types/debug": "^4.1.5",
     "@types/dotenv": "^6.1.1",
     "@types/inquirer": "^6.5.0",
     "@types/jest": "^26.0.15",

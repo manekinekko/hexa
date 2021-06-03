@@ -2,9 +2,10 @@ import { Config, az, saveWorkspace, readWorkspace } from "../../core/utils";
 import chalk from "chalk";
 import { chooseAcrAccount } from "../../core/prompt";
 
-const debug = require("debug")("container");
+import debug from "debug";
+debug("container");
 
-module.exports = async function() {
+export default async function () {
   const subscription: AzureSubscription = Config.get("subscription");
   debug(`Using subscription ${chalk.green(subscription.name)}`);
 
@@ -27,7 +28,8 @@ module.exports = async function() {
 
   if (acrList.length === 0) {
     // no ACR accout found, create one
-    return await (require(`./create`))("AUTOMATIC");
+    const { default: create } = await import('./create');
+    return await create("AUTOMATIC");
   }
 
   if (creationMode === "AUTOMATIC") {
@@ -43,7 +45,8 @@ module.exports = async function() {
         selectedAcrId = acr.id;
       } else {
         // we founf one cluster but it was not created by Hexa, go ahead and automatically create one
-        return await (require(`./create`))("AUTOMATIC");
+        const { default: create } = await import('./create');
+        return await create("AUTOMATIC");
       }
     } else if (Array.isArray(acrList)) {
       // we found many ACR accounts, let the user choose the right one
@@ -55,7 +58,8 @@ module.exports = async function() {
 
   if (selectedAcrId === "MANUAL") {
     // the user expliticitly chooses to manually create a ACR account
-    return await (require(`./create`))("MANUAL");
+    const { default: create } = await import('./create');
+    return await create("MANUAL");
   }
 
   const { id, name, hostname } = acrList.find((acr: AzureContainerRegistry) => acr.id === selectedAcrId) as AzureContainerRegistry;

@@ -1,3 +1,4 @@
+declare module 'cfonts';
 declare interface ProcessEnv {
   DEBUG: string;
   HEXA_AUTO_MODE: "1";

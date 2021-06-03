@@ -1,10 +1,11 @@
 import chalk from "chalk";
 import { chooseAccountStorage } from "../../core/prompt";
 import { az, Config, saveWorkspace, readWorkspace } from "../../core/utils";
-const debug = require("debug")("storage");
-const storageCreation = require(`./create`);
+import debug from "debug";
+debug("storage");
+import storageCreation from './create';
 
-module.exports = async function() {
+export default async function() {
   const subscription: AzureSubscription = Config.get("subscription");
   debug(`Using subscription ${chalk.green(subscription.name)}`);
 
@@ -27,7 +28,7 @@ module.exports = async function() {
 
   // In case we dont find any storage account that had been created by Hexa,
   // fallback to either a MANUAL or AUTOMATIC creation, depending on the global config
-  let creationMode = process.env.HEXA_AUTO_MODE ? "AUTOMATIC" : "MANUAL";
+  let creationMode: CreationMode = process.env.HEXA_AUTO_MODE ? "AUTOMATIC" : "MANUAL";
 
   if (Array.isArray(storageAccountsList) && storageAccountsList.length === 0) {
     // no storage account found, create one using the selected creation mode
@@ -72,5 +73,6 @@ module.exports = async function() {
     storage
   });
 
-  return await (require("./tokens"))();
+  const { default: tokens } = await import('./tokens');
+  return await tokens();
 };

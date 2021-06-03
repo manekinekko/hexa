@@ -1,9 +1,10 @@
 import chalk from "chalk";
 import { askForProjectDetails, askForResourceGroupDetails } from "../../core/prompt";
 import { az, getCurrentDirectoryBase, sanitize, saveWorkspace } from "../../core/utils";
-const debug = require("debug")("project");
+import debug from "debug";
+debug("project");
 
-module.exports = async function (creationMode: CreationMode) {
+export default async function (creationMode: CreationMode) {
   const isForceModeEnabled = !!process.env.HEXA_FORCE_MODE;
 
   let name = sanitize(getCurrentDirectoryBase());

@@ -1,3 +1,4 @@
-module.exports = async function() {
-  return await (require(`./create`)());
+export default async function() {
+  const { default: create } = await import('./create');
+  return await create();
 };

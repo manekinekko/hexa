@@ -1,8 +1,9 @@
 import chalk from "chalk";
 import { az, Config, sanitize, saveWorkspace, uuid, readWorkspace } from "../../core/utils";
-const debug = require("debug")("functions");
+import debug from "debug";
+debug("functions");
 
-module.exports = async function() {
+export default async function() {
   const workspace = readWorkspace();
   const project: AzureResourceGroup = workspace.project;
   debug(`using project ${chalk.green(project.name)}`);
@@ -45,5 +46,6 @@ module.exports = async function() {
   });
 
   // init functions projects
-  return await (require("./init"))();
+  const { default: init } = await import('./init');
+  return await init();
 };

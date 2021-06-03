@@ -1,9 +1,10 @@
 import chalk from "chalk";
 import { askForStorageAccountDetails } from "../../core/prompt";
 import { az, Config, sanitize, saveWorkspace, uuid, readWorkspace } from "../../core/utils";
-const debug = require("debug")("storage:create");
+import debug from "debug";
+debug("storage:create");
 
-module.exports = async function(creationMode: CreationMode) {
+export default async function(creationMode: CreationMode) {
   const {project} = readWorkspace();
 
   // Note: the storage account name must be globally unique!
@@ -34,5 +35,6 @@ module.exports = async function(creationMode: CreationMode) {
     storage
   });
 
-  return await (require("./tokens"))();
+  const { default: tokens } = await import('./tokens');
+  return await tokens();
 };

@@ -1,9 +1,10 @@
 import chalk from "chalk";
 import { askForFunctionsAppFolder } from "../../core/prompt";
 import { Config, createDirectoryIfNotExists, directoryExists, func, npm, saveWorkspace, uuid, copyTemplate, sanitize, updateFile, readWorkspace } from "../../core/utils";
-const debug = require("debug")("functions:init");
+import debug from "debug";
+debug("functions:init");
 
-module.exports = async function() {
+export default async function() {
   const workspace = readWorkspace();
   const project: AzureResourceGroup = workspace.project;
   debug(`using project ${chalk.green(project.name)}`);

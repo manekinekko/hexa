@@ -2,7 +2,8 @@
 
 import chalk from "chalk";
 import program from "commander";
-const CFonts = require("cfonts");
+import { version } from '../package.json';
+import CFonts from 'cfonts';
 const prettyFont = CFonts.render("HEXA", {
   font: "block",
   colors: ["cyan", "yellow"],
@@ -11,7 +12,7 @@ const prettyFont = CFonts.render("HEXA", {
 
 console.log(prettyFont.string);
 
-(async () => {
+export async function run() {
   const start = process.hrtime();
 
   const runCommand = async (commandName: string, requetedServices: string | undefined) => {
@@ -25,7 +26,8 @@ console.log(prettyFont.string);
           .filter(feat => feat);
       }
 
-      return await (require(`./commands/${commandName}`))(options);
+      const { default: command } = await import(`./commands/${commandName}`);
+      return await command(options);
     } catch (error) {
       console.error(chalk.red(error));
     }
@@ -33,7 +35,7 @@ console.log(prettyFont.string);
   program
     .name("hexa")
     .usage("<command>")
-    .version(require("../package.json").version)
+    .version(version)
     .option("init", "initialize a new workspace")
     .option("login", "connect to your Azure")
     .option("deploy", "deploy to Azure")
@@ -111,4 +113,4 @@ console.log(prettyFont.string);
 
   const end = process.hrtime(start);
   console.info(chalk.green("✔ Done in %d seconds."), end[0]);
-})();
+}

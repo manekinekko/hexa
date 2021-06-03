@@ -1,9 +1,10 @@
 import { chooseResourceGroup } from "../../core/prompt";
 import { az, saveWorkspace } from "../../core/utils";
 
-module.exports = async function () {
+export default async function () {
   if (process.env.HEXA_AUTO_MODE) {
-    return await (require(`./create`))("AUTOMATIC");
+    const { default: create } = await import('./create');
+    return await create('AUTOMATIC');
   }
 
   // https://docs.microsoft.com/en-us/cli/azure/group?view=azure-cli-latest#az-group-list
@@ -17,7 +18,8 @@ module.exports = async function () {
 
     if (selectedResourceId === "MANUAL") {
       // create a new resource group
-      return await (require(`./create`))(selectedResourceId);
+      const { default: create } = await import('./create');
+      return await create(selectedResourceId);
     } else {
       const { id, name, location } = resourceGroupsList.find(
         (resourceGroup: AzureResourceGroup) => resourceGroup.id === (selectedResourceId as string)
@@ -36,6 +38,7 @@ module.exports = async function () {
   } else {
     // no resource found
     // create a new resource group
-    return await (require(`./create`))("AUTOMATIC");
+    const { default: create } = await import('./create');
+    return await create("AUTOMATIC");
   }
 };

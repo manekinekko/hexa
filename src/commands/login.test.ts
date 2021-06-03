@@ -1,6 +1,6 @@
 import * as utils from "../core/utils";
 import * as prompt from "../core/prompt";
-const login = require("./login");
+import login from './login';
 
 describe("login", () => {
   jest.spyOn(prompt, "chooseSubscription").mockImplementationOnce(() =>

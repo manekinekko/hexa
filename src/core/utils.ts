@@ -7,9 +7,10 @@ import fs from "fs";
 import ora from "ora";
 import path from "path";
 import shell from "shelljs";
-const packageJson = require("../../package.json");
-const debugCli = require("debug")(`hexa`);
-const debug = require("debug")(`utils`);
+import { version, name } from '../../package.json';
+import dbg from "debug";
+const debugCli = dbg(`hexa`);
+const debug = dbg(`utils`);
 
 // generate a Global UUID per execution.
 // We wante the UUID to be the same for all entitites.
@@ -30,8 +31,8 @@ export const sanitize = (name: string) =>
 
 export const pluralize = (str: string) => str + (str.length > 1 ? "s are" : " is");
 
-export const Config = new Configstore(packageJson.name, {
-  version: packageJson.version
+export const Config = new Configstore(name, {
+  version
 });
 
 debug(`Cached config stored at ${chalk.green(Config.path)}`);

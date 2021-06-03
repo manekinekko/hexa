@@ -1,11 +1,13 @@
 import chalk from "chalk";
 import { chooseKubernetesCluster } from "../../core/prompt";
 import { az, Config, copyTemplate, saveWorkspace, updateFile, readWorkspace } from "../../core/utils";
-const debug = require("debug")("k8s");
-const createK8sClutster = require(`./create`);
-const acr = require(`../container-registry/index`);
+import debug from "debug";
+debug("k8s");
 
-module.exports = async function() {
+import createK8sClutster from './create';
+import acr from '../container-registry/index';
+
+export default async function() {
   // check ACR dependencies before
   await acr();
 
@@ -35,7 +37,7 @@ module.exports = async function() {
 
   // In case we dont find any cluster that had been created by Hexa,
   // fallback to either a MANUAL or AUTOMATIC creation, depending on the global config
-  let creationMode = process.env.HEXA_AUTO_MODE ? "AUTOMATIC" : "MANUAL";
+  let creationMode: CreationMode = process.env.HEXA_AUTO_MODE ? "AUTOMATIC" : "MANUAL";
 
   if (Array.isArray(kubeClustersList) && kubeClustersList.length === 0) {
     // no cluster found, create one using the selected creation mode

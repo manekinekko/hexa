@@ -1,8 +1,9 @@
 import chalk from "chalk";
 import { az, directoryExists, FEATURES, func, isProjectFileExists, joinPath, kubectl, npm, readEnvFile, readWorkspace, updateFile, readFileFromDisk } from "../core/utils";
-const debug = require("debug")("deploy");
+import debug from "debug";
+debug("deploy");
 
-module.exports = async function(options: HexaInitOptions) {
+export default async function(options: HexaInitOptions) {
   if (isProjectFileExists() === false) {
     console.log(chalk.red(`✗ The ${chalk.cyan("hexa deploy")} command can only be run inside a Hexa project.`));
     console.log(chalk.red(`✗ Run ${chalk.cyan("hexa init")} first.`));

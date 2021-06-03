@@ -1,9 +1,10 @@
 import chalk from "chalk";
 import { askForKubernetesClusterDetails } from "../../core/prompt";
 import { az, Config, sanitize, saveWorkspace, uuid, readWorkspace } from "../../core/utils";
-const debug = require("debug")("k8s:create");
+import debug from "debug";
+debug("k8s:create");
 
-module.exports = async function(creationMode: CreationMode) {
+export default async function(creationMode: CreationMode) {
   const workspace = readWorkspace();
   const project: AzureResourceGroup = workspace.project;
 

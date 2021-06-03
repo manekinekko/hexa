@@ -1,8 +1,9 @@
 import { az, readWorkspace, sanitize } from "../core/utils";
 import chalk from "chalk";
-const debug = require("debug")("ci");
+import debug from "debug";
+debug("ci");
 
-module.exports = async function() {
+export default async function() {
   const { project } = readWorkspace();
   let name = sanitize(project.name);
   debug(`using project ${chalk.green(name)}`);

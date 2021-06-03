@@ -1,8 +1,9 @@
 import chalk from "chalk";
 import { az, Config, readWorkspace, sanitize } from "../../core/utils";
-const debug = require("debug")("rbac");
+import debug from "debug";
+debug("rbac");
 
-module.exports = async function() {
+export default async function() {
   const {project} = readWorkspace();
   let name = sanitize(project.name);
   debug(`using project ${chalk.green(name)}`);
