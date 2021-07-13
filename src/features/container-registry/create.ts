@@ -1,7 +1,7 @@
 import chalk from "chalk";
 import { az, readWorkspace, sanitize, saveWorkspace, uuid } from "../../core/utils";
-import debug from "debug";
-debug("container");
+import dbg from "debug";
+const debug = dbg("container");
 
 export default async function (creationMode: CreationMode) {
   const workspace = readWorkspace();

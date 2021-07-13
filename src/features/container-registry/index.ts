@@ -2,8 +2,8 @@ import { Config, az, saveWorkspace, readWorkspace } from "../../core/utils";
 import chalk from "chalk";
 import { chooseAcrAccount } from "../../core/prompt";
 
-import debug from "debug";
-debug("container");
+import dbg from "debug";
+const debug = dbg("container");
 
 export default async function () {
   const subscription: AzureSubscription = Config.get("subscription");

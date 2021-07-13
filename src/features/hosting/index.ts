@@ -1,8 +1,8 @@
 import chalk from "chalk";
 import { askForHostingFolder } from "../../core/prompt";
 import { az, Config, createDirectoryIfNotExists, readWorkspace, saveWorkspace } from "../../core/utils";
-import debug from "debug";
-debug("hosting");
+import dbg from "debug";
+const debug = dbg("hosting");
 
 export default async function () {
   const isForceModeEnabled = !!process.env.HEXA_FORCE_MODE;

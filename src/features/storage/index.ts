@@ -1,8 +1,8 @@
 import chalk from "chalk";
 import { chooseAccountStorage } from "../../core/prompt";
 import { az, Config, saveWorkspace, readWorkspace } from "../../core/utils";
-import debug from "debug";
-debug("storage");
+import dbg from "debug";
+const debug = dbg("storage");
 import storageCreation from './create';
 
 export default async function() {

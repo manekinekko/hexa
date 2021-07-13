@@ -1,7 +1,7 @@
 import chalk from "chalk";
 import { az, Config, readWorkspace, saveEnvFile } from "../../core/utils";
-import debug from "debug";
-debug("storage:token");
+import dbg from "debug";
+const debug = dbg("storage:token");
 
 export default async function() {
   const { storage } = readWorkspace();

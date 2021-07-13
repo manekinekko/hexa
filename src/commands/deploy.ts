@@ -1,7 +1,7 @@
 import chalk from "chalk";
 import { az, directoryExists, FEATURES, func, isProjectFileExists, joinPath, kubectl, npm, readEnvFile, readWorkspace, updateFile, readFileFromDisk } from "../core/utils";
-import debug from "debug";
-debug("deploy");
+import dbg from "debug";
+const debug = dbg("deploy");
 
 export default async function(options: HexaInitOptions) {
   if (isProjectFileExists() === false) {
