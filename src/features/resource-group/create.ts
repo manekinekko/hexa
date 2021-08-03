@@ -1,8 +1,8 @@
 import chalk from "chalk";
 import { askForProjectDetails, askForResourceGroupDetails } from "../../core/prompt";
 import { az, getCurrentDirectoryBase, sanitize, saveWorkspace } from "../../core/utils";
-import debug from "debug";
-debug("project");
+import dbg from "debug";
+const debug = dbg("project");
 
 export default async function (creationMode: CreationMode) {
   const isForceModeEnabled = !!process.env.HEXA_FORCE_MODE;

@@ -1,8 +1,8 @@
 import chalk from "chalk";
 import { askForStorageAccountDetails } from "../../core/prompt";
 import { az, Config, sanitize, saveWorkspace, uuid, readWorkspace } from "../../core/utils";
-import debug from "debug";
-debug("storage:create");
+import dbg from "debug";
+const debug = dbg("storage:create");
 
 export default async function(creationMode: CreationMode) {
   const {project} = readWorkspace();

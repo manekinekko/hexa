@@ -32,6 +32,7 @@ declare interface HexaWorkspace {
     hostname: string;
   };
   registry: AzureContainerRegistry;
+  swa?: AzureStaticWebApps;
 }
 declare interface AzureEntity {
   id: string & CreationMode;
@@ -47,6 +48,17 @@ declare interface DatabaseInstance extends AzureCosmosDBInstance, AzureTableStor
   kind: "TABLE_STORAGE" | "COSMOSDB";
   created?: boolean;
   endpoint: string;
+}
+declare interface AzureStaticWebApps extends AzureEntity {
+  name?: string;
+  gitUrl?: string;
+  gitBranch?: string;
+  gitHubToken?: string;
+  outputLocation?: string;
+  apiLocation?: string;
+  appLocation?: string;
+  location?: string;
+  url?: string;
 }
 
 declare interface AzureFunctionApp extends AzureEntity {

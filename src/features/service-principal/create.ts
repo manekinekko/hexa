@@ -1,7 +1,7 @@
 import chalk from "chalk";
 import { az, Config, readWorkspace, sanitize } from "../../core/utils";
-import debug from "debug";
-debug("rbac");
+import dbg from "debug";
+const debug = dbg("rbac");
 
 export default async function() {
   const {project} = readWorkspace();

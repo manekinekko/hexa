@@ -12,7 +12,7 @@
   "scripts": {
     "start": "npm run build -- --watch",
     "build": "rm -fr dist/ && mkdir dist && npm run copy:templates && npm run copy:bin && tsc",
-    "copy:templates": "cp -r src/templates dist",
+    "copy:templates": "cp -r src/templates dist/templates",
     "copy:bin": "cp src/bin.js dist",
     "prepare": "npm run build",
     "release": "release-it --no-git.requireUpstream",
@@ -50,6 +50,7 @@
     "deepmerge": "^4.0.0",
     "dotenv": "^8.1.0",
     "inquirer": "^7.0.0",
+    "jmespath": "^0.15.0",
     "ora": "^3.4.0",
     "shelljs": "^0.8.4",
     "uuid": "^3.3.3"
@@ -64,6 +65,7 @@
     "@types/dotenv": "^6.1.1",
     "@types/inquirer": "^6.5.0",
     "@types/jest": "^26.0.15",
+    "@types/jmespath": "^0.15.0",
     "@types/mock-fs": "^4.13.0",
     "@types/node": "^12.7.3",
     "@types/ora": "^3.2.0",
@@ -74,7 +76,7 @@
     "nodemon": "^2.0.7",
     "release-it": "^14.7.0",
     "ts-jest": "^26.4.4",
-    "typescript": "beta"
+    "typescript": "^4.3.5"
   },
   "husky": {
     "hooks": {

@@ -1,8 +1,8 @@
 import chalk from "chalk";
 import { chooseKubernetesCluster } from "../../core/prompt";
 import { az, Config, copyTemplate, saveWorkspace, updateFile, readWorkspace } from "../../core/utils";
-import debug from "debug";
-debug("k8s");
+import dbg from "debug";
+const debug = dbg("k8s");
 
 import createK8sClutster from './create';
 import acr from '../container-registry/index';

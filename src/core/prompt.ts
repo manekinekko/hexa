@@ -1,5 +1,5 @@
-import inquirer, { Answers, QuestionCollection } from "inquirer";
-import { createDirectoryIfNotExists } from "./utils";
+import inquirer, { Answers, InputQuestionOptions, QuestionCollection } from "inquirer";
+import { createDirectoryIfNotExists, FEATURES } from "./utils";
 
 export function chooseSubscription(subscriptionsList: AzureSubscription[]): Promise<Answers> {
   const questions: QuestionCollection = [
@@ -103,7 +103,8 @@ export function chooseAccountStorage(storageAccounts: AzureStorage[]): Promise<i
   ];
   return inquirer.prompt(questions);
 }
-export function askForFeatures(features: any[]): Promise<Answers> {
+
+export function askForFeatures(features: typeof FEATURES): Promise<Answers> {
   const questions: QuestionCollection = [
     {
       type: "checkbox",
@@ -174,6 +175,97 @@ export function askForStorageAccountDetails(_regions: AzureRegion[], defaultStor
           return "Please enter a name for the storage account.";
         }
       }
+    },
+  ];
+  return inquirer.prompt(questions);
+}
+
+export async function askForAzureStaticWebAppsProjectDetails(defaultGitBranch: string, defaultGitUrl: string, outputLocation: string, gitHubToken: string): Promise<Answers> {
+
+  const gitUrl: InputQuestionOptions = {
+    type: "input",
+    name: "gitUrl",
+    message: "Enter the URL of your GitHub project:",
+    validate: function (value: string) {
+      if (value.length) {
+        return true;
+      }
+      else {
+        return "Please enter an existing GitHub URL of your project";
+      }
+    }
+  };
+
+  if (defaultGitUrl) {
+    gitUrl.default = defaultGitUrl;
+  }
+
+  const questions: QuestionCollection = [
+    gitUrl,
+    {
+      type: "input",
+      name: "gitBranch",
+      message: "Enter branch's name to deploy:",
+      default: defaultGitBranch,
+      validate: function (value: string) {
+        if (value.length) {
+          return true;
+        } else {
+          return "Please enter a name of the git branch to deploy.";
+        }
+      }
+    },
+    {
+      type: "input",
+      name: "gitHubToken",
+      message: "Enter your GitHub Personal Access Token (https://github.com/settings/tokens):",
+      default: gitHubToken,
+      validate: function (value: string) {
+        if (value.length) {
+          return true;
+        } else {
+          return "Please enter your GitHub Personal Access Token.";
+        }
+      }
+    },
+    {
+      type: "input",
+      name: "appLocation",
+      message: "Enter the folder your application code.:",
+      default: '/',
+      validate: function (value: string) {
+        if (value.length) {
+          return true;
+        } else {
+          return "Please enter the folder of your application code.";
+        }
+      }
+    },
+    {
+      type: "input",
+      name: "outputLocation",
+      message: "Enter the folder of the build output directory to deploy:",
+      default: outputLocation,
+      validate: function (value: string) {
+        if (value.length) {
+          return true;
+        } else {
+          return "Please enter the folder of the build output directory to deploy.";
+        }
+      }
+    },
+    {
+      type: "input",
+      name: "apiLocation",
+      message: "Enter the folder of your Azure Functions code (optional):",
+      default: 'api',
+      validate: function (value: string) {
+        if (value.length) {
+          return true;
+        } else {
+          return "Please enter the folder of your Azure Functions code.";
+        }
+      }
     }
   ];
   return inquirer.prompt(questions);
@@ -228,7 +320,7 @@ export function askForProjectDetails(defaultProjectName: string): Promise<Answer
     {
       type: "input",
       name: "name",
-      message: "Enter a name for the project:",
+      message: "Enter the project's name:",
       default: defaultProjectName,
       validate: function (value: string) {
         if (value.length) {

@@ -1,7 +1,7 @@
 import { az, readWorkspace, sanitize } from "../core/utils";
 import chalk from "chalk";
-import debug from "debug";
-debug("ci");
+import dbg from "debug";
+const debug = dbg("ci");
 
 export default async function() {
   const { project } = readWorkspace();

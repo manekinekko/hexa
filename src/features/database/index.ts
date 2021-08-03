@@ -1,8 +1,8 @@
 import chalk from "chalk";
 import { askForDatabaseDetails } from "../../core/prompt";
 import { az, Config, readWorkspace, sanitize, saveWorkspace } from "../../core/utils";
-import debug from "debug";
-debug("database");
+import dbg from "debug";
+const debug = dbg("database");
 
 const buildTableStorageDatabaseEndpoint = (storage: AzureStorage, databaseName: string) => `https://${storage.name}.table.core.windows.net/${databaseName}`;
 

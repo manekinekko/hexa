@@ -1,8 +1,8 @@
 import chalk from "chalk";
 import { askForFunctionsAppFolder } from "../../core/prompt";
 import { Config, createDirectoryIfNotExists, directoryExists, func, npm, saveWorkspace, uuid, copyTemplate, sanitize, updateFile, readWorkspace } from "../../core/utils";
-import debug from "debug";
-debug("functions:init");
+import dbg from "debug";
+const debug = dbg("functions:init");
 
 export default async function() {
   const workspace = readWorkspace();

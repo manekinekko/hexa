@@ -1,8 +1,8 @@
 import chalk from "chalk";
 import { askForKubernetesClusterDetails } from "../../core/prompt";
 import { az, Config, sanitize, saveWorkspace, uuid, readWorkspace } from "../../core/utils";
-import debug from "debug";
-debug("k8s:create");
+import dbg from "debug";
+const debug = dbg("k8s:create");
 
 export default async function(creationMode: CreationMode) {
   const workspace = readWorkspace();
