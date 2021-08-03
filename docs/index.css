@@ -96,7 +96,7 @@ footer {
 }
 
 header nav {
-  width: 320px;
+  width: 400px;
   text-align: right;
 }
 header nav a {
@@ -170,7 +170,7 @@ main h2 img.logo {
 
 main div.code-editor {
   background: #272822;
-  min-width: 340px;
+  min-width: 650px;
   width: 60vw;
   border-radius: 4px;
   box-shadow: 0 0 13px -3px black;

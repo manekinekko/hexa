@@ -1,4 +1,5 @@
 import * as utils from "../core/utils";
+import ci from "./ci";
 
 describe("ci", () => {
   jest.spyOn(utils, "readWorkspace").mockImplementationOnce(() => ({
@@ -33,7 +34,6 @@ describe("ci", () => {
   console.log = jest.fn();
 
   it("should log principal service", async () => {
-    const ci = require("./ci");
     await ci();
     expect(console.log).toHaveBeenCalledWith({ message: "This is the message from az" });
   });

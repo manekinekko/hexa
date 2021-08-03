@@ -3,7 +3,7 @@ let pendingAssertions;
 
 exports.prompt = (prompts) => {
   if (!pendingAssertions) {
-    throw new Error(`inquirer was mocked and used without pending assertions: ${prompts}`);
+    throw new Error(`inquirer was mocked and used without pending assertions: ${JSON.stringify(prompts)}`);
   }
 
   const answers = {};
