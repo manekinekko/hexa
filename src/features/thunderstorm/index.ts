@@ -187,7 +187,7 @@ export async function processWebSocketRequest(ws: WebSocket, message: WebSocket.
           }
           // GET /accounts/${accountId}/projects/${projectId}/storages
           else if (providerType === 'storages') {
-            return await listBlobStorage({
+            return await listStorage({
               ws,
               requestId,
               projectNameUnique,
@@ -336,7 +336,7 @@ async function createSwa({ ws, requestId, projectName, projectNameUnique, locati
 async function getStorageConnectionString({ projectNameUnique }: any) {
   return await az<{ connectionString: string }>(
     `storage account show-connection-string \
-    --name ${projectNameUnique}
+    --name "${projectNameUnique}"
     `
   );
 }
@@ -367,9 +367,9 @@ async function createStorage({ ws, location, requestId, projectName, projectName
 
     await az<AzureStorage>(
       `storage container create \
-      --resource-group ${projectName} \
-      --name ${projectNameUnique} \
-      --public-access blob \
+      --resource-group "${projectName}" \
+      --name "${projectNameUnique}" \
+      --public-access "blob" \
       --connection-string "${storageConnectionString.connectionString}"`
     );
 
@@ -447,7 +447,7 @@ async function createDatabase({ ws, requestId, projectName, projectNameUnique }:
 }
 
 async function updateSwaWithDatabaseConnectionStrings({ projectNameUnique, databaseConnectionString }: any) {
-  console.log(`az staticwebapp appsettings set doesn not support updating app setting right now!`);
+  console.log(`TODO: az staticwebapp appsettings set doesn not support updating app setting right now!`);
   console.log({ projectNameUnique, databaseConnectionString });
   return Promise.resolve();
 
@@ -458,7 +458,7 @@ async function updateSwaWithDatabaseConnectionStrings({ projectNameUnique, datab
   // );
 }
 
-async function listBlobStorage({ ws, requestId, projectName, projectNameUnique }: any) {
+async function listStorage({ ws, requestId, projectName, projectNameUnique }: any) {
   try {
 
     sendWebSocketResponse(ws, requestId, {
