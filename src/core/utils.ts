@@ -350,7 +350,7 @@ export function copyTemplate(src: string, destination: string, context?: { [key:
 }
 
 export function getTemplateFullPath() {
-  return getFullPath("../../templates");
+  return getFullPath("../templates");
 }
 
 export function getFullPath(folder: string) {
