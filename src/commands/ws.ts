@@ -52,17 +52,22 @@ function response(ws: WebSocket, requestId: string, body: Object | null, statusC
 async function process(ws: WebSocket, message: WebSocket.Data) {
   const request = JSON.parse(String(message));
   let { method, url = '/', requestId, body } = request as WsRequest;
-  const [_, _subscriptionLabel, subscriptionId, resourceType, resourceId, providerType] = url.split('/');
 
-  let projectName = (body?.projectName)?.replace(/\s+/g, '-');
+  // /accounts/${subscriptionId}/projects/${resourceId}/storages/${storageId}
+  const [_, _subscriptionLabel, subscriptionId, resourceType, resourceId, providerType, storageId] = url.split('/');
+
+  let projectName = (body?.projectName)?.replace(/\s+/g, '');
 
   // some resources require that name values must be less than 24 characters with no whitespace
-  let projectNameUnique = `${projectName}-${(Math.random() + 1).toString(36).substring(2)}`.substr(0, 24);
+  let projectNameUnique = `${projectName}${(Math.random() + 1).toString(36).substring(2)}`.substr(0, 24);
 
   // if resourceId is provided then use it as project name
   if (resourceId) {
     projectName = resourceId;
-    projectNameUnique = resourceId;
+  }
+
+  if (storageId) {
+    projectNameUnique = storageId;
   }
 
   const location = 'westeurope';
@@ -75,7 +80,7 @@ async function process(ws: WebSocket, message: WebSocket.Data) {
 
   switch (method) {
     case 'POST':
-      if (resourceType === 'resourceGroups') {
+      if (resourceType === 'projects') {
         try {
 
           response(ws, requestId, {
@@ -109,6 +114,7 @@ async function process(ws: WebSocket, message: WebSocket.Data) {
             ws,
             requestId,
             projectName,
+            projectNameUnique,
             location
           });
 
@@ -156,7 +162,9 @@ async function process(ws: WebSocket, message: WebSocket.Data) {
           }
 
           // end operation
-          response(ws, requestId, null, 201);
+          response(ws, requestId, {
+            projectName: projectNameUnique
+          }, 201);
 
         } catch (error) {
           console.error(chalk.red(error));
@@ -170,14 +178,14 @@ async function process(ws: WebSocket, message: WebSocket.Data) {
 
     case 'GET':
 
-      if (resourceType === 'resourceGroups') {
-        // GET /subscriptions/${subscriptionId}/resourceGroups/${resourceId}
+      if (resourceType === 'projects') {
+        // GET /accounts/${accountId}/projects/${projectId}
         if (resourceId) {
           if (!providerType) {
             // TODO: list all resource groups
           }
-          // GET /subscriptions/${subscriptionId}/resourceGroups/${resourceId}/blobs
-          else if (providerType === 'blobs') {
+          // GET /accounts/${accountId}/projects/${projectId}/storages
+          else if (providerType === 'storages') {
             return await listBlobStorage({
               ws,
               requestId,
@@ -186,7 +194,7 @@ async function process(ws: WebSocket, message: WebSocket.Data) {
             });
           }
         }
-        // GET /subscriptions/${subscriptionId}/resourceGroups/
+        // GET /accounts/${accountId}/projects/
         else {
           response(ws, requestId, null, 202);
           let resourceGroupsList = await az<AzureResourceGroup[]>(
@@ -205,7 +213,7 @@ async function process(ws: WebSocket, message: WebSocket.Data) {
     case 'LOGINAZURE':
 
       response(ws, requestId, null, 202);
-      const subscriptionsList = await az<AzureSubscription[]>(`login --query "[].{name:name, state:state, id:id}"`);
+      const subscriptionsList = await az<AzureSubscription[]>(`login --query "[].{name:name, state:state, id:id, user:user}"`);
       response(ws, requestId, subscriptionsList);
 
       break;
@@ -230,15 +238,15 @@ async function process(ws: WebSocket, message: WebSocket.Data) {
       break;
 
     case 'DELETE':
-      if (resourceType === 'resourceGroups') {
+      if (resourceType === 'projects') {
         try {
 
           response(ws, requestId, null, 202);
           await az<void>(
             `group delete \
-          --name "${resourceId}" \
-          --subscription "${subscriptionId}" \
-          --yes`
+            --name "${projectName}" \
+            --subscription "${subscriptionId}" \
+            --yes`
           );
           response(ws, requestId, null, 200);
         }
@@ -296,7 +304,7 @@ export default async function () {
 
 }
 
-async function createProject({ ws, requestId, projectName, location }: any) {
+async function createProject({ ws, requestId, projectName, projectNameUnique, location }: any) {
 
   try {
     response(ws, requestId, {
@@ -308,6 +316,7 @@ async function createProject({ ws, requestId, projectName, location }: any) {
       --location "${location}" \
       --name "${projectName}" \
       --tag "x-created-by=hexa" \
+      --tag "x-project-name="${projectNameUnique}" \
       --query "{name:name, id:id, location:location}"`
     );
 
@@ -401,7 +410,6 @@ async function createStorage({ ws, location, requestId, projectName, projectName
       --resource-group ${projectName} \
       --name ${projectNameUnique} \
       --public-access blob \
-      --tag "x-created-by=hexa" \
       --connection-string "${storageConnectionString.connectionString}"`
     );
 
@@ -519,9 +527,7 @@ async function listBlobStorage({ ws, requestId, projectName, projectNameUnique }
 
     return response(ws, requestId, {
       resource: 'STORAGE',
-      body: {
-        blobs
-      }
+      blobs
     }, 200);
 
   }
