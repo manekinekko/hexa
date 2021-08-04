@@ -1,3 +1,4 @@
+require("dotenv").config();
 
 import { OAuthApp, createNodeMiddleware } from "@octokit/oauth-app";
 import type { Server, ServerResponse, IncomingMessage } from 'http';
@@ -10,8 +11,8 @@ const OAUTH_CALLBACK_URL = `http://${HOST}:${PORT}/api/github/oauth/login`;
 
 const OAuthConfig = {
   clientType: "oauth-app",
-  clientId: "9a07ae2fba267820e3ee",
-  clientSecret: "4d17a77be7e285d050bda7ca285e16a7b7806eab",
+  clientId: process.env.GITHUB_CLIENT_ID,
+  clientSecret: process.env.GITHUB_CLIENT_SECRET,
   defaultScopes: ['repo', 'workflow']
 };
 const app = new OAuthApp(OAuthConfig as any);
