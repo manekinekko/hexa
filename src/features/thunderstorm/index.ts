@@ -5,7 +5,7 @@ import { az } from '../../core/utils';
 import createGitHubRepo from '../github/repo';
 import { loginWithGitHub } from '../github/login-github';
 import { createDatabase } from './database';
-import { createProject } from './project';
+import { createProject, listProjects } from './project';
 import { createStorage, listStorage } from './storage';
 import { createSwa, updateSwaWithDatabaseConnectionStrings } from './swa';
 
@@ -51,6 +51,7 @@ export async function processWebSocketRequest(ws: WebSocket, message: WebSocket.
 
   // get project name from body (only sent when creating a project)
   let projectName = (body?.projectName)?.replace(/\s+/g, '');
+  let projectNameUnique = undefined;
 
   // extract request metadata from URL
   // /accounts/${accountId}/projects/${projectId}/{storage,database}/${providerId}
@@ -69,8 +70,10 @@ export async function processWebSocketRequest(ws: WebSocket, message: WebSocket.
     projectName = projectId;
   }
 
-  // some resources require that name values must be less than 24 characters with no whitespace
-  let projectNameUnique = `${projectName + (Math.random() + 1).toString(36).substring(2)}`.substr(0, 24);
+  if (projectName) {
+    // some resources require that name values must be less than 24 characters with no whitespace
+    projectNameUnique = `${projectName + (Math.random() + 1).toString(36).substring(2)}`.substr(0, 24);
+  }
 
   if (providerType && providerId) {
     projectNameUnique = providerId;
@@ -211,12 +214,11 @@ export async function processWebSocketRequest(ws: WebSocket, message: WebSocket.
         }
         // GET /accounts/${accountId}/projects/
         else {
-          sendWebSocketResponse(ws, requestId, null, 202);
-          let resourceGroupsList = await az<AzureResourceGroup[]>(
-            `group list --subscription "${accountId}" --query "[].{name:name, id:id, location:location, tags:tags}"`
-          );
-          resourceGroupsList = resourceGroupsList.filter((a, _b) => (a.tags && a.tags["x-created-by"] === "hexa"));
-          sendWebSocketResponse(ws, requestId, resourceGroupsList);
+          await listProjects({
+            ws,
+            requestId,
+            accountId
+          });
         }
       }
       else {
@@ -274,6 +276,6 @@ export async function processWebSocketRequest(ws: WebSocket, message: WebSocket.
       break;
 
     default:
-      sendWebSocketResponse(ws, requestId, { error: 'method not allowed' }, 405);
+      sendWebSocketResponse(ws, requestId, { error: `method "${method}" not allowed` }, 405);
   }
 }

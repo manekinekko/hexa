@@ -31,3 +31,29 @@ export async function createProject({ ws, requestId, projectName, projectNameUni
     }, 500);
   }
 }
+
+export async function listProjects({ ws, requestId, accountId }: any) {
+
+  try {
+
+    sendWebSocketResponse(ws, requestId, {
+      resource: 'PROJECT',
+    }, 202);
+
+    let resourceGroupsList = await az<AzureResourceGroup[]>(
+      `group list --subscription "${accountId}" --query "[].{name:name, id:id, location:location, tags:tags}"`
+    );
+    resourceGroupsList = resourceGroupsList.filter((a, _b) => (a.tags && a.tags["x-created-by"] === "hexa"));
+    sendWebSocketResponse(ws, requestId, {
+      projects: resourceGroupsList
+    }, 200);
+  } catch (error) {
+    console.error(chalk.red(error));
+
+    return sendWebSocketResponse(ws, requestId, {
+      resource: 'PROJECT',
+      error
+    }, 500);
+  }
+
+}
