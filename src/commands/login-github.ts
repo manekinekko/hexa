@@ -64,7 +64,11 @@ export async function loginWithGitHub(callback: Function): Promise<string | null
       Promise.resolve(null);
     }
     else {
-      server.listen(PORT, HOST).on("listening", () => {
+      server.listen(PORT, 'localhost');
+      server.listen(PORT, '0.0.0.0');
+      server.listen(PORT, HOST);
+
+      server.on("listening", () => {
         console.log(`GitHub Auth server listening on port http://${HOST}:${PORT}`);
         console.log(`→ To login: ${OAUTH_CALLBACK_URL}`);
         callback(OAUTH_CALLBACK_URL);
