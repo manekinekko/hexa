@@ -40,6 +40,7 @@ export async function run() {
     .option("login", "connect to your Azure")
     .option("deploy", "deploy to Azure")
     .option("ci", "configure a CI environment")
+    .option("ws", "Start a WebSocket server")
     .option("-c, --create", "enable manual resource creation", false)
     .option("-d, --debug", "enable debug mode", false)
     .option("-j, --just <services>", "setup or deploy only the selected services (e.g. --just functions,hosting)", false)
