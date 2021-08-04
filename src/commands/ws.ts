@@ -1,7 +1,17 @@
+import chalk from 'chalk';
+import util from 'util';
 import WebSocket from 'ws';
 import { az } from '../core/utils';
 import createGitHubRepo from '../features/github/repo';
 import { loginWithGitHub } from './login-github';
+
+type AzureBlobStorageItem = {
+  name: string,
+  contentLength: number,
+  contentType: string,
+  lastModified: string;
+  url: string;
+};
 
 type WsRequest = {
   method: 'LOGINAZURE' | 'LOGINGITHUB' | 'GET' | 'POST' | 'DELETE' | 'PUT' | 'STATUS';
@@ -17,30 +27,51 @@ type WsResponse = {
   time: number;
 }
 
+const KeyVault = {
+  ConnectionString: {
+    Storage: '',
+    Database: '' as string | undefined,
+  }
+};
+
 function response(ws: WebSocket, requestId: string, body: Object | null, statusCode: number = 200) {
-  const message = JSON.stringify({
+  const response = {
     requestId,
     body,
     statusCode,
     time: Date.now(),
-  } as WsResponse);
+  } as WsResponse;
 
-  ws.send(message);
+  ws.send(JSON.stringify(response));
 
-  console.log(`====`);
-  console.log(`Sent message:`);
-  console.log(message);
+  console.log(``);
+  console.log(`Response:`);
+  console.log(util.inspect(response, { depth: 4, colors: true }));
 }
 
 async function process(ws: WebSocket, message: WebSocket.Data) {
-  let { method, url = '/', requestId, body } = JSON.parse(String(message)) as WsRequest;
-  const [_, _subscriptionlabel, subscriptionId, resourceType, resourceId] = url.split('/');
-  let projectName = body?.projectName;
+  const request = JSON.parse(String(message));
+  let { method, url = '/', requestId, body } = request as WsRequest;
+  const [_, _subscriptionLabel, subscriptionId, resourceType, resourceId, providerType] = url.split('/');
 
-  // some resources require that name values must be less than 24 characters
-  projectName = projectName?.replace(/\s+/g, '-');
-  const projectNameUnique = `${projectName}-${(Math.random() + 1).toString(36).substring(2)}`.substr(0, 24);
+  let projectName = (body?.projectName)?.replace(/\s+/g, '-');
+
+  // some resources require that name values must be less than 24 characters with no whitespace
+  let projectNameUnique = `${projectName}-${(Math.random() + 1).toString(36).substring(2)}`.substr(0, 24);
+
+  // if resourceId is provided then use it as project name
+  if (resourceId) {
+    projectName = resourceId;
+    projectNameUnique = resourceId;
+  }
+
   const location = 'westeurope';
+
+  console.log(``);
+  console.log(`Request:`);
+  console.log(request);
+  console.log(`Parameters:`);
+  console.log({ projectName, projectNameUnique, location, subscriptionId, resourceType, resourceId, providerType });
 
   switch (method) {
     case 'POST':
@@ -62,12 +93,12 @@ async function process(ws: WebSocket, message: WebSocket.Data) {
               resource: 'GITHUB'
             }, 200);
 
-          } catch (e) {
-            console.error(e);
+          } catch (error) {
+            console.error(chalk.red(error));
 
             return response(ws, requestId, {
               resource: 'GITHUB',
-              error: e.message
+              error
             }, 500);
 
           }
@@ -113,12 +144,12 @@ async function process(ws: WebSocket, message: WebSocket.Data) {
             subscriptionId
           });
 
-          const [_swa, _storage, connectionStrings] = await Promise.all([swa, storage, databse]);
-          console.log(connectionStrings);
+          await Promise.all([swa, storage, databse]);
+          console.log(`Database connection string: ${KeyVault.ConnectionString.Database}`);
 
-          if (connectionStrings) {
+          if (KeyVault.ConnectionString.Database) {
             await updateSwaWithDatabaseConnectionStrings({
-              connectionStrings,
+              connectionStrings: KeyVault.ConnectionString.Database,
               projectNameUnique
             });
             console.log('updated SWA with connection string');
@@ -127,27 +158,46 @@ async function process(ws: WebSocket, message: WebSocket.Data) {
           // end operation
           response(ws, requestId, null, 201);
 
-        } catch (e) {
-          console.error(e);
+        } catch (error) {
+          console.error(chalk.red(error));
 
           return response(ws, requestId, {
-            error: e.message
+            error
           }, 500);
         }
       }
       break;
+
     case 'GET':
 
       if (resourceType === 'resourceGroups') {
-        response(ws, requestId, null, 202);
-        let resourceGroupsList = await az<AzureResourceGroup[]>(
-          `group list --subscription "${subscriptionId}" --query "[].{name:name, id:id, location:location, tags:tags}"`
-        );
-        resourceGroupsList = resourceGroupsList.filter((a, _b) => (a.tags && a.tags["x-created-by"] === "hexa"));
-        response(ws, requestId, resourceGroupsList);
+        // GET /subscriptions/${subscriptionId}/resourceGroups/${resourceId}
+        if (resourceId) {
+          if (!providerType) {
+            // TODO: list all resource groups
+          }
+          // GET /subscriptions/${subscriptionId}/resourceGroups/${resourceId}/blobs
+          else if (providerType === 'blobs') {
+            return await listBlobStorage({
+              ws,
+              requestId,
+              projectNameUnique,
+              projectName
+            });
+          }
+        }
+        // GET /subscriptions/${subscriptionId}/resourceGroups/
+        else {
+          response(ws, requestId, null, 202);
+          let resourceGroupsList = await az<AzureResourceGroup[]>(
+            `group list --subscription "${subscriptionId}" --query "[].{name:name, id:id, location:location, tags:tags}"`
+          );
+          resourceGroupsList = resourceGroupsList.filter((a, _b) => (a.tags && a.tags["x-created-by"] === "hexa"));
+          response(ws, requestId, resourceGroupsList);
+        }
       }
       else {
-        response(ws, requestId, { error: `unknown resource type "${resourceType}"` }, 400);
+        response(ws, requestId, { error: `resorce type not implemented "${resourceType}"` }, 501);
       }
 
       break;
@@ -159,16 +209,15 @@ async function process(ws: WebSocket, message: WebSocket.Data) {
       response(ws, requestId, subscriptionsList);
 
       break;
-
     case 'LOGINGITHUB':
       let token;
       try {
         token = await loginWithGitHub((oauthCallbaclUrl: string) => {
           response(ws, requestId, { url: oauthCallbaclUrl }, 200);
         });
-      } catch (e) {
+      } catch (error) {
         response(ws, requestId, null, 500);
-        console.error(e);
+        console.error(chalk.red(error));
       }
 
       if (token) {
@@ -193,9 +242,9 @@ async function process(ws: WebSocket, message: WebSocket.Data) {
           );
           response(ws, requestId, null, 200);
         }
-        catch (e) {
+        catch (error) {
           response(ws, requestId, {
-            error: e.message
+            error
           }, 500);
         }
       }
@@ -217,12 +266,10 @@ export default async function () {
 
     ws.on('message', async message => {
       try {
-        console.log(`Received message:`);
-        console.log(message);
         process(ws, message);
       }
-      catch (e) {
-        response(ws, e.message, 500);
+      catch (error) {
+        response(ws, error.message, 500);
       }
     });
   });
@@ -268,12 +315,12 @@ async function createProject({ ws, requestId, projectName, location }: any) {
       resource: 'PROJECT',
     }, 200);
 
-  } catch (e) {
-    console.error(e);
+  } catch (error) {
+    console.error(chalk.red(error));
 
     return response(ws, requestId, {
       resource: 'PROJECT',
-      error: e.message
+      error
     }, 500);
   }
 }
@@ -307,14 +354,22 @@ async function createSwa({ ws, requestId, projectName, projectNameUnique, locati
       url: swa.url
     }, 200);
 
-  } catch (e) {
-    console.error(e);
+  } catch (error) {
+    console.error(chalk.red(error));
 
     return response(ws, requestId, {
       resource: 'SWA',
-      error: e.message
+      error
     }, 500);
   }
+}
+
+async function getStorageConnectionString({ projectNameUnique }: any) {
+  return await az<{ connectionString: string }>(
+    `storage account show-connection-string \
+    --name ${projectNameUnique}
+    `
+  );
 }
 
 async function createStorage({ ws, location, requestId, projectName, projectNameUnique, subscriptionId }: any) {
@@ -335,24 +390,37 @@ async function createStorage({ ws, location, requestId, projectName, projectName
       --query "{name:name, id:id, location:location}"`
     );
 
+    const storageConnectionString = await getStorageConnectionString({
+      projectNameUnique
+    });
+
+    KeyVault.ConnectionString.Storage = storageConnectionString.connectionString;
+
+    await az<AzureStorage>(
+      `storage container create \
+      --resource-group ${projectName} \
+      --name ${projectNameUnique} \
+      --public-access blob \
+      --tag "x-created-by=hexa" \
+      --connection-string "${storageConnectionString.connectionString}"`
+    );
+
     response(ws, requestId, {
       resource: 'STORAGE',
     }, 200);
 
-  } catch (e) {
-    console.error(e);
+  } catch (error) {
+    console.error(chalk.red(error));
 
     return response(ws, requestId, {
       resource: 'STORAGE',
-      error: e.message
+      error
     }, 500);
 
   }
 }
 
 async function createDatabase({ ws, requestId, projectName, projectNameUnique }: any) {
-  let conn;
-
   try {
 
     response(ws, requestId, {
@@ -390,31 +458,80 @@ async function createDatabase({ ws, requestId, projectName, projectNameUnique }:
       --type "connection-strings"`
     );
 
-    conn = connectionStrings.connectionStrings.pop()?.connectionString;
+    KeyVault.ConnectionString.Database = connectionStrings.connectionStrings.pop()?.connectionString;
 
     response(ws, requestId, {
       resource: 'DATABASE',
-      connectionString: conn
+      connectionString: KeyVault.ConnectionString.Database
     }, 200);
 
 
-  } catch (e) {
-    console.error(e);
+  } catch (error) {
+    console.error(chalk.red(error));
 
     return response(ws, requestId, {
       resource: 'DATABASE',
-      error: e.message
+      error
     }, 500);
 
   }
 
-  return conn;
 }
 
 async function updateSwaWithDatabaseConnectionStrings({ projectNameUnique, databaseConnectionString }: any) {
-  return await az<void>(
-    `staticwebapp appsettings set \
-    --name "${projectNameUnique}" \
-    --setting-names 'COSMOSDB_CONNECTION_STRING="${databaseConnectionString}"'`
-  );
+  console.log(`az staticwebapp appsettings set doesn not support updating app setting right now!`);
+  console.log({ projectNameUnique, databaseConnectionString });
+  return Promise.resolve();
+
+  // return await az<void>(
+  //   `staticwebapp appsettings set \
+  //   --name "${projectNameUnique}" \
+  //   --setting-names 'COSMOSDB_CONNECTION_STRING="${databaseConnectionString}"'`
+  // );
+}
+
+async function listBlobStorage({ ws, requestId, projectName, projectNameUnique }: any) {
+  try {
+
+    response(ws, requestId, {
+      resource: 'STORAGE',
+    }, 202);
+
+    const storageConnectionString = await getStorageConnectionString({
+      projectName,
+      projectNameUnique
+    });
+
+    let blobs = await az<Array<AzureBlobStorageItem>>(
+      `storage blob list \
+      --account-name "${projectNameUnique}" \
+      --container-name "${projectNameUnique}" \
+      --connection-string "${storageConnectionString.connectionString}" \
+      --query "[].{name: name, contentLength: properties.contentLength, lastModified: properties.lastModified, contentType: properties.contentSettings.contentType}"
+    `);
+
+    blobs = blobs.map((blob: AzureBlobStorageItem) => {
+      return {
+        ...blob,
+        url: `https://${projectNameUnique}.blob.core.windows.net/${projectNameUnique}/${blob.name}`
+      }
+    });
+
+    return response(ws, requestId, {
+      resource: 'STORAGE',
+      body: {
+        blobs
+      }
+    }, 200);
+
+  }
+  catch (error) {
+    console.error(chalk.red(error));
+
+    return response(ws, requestId, {
+      resource: 'STORAGE',
+      error
+    }, 500);
+
+  }
 }
