@@ -4,7 +4,7 @@ import util from 'util';
 import { az } from '../../core/utils';
 import createGitHubRepo from '../github/repo';
 import { loginWithGitHub } from '../github/login-github';
-import { createDatabase } from './database';
+import { createDatabase, getDatabase } from './database';
 import { createProject, listProjects } from './project';
 import { createStorage, listStorage } from './storage';
 import { createSwa, updateSwaWithDatabaseConnectionStrings } from './swa';
@@ -195,7 +195,6 @@ export async function processWebSocketRequest(ws: WebSocket, message: WebSocket.
       break;
 
     case 'GET':
-
       if (projectType === 'projects') {
         // GET /accounts/${accountId}/projects/${projectId}
         if (projectId) {
@@ -207,8 +206,16 @@ export async function processWebSocketRequest(ws: WebSocket, message: WebSocket.
             return await listStorage({
               ws,
               requestId,
+              projectName,
               projectNameUnique,
-              projectName
+            });
+          // GET /accounts/${accountId}/projects/${projectId}/database
+          } else if (providerType === 'database') {
+            return await getDatabase({
+              ws,
+              requestId,
+              projectName,
+              projectNameUnique
             });
           }
         }
