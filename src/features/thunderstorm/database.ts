@@ -21,7 +21,7 @@ export async function createDatabase({ ws, requestId, projectName, projectNameUn
       --kind "MongoDB" \
       --server-version "4.0" \
       --default-consistency-level "Eventual" \
-      --tag "x-created-by=hexa" \
+      --tag "x-created-by=thunderstorm" \
       --enable-multiple-write-locations false \
       --enable-automatic-failover false \
       --query "{id: id, name: name, tags: tags, endpoint: documentEndpoint}"`
@@ -71,7 +71,7 @@ export async function getDatabase({ ws, requestId, projectName, projectNameUniqu
     sendWebSocketResponse(ws, requestId, {
       resource: 'DATABASE',
     }, 202);
-    
+
     const cosmosdbConnectionString = await getDatabaseConnectionString({
       projectName,
       projectNameUnique
@@ -79,9 +79,9 @@ export async function getDatabase({ ws, requestId, projectName, projectNameUniqu
 
     const client = await MongoClient.connect(cosmosdbConnectionString.connectionStrings[0].connectionString);
     const database = client.db(projectNameUnique);
-    
+
     const collections = await database.listCollections().toArray() as any;
-    
+
     for (const collection of collections) {
       collection.documents = await database.collection(collection.name).find().toArray();
     }

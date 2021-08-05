@@ -13,7 +13,7 @@ export async function createProject({ ws, requestId, projectName, projectNameUni
       `group create \
       --location "${location}" \
       --name "${projectName}" \
-      --tag "x-created-by=hexa" \
+      --tag "x-created-by=thunderstorm" \
       --tag "x-project-name="${projectNameUnique}" \
       --query "{name:name, id:id, location:location}"`
     );

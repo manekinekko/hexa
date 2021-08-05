@@ -181,7 +181,8 @@ export async function processWebSocketRequest(ws: WebSocket, message: WebSocket.
 
           // end operation
           sendWebSocketResponse(ws, requestId, {
-            projectName: projectNameUnique
+            projectName: projectNameUnique,
+            swa
           }, 201);
 
         } catch (error) {

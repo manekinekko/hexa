@@ -32,7 +32,7 @@ export async function createStorage({ ws, location, requestId, projectName, proj
       --subscription "${subscriptionId}" \
       --resource-group "${projectName}" \
       --kind "StorageV2" \
-      --tag "x-created-by=hexa" \
+      --tag "x-created-by=thunderstorm" \
       --query "{name:name, id:id, location:location}"`
     );
 
