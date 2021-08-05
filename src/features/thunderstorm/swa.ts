@@ -54,10 +54,37 @@ export async function updateSwaWithDatabaseConnectionStrings({ projectNameUnique
   // );
 }
 
+export async function getSWA({ ws, requestId, projectName, projectNameUnique }: any) {
+  try {
+    sendWebSocketResponse(ws, requestId, {
+      resource: 'FUNCTIONS',
+    }, 202);
+
+    let swa = await az<Array<any>>(
+      `staticwebapp show \
+      --name "${projectNameUnique}"
+      --resource-group "${projectName}" \
+    `);
+
+    return sendWebSocketResponse(ws, requestId, {
+      resource: 'FUNCTIONS',
+      swa
+    }, 200);
+  } catch (error) {
+    console.error(chalk.red(error));
+
+    return sendWebSocketResponse(ws, requestId, {
+      resource: 'FUNCTIONS',
+      error
+    }, 500);
+
+  }
+}
+
 
 export async function listFunctions({ ws, requestId, projectName, projectNameUnique }: any) {
   try {
-    
+
     sendWebSocketResponse(ws, requestId, {
       resource: 'FUNCTIONS',
     }, 202);
@@ -81,6 +108,5 @@ export async function listFunctions({ ws, requestId, projectName, projectNameUni
       resource: 'STORAGE',
       error
     }, 500);
-
   }
 }
