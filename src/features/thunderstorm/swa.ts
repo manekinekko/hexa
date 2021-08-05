@@ -23,6 +23,7 @@ export async function createSwa({ ws, requestId, projectName, projectNameUnique,
       --token "${gitHubToken}" \
       --tag "x-created-by=thunderstorm" \
       --sku "free" \
+      --debug \
       --query "{name:name, id:id, url:defaultHostname}"`,
     );
 
