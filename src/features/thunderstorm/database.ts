@@ -21,7 +21,7 @@ export async function createDatabase({ ws, requestId, projectName, projectNameUn
       --kind "MongoDB" \
       --server-version "4.0" \
       --default-consistency-level "Eventual" \
-      --tag "x-created-by=thunderstorm" \
+      --tags "x-created-by=thunderstorm" \
       --enable-multiple-write-locations false \
       --enable-automatic-failover false \
       --query "{id: id, name: name, tags: tags, endpoint: documentEndpoint}"`

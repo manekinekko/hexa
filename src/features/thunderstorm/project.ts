@@ -9,17 +9,18 @@ export async function createProject({ ws, requestId, projectName, projectNameUni
       resource: 'PROJECT'
     }, 202);
 
-    await az<AzureResourceGroup>(
+    const project = await az<AzureResourceGroup>(
       `group create \
       --location "${location}" \
       --name "${projectName}" \
-      --tag "x-created-by=thunderstorm" \
-      --tag "x-project-name="${projectNameUnique}" \
+      --tags "x-created-by=thunderstorm" "x-project-name=${projectName}" "x-resource-name=${projectNameUnique}" \
+      --debug \
       --query "{name:name, id:id, location:location}"`
     );
 
     sendWebSocketResponse(ws, requestId, {
       resource: 'PROJECT',
+      project
     }, 200);
 
   } catch (error) {

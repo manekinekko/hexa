@@ -12,7 +12,7 @@
   "scripts": {
     "watch": "npm run build -- --watch",
     "prestart": "npm run build",
-    "start": "node ./dist/bin.js ws",
+    "start": "node ./dist/bin.js ws --verbose",
     "build": "rimraf dist/ && mkdir dist && npm run copy:templates && npm run copy:bin && tsc",
     "copy:templates": "copyfiles --verbose --all \"src/templates/**/*\" dist/",
     "copy:bin": "copyfiles --verbose --flat src/bin.js dist/",
