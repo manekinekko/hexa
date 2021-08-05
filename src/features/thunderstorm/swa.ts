@@ -21,7 +21,7 @@ export async function createSwa({ ws, requestId, projectName, projectNameUnique,
       --api-location "api" \
       --app-location "./" \
       --token "${gitHubToken}" \
-      --tag "x-created-by=thunderstorm" \
+      --tags "x-created-by=thunderstorm" \
       --sku "free" \
       --debug \
       --query "{name:name, id:id, url:defaultHostname}"`,
@@ -29,7 +29,7 @@ export async function createSwa({ ws, requestId, projectName, projectNameUnique,
 
     sendWebSocketResponse(ws, requestId, {
       resource: 'SWA',
-      url: swa.url
+      url: swa.url,
     }, 200);
 
   } catch (error) {
