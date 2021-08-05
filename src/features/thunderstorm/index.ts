@@ -1,9 +1,9 @@
-import WebSocket from 'ws';
 import chalk from 'chalk';
 import util from 'util';
+import WebSocket from 'ws';
 import { az } from '../../core/utils';
-import createGitHubRepo from '../github/repo';
 import { loginWithGitHub } from '../github/login-github';
+import createGitHubRepo from '../github/repo';
 import { createDatabase, getDatabase } from './database';
 import { createProject, listProjects } from './project';
 import { createStorage, listStorage } from './storage';
@@ -160,7 +160,7 @@ export async function processWebSocketRequest(ws: WebSocket, message: WebSocket.
             location
           });
 
-          const databse = createDatabase({
+          const database = createDatabase({
             ws,
             requestId,
             projectName,
@@ -168,7 +168,7 @@ export async function processWebSocketRequest(ws: WebSocket, message: WebSocket.
             accountId
           });
 
-          await Promise.all([swa, storage, databse]);
+          await Promise.all([swa, storage, database]);
           console.log(`Database connection string: ${KeyVault.ConnectionString.Database}`);
 
           if (KeyVault.ConnectionString.Database) {
@@ -181,8 +181,7 @@ export async function processWebSocketRequest(ws: WebSocket, message: WebSocket.
 
           // end operation
           sendWebSocketResponse(ws, requestId, {
-            projectName: projectNameUnique,
-            swa
+            projectName: projectNameUnique
           }, 201);
 
         } catch (error) {
@@ -210,7 +209,7 @@ export async function processWebSocketRequest(ws: WebSocket, message: WebSocket.
               projectName,
               projectNameUnique,
             });
-          // GET /accounts/${accountId}/projects/${projectId}/database
+            // GET /accounts/${accountId}/projects/${projectId}/database
           } else if (providerType === 'database') {
             return await getDatabase({
               ws,
