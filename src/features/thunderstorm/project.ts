@@ -43,7 +43,7 @@ export async function listProjects({ ws, requestId, accountId }: any) {
     let resourceGroupsList = await az<AzureResourceGroup[]>(
       `group list --subscription "${accountId}" --query "[].{name:name, id:id, location:location, tags:tags}"`
     );
-    resourceGroupsList = resourceGroupsList.filter((a, _b) => (a.tags && a.tags["x-created-by"] === "hexa"));
+    resourceGroupsList = resourceGroupsList.filter((a, _b) => (a.tags && a.tags["x-created-by"] === "thunderstorm"));
     sendWebSocketResponse(ws, requestId, {
       projects: resourceGroupsList
     }, 200);
