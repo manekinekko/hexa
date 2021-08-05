@@ -23,7 +23,6 @@ export async function createSwa({ ws, requestId, projectName, projectNameUnique,
       --token "${gitHubToken}" \
       --tag "x-created-by=thunderstorm" \
       --sku "free" \
-      --debug \
       --query "{name:name, id:id, url:defaultHostname}"`,
     );
 
@@ -42,7 +41,7 @@ export async function createSwa({ ws, requestId, projectName, projectNameUnique,
   }
 }
 
-export async function updateSwaWithDatabaseConnectionStrings({ projectNameUnique, databaseConnectionString }: any) {
+export async function updateSwaWithDatabaseConnectionStrings({ projectNameUnique, databaseConnectionString }: { projectNameUnique: string | undefined, databaseConnectionString: string }) {
   console.log(`TODO: az staticwebapp appsettings set doesn not support updating app setting right now!`);
   console.log({ projectNameUnique, databaseConnectionString });
   return Promise.resolve();

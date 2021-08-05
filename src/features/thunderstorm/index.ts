@@ -51,7 +51,7 @@ export async function processWebSocketRequest(ws: WebSocket, message: WebSocket.
 
   // get project name from body (only sent when creating a project)
   let projectName = (body?.projectName)?.replace(/\s+/g, '');
-  let projectNameUnique = undefined;
+  let projectNameUnique: undefined | string = undefined;
 
   // extract request metadata from URL
   // /accounts/${accountId}/projects/${projectId}/{storage,database}/${providerId}
@@ -72,7 +72,7 @@ export async function processWebSocketRequest(ws: WebSocket, message: WebSocket.
 
   if (projectName) {
     // some resources require that name values must be less than 24 characters with no whitespace
-    projectNameUnique = `${projectName + (Math.random() + 1).toString(36).substring(2)}`.substr(0, 24);
+    projectNameUnique = `${projectName + (Math.random() + 1).toString(36).substring(2)}`.substr(0, 24).replace(/\-/g, '');
   }
 
   if (providerType && providerId) {
@@ -168,21 +168,29 @@ export async function processWebSocketRequest(ws: WebSocket, message: WebSocket.
             accountId
           });
 
-          await Promise.all([swa, storage, database]);
-          console.log(`Database connection string: ${KeyVault.ConnectionString.Database}`);
 
-          if (KeyVault.ConnectionString.Database) {
-            await updateSwaWithDatabaseConnectionStrings({
-              connectionStrings: KeyVault.ConnectionString.Database,
-              projectNameUnique
+          await Promise.all([swa, storage, database])
+            .then(async _ => {
+
+              console.log(`Database connection string: ${KeyVault.ConnectionString.Database}`);
+
+              if (KeyVault.ConnectionString.Database) {
+                await updateSwaWithDatabaseConnectionStrings({
+                  databaseConnectionString: KeyVault.ConnectionString.Database,
+                  projectNameUnique
+                });
+                console.log('updated SWA with connection string');
+              }
+
+              // end operation
+              sendWebSocketResponse(ws, requestId, {
+                projectName: projectNameUnique
+              }, 201);
+            }).catch(error => {
+              sendWebSocketResponse(ws, requestId, {
+                error
+              }, 500);
             });
-            console.log('updated SWA with connection string');
-          }
-
-          // end operation
-          sendWebSocketResponse(ws, requestId, {
-            projectName: projectNameUnique
-          }, 201);
 
         } catch (error) {
           console.error(chalk.red(error));
