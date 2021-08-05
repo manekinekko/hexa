@@ -53,3 +53,34 @@ export async function updateSwaWithDatabaseConnectionStrings({ projectNameUnique
   //   --setting-names 'COSMOSDB_CONNECTION_STRING="${databaseConnectionString}"'`
   // );
 }
+
+
+export async function listFunctions({ ws, requestId, projectName, projectNameUnique }: any) {
+  try {
+    
+    sendWebSocketResponse(ws, requestId, {
+      resource: 'FUNCTIONS',
+    }, 202);
+
+    let functions = await az<Array<any>>(
+      `staticwebapp environment functions \
+      --name "${projectNameUnique}"
+      --resource-group "${projectName}" \
+    `);
+
+    return sendWebSocketResponse(ws, requestId, {
+      resource: 'FUNCTIONS',
+      functions
+    }, 200);
+
+
+  } catch (error) {
+    console.error(chalk.red(error));
+
+    return sendWebSocketResponse(ws, requestId, {
+      resource: 'STORAGE',
+      error
+    }, 500);
+
+  }
+}

@@ -59,7 +59,6 @@ export async function createStorage({ ws, location, requestId, projectName, proj
       resource: 'STORAGE',
       error
     }, 500);
-
   }
 }
 

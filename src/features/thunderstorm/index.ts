@@ -7,7 +7,7 @@ import { loginWithGitHub } from '../github/login-github';
 import { createDatabase, getDatabase } from './database';
 import { createProject, listProjects } from './project';
 import { createStorage, listStorage } from './storage';
-import { createSwa, updateSwaWithDatabaseConnectionStrings } from './swa';
+import { createSwa, listFunctions, updateSwaWithDatabaseConnectionStrings } from './swa';
 
 type WsRequest = {
   method: 'LOGINAZURE' | 'LOGINGITHUB' | 'GET' | 'POST' | 'DELETE' | 'PUT' | 'STATUS';
@@ -216,6 +216,10 @@ export async function processWebSocketRequest(ws: WebSocket, message: WebSocket.
               requestId,
               projectName,
               projectNameUnique
+            });
+          } else if (providerType === 'functions') {
+            return await listFunctions({
+              ws, requestId, projectName, projectNameUnique
             });
           }
         }
