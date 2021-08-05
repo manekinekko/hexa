@@ -18,7 +18,7 @@ export async function getStorageConnectionString({ projectNameUnique }: any) {
   );
 }
 
-export async function createStorage({ ws, location, requestId, projectName, projectNameUnique, subscriptionId }: any) {
+export async function createStorage({ ws, location, requestId, projectName, projectNameUnique, accountId }: any) {
 
   try {
     sendWebSocketResponse(ws, requestId, {
@@ -29,7 +29,7 @@ export async function createStorage({ ws, location, requestId, projectName, proj
       `storage account create \
       --location "${location}" \
       --name "${projectNameUnique}" \
-      --subscription "${subscriptionId}" \
+      --subscription "${accountId}" \
       --resource-group "${projectName}" \
       --kind "StorageV2" \
       --tag "x-created-by=thunderstorm" \
