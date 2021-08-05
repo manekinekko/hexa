@@ -66,14 +66,37 @@ async function getDatabaseConnectionString({ projectNameUnique, projectName }: {
   );
 }
 
-export async function getDatabaseCollection({ projectNameUnique, cosmosdbConnectionString }: { projectNameUnique: string, cosmosdbConnectionString: string }) {
-  const client = await MongoClient.connect(cosmosdbConnectionString);
-  const database = client.db(projectNameUnique);
-  return database.listCollections();
-}
+export async function getDatabase({ ws, requestId, projectName, projectNameUnique }: any) {
+  try {
+    sendWebSocketResponse(ws, requestId, {
+      resource: 'DATABASE',
+    }, 202);
+    
+    const cosmosdbConnectionString = await getDatabaseConnectionString({
+      projectName,
+      projectNameUnique
+    });
 
-export async function getDatabaseDocument({ projectNameUnique, cosmosdbConnectionString, collectionName }: { projectNameUnique: string, cosmosdbConnectionString: string, collectionName: string }) {
-  const client = await MongoClient.connect(cosmosdbConnectionString);
-  const database = client.db(projectNameUnique);
-  return database.collection(collectionName).find();
+    const client = await MongoClient.connect(cosmosdbConnectionString.connectionStrings[0].connectionString);
+    const database = client.db(projectNameUnique);
+    
+    const collections = await database.listCollections().toArray() as any;
+    
+    for (const collection of collections) {
+      collection.documents = await database.collection(collection.name).find().toArray();
+    }
+
+    return sendWebSocketResponse(ws, requestId, {
+      resource: 'DATABASE',
+      collections
+    }, 200);
+
+  } catch (error) {
+    console.error(chalk.red(error));
+
+    return sendWebSocketResponse(ws, requestId, {
+      resource: 'DATABASE',
+      error
+    }, 500);
+  }
 }
