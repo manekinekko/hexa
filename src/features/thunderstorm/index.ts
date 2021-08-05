@@ -4,7 +4,7 @@ import WebSocket from 'ws';
 import { az } from '../../core/utils';
 import { loginWithGitHub } from '../github/login-github';
 import createGitHubRepo from '../github/repo';
-import { createDatabase, getDatabase } from './database';
+import { createCollection, createDatabase, getDatabase } from './database';
 import { createProject, listProjects } from './project';
 import { createStorage, listStorage } from './storage';
 import { createSwa, getSWA, listFunctions, updateSwaWithDatabaseConnectionStrings } from './swa';
@@ -101,89 +101,100 @@ export async function processWebSocketRequest(ws: WebSocket, message: WebSocket.
       if (projectType === 'projects') {
         try {
 
-          sendWebSocketResponse(ws, requestId, {
-            resource: 'GITHUB'
-          }, 202);
-
-          try {
-
-            var { html_url, default_branch } = await createGitHubRepo({
-              token: body.gitHubToken,
+          if (providerType === 'database') {
+            
+            return await createCollection({
+              ws,
+              requestId,
               projectName,
-            })
-
+              projectNameUnique,
+              collectionName: body.collectionName
+            });
+            
+          } else {
             sendWebSocketResponse(ws, requestId, {
               resource: 'GITHUB'
-            }, 200);
+            }, 202);
 
-          } catch (error) {
-            console.error(chalk.red(error));
+            try {
 
-            return sendWebSocketResponse(ws, requestId, {
-              resource: 'GITHUB',
-              error
-            }, 500);
+              var { html_url, default_branch } = await createGitHubRepo({
+                token: body.gitHubToken,
+                projectName,
+              })
 
-          }
+              sendWebSocketResponse(ws, requestId, {
+                resource: 'GITHUB'
+              }, 200);
 
-          //======
+            } catch (error) {
+              console.error(chalk.red(error));
 
-          const resourceGroup = createProject({
-            ws,
-            requestId,
-            projectName,
-            projectNameUnique,
-            location
-          });
+              return sendWebSocketResponse(ws, requestId, {
+                resource: 'GITHUB',
+                error
+              }, 500);
 
-          await Promise.all([resourceGroup]);
+            }
 
-          //======
+            //======
 
-          const swa = createSwa({
-            ws,
-            requestId,
-            projectName,
-            projectNameUnique,
-            location,
-            html_url,
-            default_branch,
-            gitHubToken: body.gitHubToken
-          });
-
-          const storage = createStorage({
-            ws,
-            requestId,
-            projectName,
-            projectNameUnique,
-            accountId,
-            location
-          });
-
-          const database = createDatabase({
-            ws,
-            requestId,
-            projectName,
-            projectNameUnique,
-            accountId
-          });
-
-          await Promise.all([swa, storage, database]);
-          console.log(`Database connection string: ${KeyVault.ConnectionString.Database}`);
-
-          if (KeyVault.ConnectionString.Database) {
-            await updateSwaWithDatabaseConnectionStrings({
-              connectionStrings: KeyVault.ConnectionString.Database,
-              projectNameUnique
+            const resourceGroup = createProject({
+              ws,
+              requestId,
+              projectName,
+              projectNameUnique,
+              location
             });
-            console.log('updated SWA with connection string');
+
+            await Promise.all([resourceGroup]);
+
+            //======
+
+            const swa = createSwa({
+              ws,
+              requestId,
+              projectName,
+              projectNameUnique,
+              location,
+              html_url,
+              default_branch,
+              gitHubToken: body.gitHubToken
+            });
+
+            const storage = createStorage({
+              ws,
+              requestId,
+              projectName,
+              projectNameUnique,
+              accountId,
+              location
+            });
+
+            const database = createDatabase({
+              ws,
+              requestId,
+              projectName,
+              projectNameUnique,
+              accountId
+            });
+
+            await Promise.all([swa, storage, database]);
+            console.log(`Database connection string: ${KeyVault.ConnectionString.Database}`);
+
+            if (KeyVault.ConnectionString.Database) {
+              await updateSwaWithDatabaseConnectionStrings({
+                connectionStrings: KeyVault.ConnectionString.Database,
+                projectNameUnique
+              });
+              console.log('updated SWA with connection string');
+            }
+
+            // end operation
+            sendWebSocketResponse(ws, requestId, {
+              projectName: projectNameUnique
+            }, 201);
           }
-
-          // end operation
-          sendWebSocketResponse(ws, requestId, {
-            projectName: projectNameUnique
-          }, 201);
-
         } catch (error) {
           console.error(chalk.red(error));
 

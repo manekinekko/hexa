@@ -66,6 +66,43 @@ async function getDatabaseConnectionString({ projectNameUnique, projectName }: {
   );
 }
 
+export async function createCollection({ ws, requestId, projectName, projectNameUnique, collectionName }: any) {
+  try {
+    sendWebSocketResponse(ws, requestId, {
+      resource: 'DATABASE',
+    }, 202);
+
+    const cosmosdbConnectionString = await getDatabaseConnectionString({
+      projectName,
+      projectNameUnique
+    });
+
+    const client = await MongoClient.connect(cosmosdbConnectionString.connectionStrings[0].connectionString);
+    const database = client.db(projectNameUnique);
+
+    const collections = (await database.listCollections().toArray() as any).map((collection: any) => collection.name);
+    
+    if (!collections.includes(collectionName)) {
+      console.log(`collection ${collectionName} does not exist`);
+      await database.createCollection(collectionName);
+    } else {
+      console.log(`collection ${collectionName} already exists`);
+    }
+
+    return sendWebSocketResponse(ws, requestId, {
+      resource: 'DATABASE'
+    }, 200);
+
+  } catch (error) {
+    console.error(chalk.red(error));
+
+    return sendWebSocketResponse(ws, requestId, {
+      resource: 'DATABASE',
+      error
+    }, 500);
+  }
+}
+
 export async function getDatabase({ ws, requestId, projectName, projectNameUnique }: any) {
   try {
     sendWebSocketResponse(ws, requestId, {
