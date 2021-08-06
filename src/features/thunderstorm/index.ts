@@ -4,7 +4,12 @@ import WebSocket from 'ws';
 import { az } from '../../core/utils';
 import { loginWithGitHub } from '../github/login-github';
 import createGitHubRepo from '../github/repo';
+<<<<<<< HEAD
 import { createCollection, createDatabase, getDatabase } from './database';
+=======
+import { createDatabase, getDatabase } from './database';
+import { listEnvironmentVariables } from './env';
+>>>>>>> 474d89800e5cff3a9afdd75a82a152cb300782e0
 import { createProject, listProjects } from './project';
 import { createStorage, listStorage } from './storage';
 import { createSwa, getSWA, listFunctions, updateSwaWithDatabaseConnectionStrings } from './swa';
@@ -54,7 +59,7 @@ export async function processWebSocketRequest(ws: WebSocket, message: WebSocket.
   let projectNameUnique: undefined | string = undefined;
 
   // extract request metadata from URL
-  // /accounts/${accountId}/projects/${projectId}/{storage,database}/${providerId}
+  // /accounts/{accountId}/projects/{projectId}/{storage,function,env,swa,database}/{providerId}
   const [
     _,
     _accountsLabel,
@@ -227,12 +232,13 @@ export async function processWebSocketRequest(ws: WebSocket, message: WebSocket.
 
     case 'GET':
       if (projectType === 'projects') {
-        // GET /accounts/${accountId}/projects/${projectId}
+
+        // GET /accounts/{accountId}/projects/{projectId}
         if (projectId) {
           if (!providerType) {
             // TODO: list all resource groups
           }
-          // GET /accounts/${accountId}/projects/${projectId}/storages
+          // GET /accounts/{accountId}/projects/{projectId}/storages/{providerId}
           else if (providerType === 'storages') {
             return await listStorage({
               ws,
@@ -240,25 +246,35 @@ export async function processWebSocketRequest(ws: WebSocket, message: WebSocket.
               projectName,
               projectNameUnique,
             });
-            // GET /accounts/${accountId}/projects/${projectId}/database
-          } else if (providerType === 'database') {
+            // GET /accounts/{accountId}/projects/{projectId}/databases/{providerId}
+          } else if (providerType === 'databases') {
             return await getDatabase({
               ws,
               requestId,
               projectName,
               projectNameUnique
             });
-          } else if (providerType === 'functions') {
+          }
+          // GET /accounts/{accountId}/projects/{projectId}/functions/{providerId}
+          else if (providerType === 'functions') {
             return await listFunctions({
               ws, requestId, projectName, projectNameUnique
             });
-          } else if (providerType === 'swa') {
+          }
+          // GET /accounts/{accountId}/projects/{projectId}/swa/{providerId}
+          else if (providerType === 'swa') {
             return await getSWA({
               ws, requestId, projectName, projectNameUnique
             });
           }
+          // GET /accounts/{accountId}/projects/{projectId}/env/{providerId}
+          else if (providerType === 'env') {
+            return await listEnvironmentVariables({
+              ws, requestId, projectNameUnique, projectName
+            });
+          }
         }
-        // GET /accounts/${accountId}/projects/
+        // GET /accounts/{accountId}/projects/
         else {
           await listProjects({
             ws,

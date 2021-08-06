@@ -57,7 +57,7 @@ export async function createDatabase({ ws, requestId, projectName, projectNameUn
 
 }
 
-async function getDatabaseConnectionString({ projectNameUnique, projectName }: { projectNameUnique: string, projectName: string }) {
+export async function getDatabaseConnectionString({ projectNameUnique, projectName }: { projectNameUnique: string, projectName: string }) {
   return await az<{ connectionStrings: Array<{ connectionString: string, description: string }> }>(
     `cosmosdb keys list \
     --name "${projectNameUnique}" \
