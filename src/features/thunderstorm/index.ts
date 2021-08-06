@@ -102,8 +102,8 @@ export async function processWebSocketRequest(ws: WebSocket, message: WebSocket.
       if (projectType === 'projects') {
         try {
 
-          if (providerType === 'database') {
-            
+          if (providerType === 'databases') {
+
             return await createCollection({
               ws,
               requestId,
@@ -111,7 +111,7 @@ export async function processWebSocketRequest(ws: WebSocket, message: WebSocket.
               projectNameUnique,
               collectionName: body.collectionName
             });
-            
+
           } else {
             sendWebSocketResponse(ws, requestId, {
               resource: 'GITHUB'
