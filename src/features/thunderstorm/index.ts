@@ -4,12 +4,8 @@ import WebSocket from 'ws';
 import { az } from '../../core/utils';
 import { loginWithGitHub } from '../github/login-github';
 import createGitHubRepo from '../github/repo';
-<<<<<<< HEAD
-import { createCollection, createDatabase, getDatabase } from './database';
-=======
-import { createDatabase, getDatabase } from './database';
+import { createDatabase, createCollection, getDatabase } from './database';
 import { listEnvironmentVariables } from './env';
->>>>>>> 474d89800e5cff3a9afdd75a82a152cb300782e0
 import { createProject, listProjects } from './project';
 import { createStorage, listStorage } from './storage';
 import { createSwa, getSWA, listFunctions, updateSwaWithDatabaseConnectionStrings } from './swa';
