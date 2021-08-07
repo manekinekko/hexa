@@ -2,7 +2,7 @@ import chalk from "chalk";
 import { sendWebSocketResponse } from ".";
 import { az } from "../../core/utils";
 
-export async function createProject({ ws, requestId, projectName, projectNameUnique, location }: any) {
+export async function createProject({ ws, requestId, projectName, projectNameUnique, location, projectRealName }: any) {
 
   try {
     sendWebSocketResponse(ws, requestId, {
@@ -13,7 +13,7 @@ export async function createProject({ ws, requestId, projectName, projectNameUni
       `group create \
       --location "${location}" \
       --name "${projectName}" \
-      --tags "x-created-by=thunderstorm" "x-project-name=${projectName}" "x-resource-name=${projectNameUnique}" \
+      --tags "x-created-by=thunderstorm" "x-project-name=${projectRealName}" "x-project-id=${projectName}" "x-resource-name=${projectNameUnique}" \
       --debug \
       --query "{name:name, id:id, location:location}"`
     );

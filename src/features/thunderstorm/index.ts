@@ -52,6 +52,7 @@ export async function processWebSocketRequest(ws: WebSocket, message: WebSocket.
 
   // get project name from body (only sent when creating a project)
   let projectName = (body?.projectName)?.replace(/\s+/g, '');
+  let projectRealName = body?.projectName;
   let projectNameUnique: undefined | string = undefined;
 
   // extract request metadata from URL
@@ -145,7 +146,8 @@ export async function processWebSocketRequest(ws: WebSocket, message: WebSocket.
               requestId,
               projectName,
               projectNameUnique,
-              location
+              location,
+              projectRealName
             });
 
             await Promise.all([resourceGroup]);
