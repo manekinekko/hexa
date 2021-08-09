@@ -48,7 +48,7 @@ export async function listProjects({ ws, requestId, accountId }: any) {
     sendWebSocketResponse(ws, requestId, {
       projects: staticWebApps.map((swa: any) => {
         return { swa };
-      });
+      })
     }, 200);
   } catch (error) {
     console.error(chalk.red(error));
