@@ -162,7 +162,8 @@ export async function processWebSocketRequest(ws: WebSocket, message: WebSocket.
               location,
               html_url,
               default_branch,
-              gitHubToken: body.gitHubToken
+              gitHubToken: body.gitHubToken,
+              projectRealName
             });
 
             const storage = createStorage({

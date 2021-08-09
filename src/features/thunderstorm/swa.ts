@@ -3,7 +3,7 @@ import { sendWebSocketResponse } from ".";
 import { az } from "../../core/utils";
 
 
-export async function createSwa({ ws, requestId, projectName, projectNameUnique, location, html_url, default_branch, gitHubToken }: any) {
+export async function createSwa({ ws, requestId, projectName, projectNameUnique, location, html_url, default_branch, gitHubToken, projectRealName }: any) {
 
   try {
     sendWebSocketResponse(ws, requestId, {
@@ -21,7 +21,7 @@ export async function createSwa({ ws, requestId, projectName, projectNameUnique,
       --api-location "api" \
       --app-location "./" \
       --token "${gitHubToken}" \
-      --tags "x-created-by=thunderstorm" \
+      --tags "x-created-by=thunderstorm" "x-project-name=${projectRealName}" \
       --sku "free" \
       --debug \
       --query "{name:name, id:id, url:defaultHostname}"`,
