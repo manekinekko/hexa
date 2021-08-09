@@ -21,7 +21,7 @@ export async function createSwa({ ws, requestId, projectName, projectNameUnique,
       --api-location "api" \
       --app-location "./" \
       --token "${gitHubToken}" \
-      --tags "x-created-by=thunderstorm" "x-project-name=${projectRealName}" \
+      --tags "x-created-by=thunderstorm" "x-project-name=${projectRealName}" "x-project-id=${projectName}" "x-resource-name=${projectNameUnique}" \
       --sku "free" \
       --debug \
       --query "{name:name, id:id, url:defaultHostname}"`,

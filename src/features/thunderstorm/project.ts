@@ -41,12 +41,14 @@ export async function listProjects({ ws, requestId, accountId }: any) {
       resource: 'PROJECT',
     }, 202);
 
-    let resourceGroupsList = await az<AzureResourceGroup[]>(
-      `group list --subscription "${accountId}" --query "[].{name:name, id:id, location:location, tags:tags}"`
+    let staticWebApps = await az<AzureResourceGroup[]>(
+      `staticwebapp list --subscription "${accountId}"`
     );
-    resourceGroupsList = resourceGroupsList.filter((a, _b) => (a.tags && a.tags["x-created-by"] === "thunderstorm"));
+    staticWebApps = staticWebApps.filter((a, _b) => (a.tags && a.tags["x-created-by"] === "thunderstorm"));
     sendWebSocketResponse(ws, requestId, {
-      projects: resourceGroupsList
+      projects: staticWebApps.map((swa: any) => {
+        return { swa };
+      });
     }, 200);
   } catch (error) {
     console.error(chalk.red(error));
