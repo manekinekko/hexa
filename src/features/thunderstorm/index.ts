@@ -6,7 +6,7 @@ import { loginWithGitHub } from '../github/login-github';
 import createGitHubRepo from '../github/repo';
 import { createDatabase, createCollection, getDatabase } from './database';
 import { listEnvironmentVariables } from './env';
-import { createProject, listProjects } from './project';
+import { createProject, deleteProject, listProjects } from './project';
 import { createStorage, listStorage } from './storage';
 import { createSwa, getSWA, listFunctions, updateSwaWithDatabaseConnectionStrings } from './swa';
 
@@ -43,7 +43,7 @@ export function sendWebSocketResponse(ws: WebSocket, requestId: string, body: Ob
 
   console.log(``);
   console.log(`Response:`);
-  console.log(util.inspect(response, { depth: 4, colors: true }));
+  console.log(util.inspect(response, { depth: 6, colors: true }));
 }
 
 export async function processWebSocketRequest(ws: WebSocket, message: WebSocket.Data) {
@@ -183,28 +183,28 @@ export async function processWebSocketRequest(ws: WebSocket, message: WebSocket.
               accountId
             });
 
-          await Promise.all([swa, storage, database])
-            .then(async _ => {
+            await Promise.all([swa, storage, database])
+              .then(async _ => {
 
-              console.log(`Database connection string: ${KeyVault.ConnectionString.Database}`);
+                console.log(`Database connection string: ${KeyVault.ConnectionString.Database}`);
 
-              if (KeyVault.ConnectionString.Database) {
-                await updateSwaWithDatabaseConnectionStrings({
-                  databaseConnectionString: KeyVault.ConnectionString.Database,
-                  projectNameUnique
-                });
-                console.log('updated SWA with connection string');
-              }
+                if (KeyVault.ConnectionString.Database) {
+                  await updateSwaWithDatabaseConnectionStrings({
+                    databaseConnectionString: KeyVault.ConnectionString.Database,
+                    projectNameUnique
+                  });
+                  console.log('updated SWA with connection string');
+                }
 
-              // end operation
-              sendWebSocketResponse(ws, requestId, {
-                projectName: projectNameUnique
-              }, 201);
-            }).catch(error => {
-              sendWebSocketResponse(ws, requestId, {
-                error
-              }, 500);
-            });
+                // end operation
+                sendWebSocketResponse(ws, requestId, {
+                  projectName: projectNameUnique
+                }, 201);
+              }).catch(error => {
+                sendWebSocketResponse(ws, requestId, {
+                  error
+                }, 500);
+              });
 
             if (KeyVault.ConnectionString.Database) {
               await updateSwaWithDatabaseConnectionStrings({
@@ -317,22 +317,7 @@ export async function processWebSocketRequest(ws: WebSocket, message: WebSocket.
 
     case 'DELETE':
       if (projectType === 'projects') {
-        try {
-
-          sendWebSocketResponse(ws, requestId, null, 202);
-          await az<void>(
-            `group delete \
-            --name "${projectName}" \
-            --subscription "${accountId}" \
-            --yes`
-          );
-          sendWebSocketResponse(ws, requestId, null, 200);
-        }
-        catch (error) {
-          sendWebSocketResponse(ws, requestId, {
-            error
-          }, 500);
-        }
+        await deleteProject({ ws, requestId, projectName, projectRealName, accountId, projectNameUnique });
       }
       break;
 
