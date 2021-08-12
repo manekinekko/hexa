@@ -10,7 +10,7 @@ export async function createSwa({ ws, requestId, projectName, projectNameUnique,
       resource: 'SWA'
     }, 202);
 
-    let swa = { url: '' };
+    let swa: AzureStaticWebApps = { id: 'MANUAL', url: '' };
 
     if (IS_DEMO()) {
       swa = await new Promise(resolve => setTimeout(resolve, 5000, { url: '' }));

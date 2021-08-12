@@ -4,7 +4,7 @@ import { IS_DEMO } from "../../core/utils";
 export default async function ({ token, projectName }: { token: string, projectName: string }) {
 
   if (IS_DEMO()) {
-    return await new Promise(resolve => setTimeout(resolve, 5000, {}));
+    return await new Promise((resolve: Function) => setTimeout(resolve, 5000, { html_url: '', default_branch: '' })) as { html_url: string, default_branch: string };
   }
   else {
     const octokit = new Octokit({
