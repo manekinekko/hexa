@@ -1,6 +1,6 @@
 import chalk from "chalk";
 import { sendWebSocketResponse } from ".";
-import { az } from "../../core/utils";
+import { az, IS_DEMO } from "../../core/utils";
 
 type AzureBlobStorageItem = {
   name: string,
@@ -25,8 +25,13 @@ export async function createStorage({ ws, location, requestId, projectName, proj
       resource: 'STORAGE',
     }, 202);
 
-    await az<AzureStorage>(
-      `storage account create \
+    if (IS_DEMO()) {
+      // await new Promise(resolve => setTimeout(resolve, 5000, {}));
+      throw new Error('Demo Error');
+    }
+    else {
+      await az<AzureStorage>(
+        `storage account create \
       --location "${location}" \
       --name "${projectNameUnique}" \
       --subscription "${accountId}" \
@@ -34,19 +39,20 @@ export async function createStorage({ ws, location, requestId, projectName, proj
       --kind "StorageV2" \
       --tags "x-created-by=thunderstorm" \
       --query "{name:name, id:id, location:location}"`
-    );
+      );
 
-    const storageConnectionString = await getStorageConnectionString({
-      projectNameUnique
-    });
+      const storageConnectionString = await getStorageConnectionString({
+        projectNameUnique
+      });
 
-    await az<AzureStorage>(
-      `storage container create \
+      await az<AzureStorage>(
+        `storage container create \
       --resource-group "${projectName}" \
       --name "${projectNameUnique}" \
       --public-access "blob" \
       --connection-string "${storageConnectionString.connectionString}"`
-    );
+      );
+    }
 
     sendWebSocketResponse(ws, requestId, {
       resource: 'STORAGE',

@@ -1,6 +1,8 @@
 import chalk from "chalk";
 import { sendWebSocketResponse } from ".";
-import { az } from "../../core/utils";
+import { az, IS_DEMO } from "../../core/utils";
+
+
 
 function generateTags({ projectRealName, projectName, projectNameUnique }: any) {
   return `"x-created-by=thunderstorm" "x-project-name=${projectRealName}" "x-project-id=${projectName}" "x-resource-name=${projectNameUnique}"`;
@@ -12,16 +14,20 @@ export async function createProject({ ws, requestId, projectName, projectNameUni
     sendWebSocketResponse(ws, requestId, {
       resource: 'PROJECT'
     }, 202);
+    let project = {};
 
-    const project = await az<AzureResourceGroup>(
-      `group create \
+    if (IS_DEMO()) {
+      project = await new Promise(resolve => setTimeout(resolve, 5000, {}));
+    } else {
+      project = await az<AzureResourceGroup>(
+        `group create \
       --location "${location}" \
       --name "${projectName}" \
       --tags ${generateTags({ projectRealName, projectName, projectNameUnique })} \
       --debug \
       --query "{name:name, id:id, location:location}"`
-    );
-
+      );
+    }
     sendWebSocketResponse(ws, requestId, {
       resource: 'PROJECT',
       project

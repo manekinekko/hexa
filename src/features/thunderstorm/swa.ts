@@ -1,6 +1,6 @@
 import chalk from "chalk";
 import { sendWebSocketResponse } from ".";
-import { az } from "../../core/utils";
+import { az, IS_DEMO } from "../../core/utils";
 
 
 export async function createSwa({ ws, requestId, projectName, projectNameUnique, location, html_url, default_branch, gitHubToken, projectRealName }: any) {
@@ -10,8 +10,15 @@ export async function createSwa({ ws, requestId, projectName, projectNameUnique,
       resource: 'SWA'
     }, 202);
 
-    const swa = await az<AzureStaticWebApps>(
-      `staticwebapp create \
+    let swa = { url: '' };
+
+    if (IS_DEMO()) {
+      swa = await new Promise(resolve => setTimeout(resolve, 5000, { url: '' }));
+    }
+    else {
+
+      swa = await az<AzureStaticWebApps>(
+        `staticwebapp create \
       --name "${projectNameUnique}" \
       --resource-group "${projectName}" \
       --source "${html_url}" \
@@ -25,7 +32,8 @@ export async function createSwa({ ws, requestId, projectName, projectNameUnique,
       --sku "free" \
       --debug \
       --query "{name:name, id:id, url:defaultHostname}"`,
-    );
+      );
+    }
 
     sendWebSocketResponse(ws, requestId, {
       resource: 'SWA',

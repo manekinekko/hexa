@@ -1,3 +1,4 @@
+import chalk from 'chalk';
 import WebSocket from 'ws';
 import { processWebSocketRequest, sendWebSocketResponse } from '../features/thunderstorm/index';
 
@@ -5,7 +6,7 @@ export default async function () {
   const wss = new WebSocket.Server({ host: '0.0.0.0', port: 8080 })
 
   wss.on('listening', () => {
-    console.log('Listening on ws://0.0.0.0:8080')
+    console.info(chalk.green("✔ Listening on ws://0.0.0.0:8080"));
   });
 
   wss.on('connection', async ws => {
