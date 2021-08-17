@@ -281,9 +281,13 @@ export async function processWebSocketRequest(ws: WebSocket, message: WebSocket.
             accountId
           });
         }
-      }
-      else {
-        sendWebSocketResponse(ws, requestId, { error: `resorce type not implemented "${projectType}"` }, 501);
+      } else if (requestId === 'SUBSCRIPTIONS') {
+        sendWebSocketResponse(ws, requestId, null, 202);
+        const subscriptions = await az<any>(`account list`);
+        sendWebSocketResponse(ws, requestId, subscriptions);
+
+      } else {
+        sendWebSocketResponse(ws, requestId, { error: `resource type not implemented "${projectType}"` }, 501);
       }
 
       break;
