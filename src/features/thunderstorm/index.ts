@@ -1,14 +1,15 @@
 import chalk from 'chalk';
 import util from 'util';
 import WebSocket from 'ws';
-import { az } from '../../core/utils';
+import { az, getTemplateFullPath } from '../../core/utils';
 import { loginWithGitHub } from '../github/login-github';
 import createGitHubRepo from '../github/repo';
-import { createDatabase, createCollection, getDatabase } from './database';
+import { createCollection, getDatabase } from './database';
 import { listEnvironmentVariables } from './env';
-import { createProject, deleteProject, listProjects } from './project';
-import { createStorage, listStorage } from './storage';
-import { createSwa, getSWA, listFunctions, updateSwaWithDatabaseConnectionStrings } from './swa';
+import { deleteProject, listProjects } from './project';
+import { listStorage } from './storage';
+import { getSWA, listFunctions } from './swa';
+import path from "path";
 
 type WsRequest = {
   method: 'LOGINAZURE' | 'LOGINGITHUB' | 'GET' | 'POST' | 'DELETE' | 'PUT' | 'STATUS';
@@ -24,12 +25,12 @@ type WsResponse = {
   time: number;
 }
 
-const KeyVault = {
-  ConnectionString: {
-    Storage: '',
-    Database: '' as string | undefined,
-  }
-};
+// const KeyVault = {
+//   ConnectionString: {
+//     Storage: '',
+//     Database: '' as string | undefined,
+//   }
+// };
 
 export function sendWebSocketResponse(ws: WebSocket, requestId: string, body: Object | null, statusCode: number = 200) {
   const response = {
@@ -120,7 +121,7 @@ export async function processWebSocketRequest(ws: WebSocket, message: WebSocket.
 
             try {
 
-              var { html_url, default_branch } = await createGitHubRepo({
+              var { html_url } = await createGitHubRepo({
                 token: body.gitHubToken,
                 projectName,
               })
@@ -138,81 +139,98 @@ export async function processWebSocketRequest(ws: WebSocket, message: WebSocket.
               }, 500);
 
             }
+            const templateDir = getTemplateFullPath();
+            const bicepPath = path.join(templateDir, path.sep, 'bicep', path.sep, 'main.bicep');
+            console.log(`bicep main path: ${bicepPath}`);
+            const cmd = `deployment sub create \
+            --template-file ${bicepPath} \
+            --location ${location} \
+            --parameters   \
+            github_repo="${html_url}" \
+            github_token="${body.gitHubToken}" \
+            project_name="${projectRealName}" \
+            resourcegroup_name="${projectName}" \
+            resource_unique_name="${projectNameUnique}" \
+            --debug`;
+            console.log(`cmd: ${cmd}`);
+            await az<any>(cmd);
+
+            // await az<any>(`--parameters github_repo='https://github.com/tagazok/test-swa' github_token='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' project_name='mon projet 1' resourcegroup_name='prj7' resource_unique_name='prj7'`);
 
             //======
 
-            const resourceGroup = createProject({
-              ws,
-              requestId,
-              projectName,
-              projectNameUnique,
-              location,
-              projectRealName
-            });
+            // const resourceGroup = createProject({
+            //   ws,
+            //   requestId,
+            //   projectName,
+            //   projectNameUnique,
+            //   location,
+            //   projectRealName
+            // });
 
-            await Promise.all([resourceGroup]);
+            // await Promise.all([resourceGroup]);
 
             //======
 
-            const swa = createSwa({
-              ws,
-              requestId,
-              projectName,
-              projectNameUnique,
-              location,
-              html_url,
-              default_branch,
-              gitHubToken: body.gitHubToken,
-              projectRealName
-            });
+            // const swa = createSwa({
+            //   ws,
+            //   requestId,
+            //   projectName,
+            //   projectNameUnique,
+            //   location,
+            //   html_url,
+            //   default_branch,
+            //   gitHubToken: body.gitHubToken,
+            //   projectRealName
+            // });
 
-            const storage = createStorage({
-              ws,
-              requestId,
-              projectName,
-              projectNameUnique,
-              accountId,
-              location
-            });
+            // const storage = createStorage({
+            //   ws,
+            //   requestId,
+            //   projectName,
+            //   projectNameUnique,
+            //   accountId,
+            //   location
+            // });
 
-            const database = createDatabase({
-              ws,
-              requestId,
-              projectName,
-              projectNameUnique,
-              accountId
-            });
+            // const database = createDatabase({
+            //   ws,
+            //   requestId,
+            //   projectName,
+            //   projectNameUnique,
+            //   accountId
+            // });
 
-            await Promise.all([swa, storage, database])
-              .then(async _ => {
+            // await Promise.all([swa, storage, database])
+            //   .then(async _ => {
 
-                console.log(`Database connection string: ${KeyVault.ConnectionString.Database}`);
+            //     console.log(`Database connection string: ${KeyVault.ConnectionString.Database}`);
 
-                if (KeyVault.ConnectionString.Database) {
-                  await updateSwaWithDatabaseConnectionStrings({
-                    databaseConnectionString: KeyVault.ConnectionString.Database,
-                    projectNameUnique
-                  });
-                  console.log('updated SWA with connection string');
-                }
+            //     if (KeyVault.ConnectionString.Database) {
+            //       await updateSwaWithDatabaseConnectionStrings({
+            //         databaseConnectionString: KeyVault.ConnectionString.Database,
+            //         projectNameUnique
+            //       });
+            //       console.log('updated SWA with connection string');
+            //     }
 
-                // end operation
-                sendWebSocketResponse(ws, requestId, {
-                  projectName: projectNameUnique
-                }, 201);
-              }).catch(error => {
-                sendWebSocketResponse(ws, requestId, {
-                  error
-                }, 500);
-              });
+            //     // end operation
+            //     sendWebSocketResponse(ws, requestId, {
+            //       projectName: projectNameUnique
+            //     }, 201);
+            //   }).catch(error => {
+            //     sendWebSocketResponse(ws, requestId, {
+            //       error
+            //     }, 500);
+            //   });
 
-            if (KeyVault.ConnectionString.Database) {
-              await updateSwaWithDatabaseConnectionStrings({
-                databaseConnectionString: KeyVault.ConnectionString.Database,
-                projectNameUnique
-              });
-              console.log('updated SWA with connection string');
-            }
+            // if (KeyVault.ConnectionString.Database) {
+            //   await updateSwaWithDatabaseConnectionStrings({
+            //     databaseConnectionString: KeyVault.ConnectionString.Database,
+            //     projectNameUnique
+            //   });
+            //   console.log('updated SWA with connection string');
+            // }
 
             // end operation
             sendWebSocketResponse(ws, requestId, {
