@@ -350,7 +350,7 @@ export function copyTemplate(src: string, destination: string, context?: { [key:
 }
 
 export function getTemplateFullPath() {
-  return getFullPath("../../templates");
+  return getFullPath("../templates");
 }
 
 export function getFullPath(folder: string) {
@@ -488,4 +488,8 @@ export async function* traverseFolder(folder: string): AsyncGenerator<string> {
       yield entryPath;
     }
   }
+}
+
+export function IS_DEMO() {
+  return process.env.DEMO_MODE === "hexa";
 }

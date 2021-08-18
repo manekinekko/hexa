@@ -40,6 +40,7 @@ export async function run() {
     .option("login", "connect to your Azure")
     .option("deploy", "deploy to Azure")
     .option("ci", "configure a CI environment")
+    .option("ws", "Start a WebSocket server")
     .option("-c, --create", "enable manual resource creation", false)
     .option("-d, --debug", "enable debug mode", false)
     .option("-j, --just <services>", "setup or deploy only the selected services (e.g. --just functions,hosting)", false)
@@ -53,11 +54,16 @@ export async function run() {
     .option("-y, --yes", "answer yes to all confirmations", false)
     .option("--dry-run", "do not execute real commands.", false)
     .option("--yolo", "enable all modes and all services", false)
+    .option("--demo", "enable demo mode", false)
     .parse(process.argv);
 
   // set confiuration
   // WARNING: order matters
 
+  if (program.demo) {
+    process.env.DEMO_MODE = "hexa";
+    console.info(chalk.yellow("!!! Running is DEMO mode !!!"));
+  }
   if (program.debug) {
     process.env.DEBUG = "hexa";
   }
@@ -112,5 +118,8 @@ export async function run() {
   await runCommand(commandName.replace("--", ""), program.just);
 
   const end = process.hrtime(start);
-  console.info(chalk.green("✔ Done in %d seconds."), end[0]);
+
+  if (!program.ws) {
+    console.info(chalk.green("✔ Done in %d seconds."), end[0]);
+  }
 }
