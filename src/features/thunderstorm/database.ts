@@ -101,9 +101,12 @@ export async function createCollection({ ws, requestId, projectName, projectName
         console.log(`collection ${collectionName} already exists`);
       }
     }
-    return sendWebSocketResponse(ws, requestId, {
-      resource: 'DATABASE'
-    }, 200);
+    return getDatabase({
+      ws,
+      requestId,
+      projectName,
+      projectNameUnique,
+    });
 
   } catch (error) {
     console.error(chalk.red(error));
