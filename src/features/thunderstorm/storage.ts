@@ -1,6 +1,6 @@
 import chalk from "chalk";
 import { sendWebSocketResponse } from ".";
-import { az, IS_DEMO } from "../../core/utils";
+import { az } from "../../core/utils";
 
 type AzureBlobStorageItem = {
   name: string,
@@ -16,56 +16,6 @@ export async function getStorageConnectionString({ projectNameUnique }: any) {
     --name "${projectNameUnique}"
     `
   );
-}
-
-export async function createStorage({ ws, location, requestId, projectName, projectNameUnique, accountId }: any) {
-
-  try {
-    sendWebSocketResponse(ws, requestId, {
-      resource: 'STORAGE',
-    }, 202);
-
-    if (IS_DEMO()) {
-      // await new Promise(resolve => setTimeout(resolve, 5000, {}));
-      throw new Error('Demo Error');
-    }
-    else {
-      await az<AzureStorage>(
-        `storage account create \
-      --location "${location}" \
-      --name "${projectNameUnique}" \
-      --subscription "${accountId}" \
-      --resource-group "${projectName}" \
-      --kind "StorageV2" \
-      --tags "x-created-by=thunderstorm" \
-      --query "{name:name, id:id, location:location}"`
-      );
-
-      const storageConnectionString = await getStorageConnectionString({
-        projectNameUnique
-      });
-
-      await az<AzureStorage>(
-        `storage container create \
-      --resource-group "${projectName}" \
-      --name "${projectNameUnique}" \
-      --public-access "blob" \
-      --connection-string "${storageConnectionString.connectionString}"`
-      );
-    }
-
-    sendWebSocketResponse(ws, requestId, {
-      resource: 'STORAGE',
-    }, 200);
-
-  } catch (error) {
-    console.error(chalk.red(error));
-
-    return sendWebSocketResponse(ws, requestId, {
-      resource: 'STORAGE',
-      error
-    }, 500);
-  }
 }
 
 export async function listStorage({ ws, requestId, projectName, projectNameUnique }: any) {

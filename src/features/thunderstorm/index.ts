@@ -1,14 +1,15 @@
 import chalk from 'chalk';
 import util from 'util';
 import WebSocket from 'ws';
-import { az } from '../../core/utils';
+import { az, getTemplateFullPath, IS_DEMO } from '../../core/utils';
 import { loginWithGitHub } from '../github/login-github';
 import createGitHubRepo from '../github/repo';
-import { createDatabase, createCollection, getDatabase } from './database';
+import { createCollection, getDatabase } from './database';
 import { listEnvironmentVariables } from './env';
-import { createProject, deleteProject, listProjects } from './project';
-import { createStorage, listStorage } from './storage';
-import { createSwa, getSWA, listFunctions, updateSwaWithDatabaseConnectionStrings } from './swa';
+import { deleteProject, listProjects } from './project';
+import { listStorage } from './storage';
+import { getSWA, listFunctions } from './swa';
+import path from "path";
 
 type WsRequest = {
   method: 'LOGINAZURE' | 'LOGINGITHUB' | 'GET' | 'POST' | 'DELETE' | 'PUT' | 'STATUS';
@@ -24,12 +25,12 @@ type WsResponse = {
   time: number;
 }
 
-const KeyVault = {
-  ConnectionString: {
-    Storage: '',
-    Database: '' as string | undefined,
-  }
-};
+// const KeyVault = {
+//   ConnectionString: {
+//     Storage: '',
+//     Database: '' as string | undefined,
+//   }
+// };
 
 export function sendWebSocketResponse(ws: WebSocket, requestId: string, body: Object | null, statusCode: number = 200) {
   const response = {
@@ -139,79 +140,26 @@ export async function processWebSocketRequest(ws: WebSocket, message: WebSocket.
 
             }
 
-            //======
-
-            const resourceGroup = createProject({
-              ws,
-              requestId,
-              projectName,
-              projectNameUnique,
-              location,
-              projectRealName
-            });
-
-            await Promise.all([resourceGroup]);
-
-            //======
-
-            const swa = createSwa({
-              ws,
-              requestId,
-              projectName,
-              projectNameUnique,
-              location,
-              html_url,
-              default_branch,
-              gitHubToken: body.gitHubToken,
-              projectRealName
-            });
-
-            const storage = createStorage({
-              ws,
-              requestId,
-              projectName,
-              projectNameUnique,
-              accountId,
-              location
-            });
-
-            const database = createDatabase({
-              ws,
-              requestId,
-              projectName,
-              projectNameUnique,
-              accountId
-            });
-
-            await Promise.all([swa, storage, database])
-              .then(async _ => {
-
-                console.log(`Database connection string: ${KeyVault.ConnectionString.Database}`);
-
-                if (KeyVault.ConnectionString.Database) {
-                  await updateSwaWithDatabaseConnectionStrings({
-                    databaseConnectionString: KeyVault.ConnectionString.Database,
-                    projectNameUnique
-                  });
-                  console.log('updated SWA with connection string');
-                }
-
-                // end operation
-                sendWebSocketResponse(ws, requestId, {
-                  projectName: projectNameUnique
-                }, 201);
-              }).catch(error => {
-                sendWebSocketResponse(ws, requestId, {
-                  error
-                }, 500);
-              });
-
-            if (KeyVault.ConnectionString.Database) {
-              await updateSwaWithDatabaseConnectionStrings({
-                databaseConnectionString: KeyVault.ConnectionString.Database,
-                projectNameUnique
-              });
-              console.log('updated SWA with connection string');
+            if (IS_DEMO()) {
+              await new Promise(resolve => setTimeout(resolve, 5000, {}));
+            }
+            else {
+              const templateDir = getTemplateFullPath();
+              const bicepPath = path.join(templateDir, path.sep, 'bicep', path.sep, 'main.bicep');
+              console.log(`bicep main path: ${bicepPath}`);
+              const cmd = `deployment sub create \
+            --template-file ${bicepPath} \
+            --location ${location} \
+            --parameters   \
+            github_repo="${html_url}" \
+            github_token="${body.gitHubToken}" \
+            project_name="${projectRealName}" \
+            resourcegroup_name="${projectName}" \
+            resource_unique_name="${projectNameUnique}" \
+            default_branch="${default_branch}" \
+            --debug`;
+              console.log(`cmd: ${cmd}`);
+              await az<any>(cmd);
             }
 
             // end operation
