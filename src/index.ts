@@ -12,7 +12,7 @@ const prettyFont = CFonts.render("HEXA", {
 
 console.log(prettyFont.string);
 
-export async function run() {
+export async function run(args: string[]) {
   const start = process.hrtime();
 
   const runCommand = async (commandName: string, requetedServices: string | undefined) => {
@@ -55,7 +55,7 @@ export async function run() {
     .option("--dry-run", "do not execute real commands.", false)
     .option("--yolo", "enable all modes and all services", false)
     .option("--demo", "enable demo mode", false)
-    .parse(process.argv);
+    .parse(['node', 'bin.js', ...args]);
 
   // set confiuration
   // WARNING: order matters
