@@ -12,7 +12,7 @@
   "scripts": {
     "watch": "npm run build -- --watch",
     "prestart": "npm run build",
-    "start": "node ./dist/bin.js ws",
+    "start": "node ./dist/bin.js ws --verbose",
     "build": "rimraf dist/ && mkdir dist && npm run copy:templates && npm run copy:bin && tsc",
     "copy:templates": "copyfiles --verbose --all \"src/templates/**/*\" dist/",
     "copy:bin": "copyfiles --verbose --flat src/bin.js dist/",
@@ -56,6 +56,7 @@
     "inquirer": "^7.0.0",
     "internal-ip": "^6.2.0",
     "jmespath": "^0.15.0",
+    "mongodb": "^4.1.0",
     "ora": "^3.4.0",
     "rimraf": "^3.0.2",
     "shelljs": "^0.8.4",

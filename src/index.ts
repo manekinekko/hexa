@@ -12,7 +12,7 @@ const prettyFont = CFonts.render("HEXA", {
 
 console.log(prettyFont.string);
 
-export async function run() {
+export async function run(args: string[]) {
   const start = process.hrtime();
 
   const runCommand = async (commandName: string, requetedServices: string | undefined) => {
@@ -54,11 +54,16 @@ export async function run() {
     .option("-y, --yes", "answer yes to all confirmations", false)
     .option("--dry-run", "do not execute real commands.", false)
     .option("--yolo", "enable all modes and all services", false)
-    .parse(process.argv);
+    .option("--demo", "enable demo mode", false)
+    .parse(['node', 'bin.js', ...args]);
 
   // set confiuration
   // WARNING: order matters
 
+  if (program.demo) {
+    process.env.DEMO_MODE = "hexa";
+    console.info(chalk.yellow("!!! Running is DEMO mode !!!"));
+  }
   if (program.debug) {
     process.env.DEBUG = "hexa";
   }
@@ -113,5 +118,8 @@ export async function run() {
   await runCommand(commandName.replace("--", ""), program.just);
 
   const end = process.hrtime(start);
-  console.info(chalk.green("✔ Done in %d seconds."), end[0]);
+
+  if (!program.ws) {
+    console.info(chalk.green("✔ Done in %d seconds."), end[0]);
+  }
 }

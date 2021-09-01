@@ -489,3 +489,7 @@ export async function* traverseFolder(folder: string): AsyncGenerator<string> {
     }
   }
 }
+
+export function IS_DEMO() {
+  return process.env.DEMO_MODE === "hexa";
+}
