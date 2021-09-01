@@ -12,8 +12,8 @@ export default async function ({ token, projectName }: { token: string, projectN
     });
     const { data } = await octokit.repos.createUsingTemplate({
       name: projectName,
-      template_repo: "vanilla-api",
-      template_owner: "staticwebdev",
+      template_repo: "thundr-template-vanilla",
+      template_owner: "thundr-dev",
       include_all_branches: false,
       private: true
     });

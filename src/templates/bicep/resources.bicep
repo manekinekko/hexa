@@ -144,9 +144,9 @@ resource swa 'Microsoft.Web/staticSites@2021-01-15' = {
   properties: {
       buildProperties: {
         apiLocation: 'api'
-        appLocation: './'
-        appArtifactLocation: './'
-        outputLocation: './'
+        appLocation: 'public'
+        appArtifactLocation: 'public'
+        outputLocation: 'public'
     }
     repositoryUrl: github_repo
     branch: default_branch
